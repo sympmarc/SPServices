@@ -1,7 +1,7 @@
 ﻿/*
  * SPServices - Work with SharePoint's Web Services using jQuery
- * Version 2013.01
- * @requires jQuery v1.5 or greater - jQuery 1.7+ recommended
+ * Version 2013.02
+ * @requires jQuery v1.8 or greater - jQuery 1.10.x recommended
  *
  * Copyright (c) 2009-2013 Sympraxis Consulting LLC
  * Examples and docs at:
@@ -24,13 +24,15 @@
 	"use strict";
   
 	// Version info
-	var VERSION					= "2013.01";			// TODO: Update version
+	var VERSION					= "2012.02";			// TODO: Update version
 
 	// String constants
 	//   General
 	var SLASH					= "/";
 	var TXTColumnNotFound		= "Column not found on page";
 	var SCHEMASharePoint		= "http://schemas.microsoft.com/sharepoint";
+	var multiLookupPrefix		= "MultiLookupPicker";
+	var multiLookupPrefix2013	= "MultiLookup";
 
 	// Caching
 	var promisesCache = {};
@@ -46,7 +48,6 @@
 	var PERMISSIONS				= "Permissions";
 	var PUBLISHEDLINKSSERVICE	= "PublishedLinksService";
 	var SEARCH					= "Search";
-	var SPSEARCH				= "SPSearch";
 	var SHAREPOINTDIAGNOSTICS	= "SharePointDiagnostics";
 	var SITEDATA				= "SiteData";
 	var SITES					= "Sites";
@@ -62,7 +63,7 @@
 	var WORKFLOW				= "Workflow";
 
 	// Global variables
-	var SPServicesContext = new SPServicesContext();	// Variable to hold the current context as we figure it out
+	var currentContext = new SPServicesContext();		// Variable to hold the current context as we figure it out
 	var i = 0;											// Generic loop counter
 	var encodeOptionList = ["listName", "description"]; // Used to encode options which may contain special characters
 
@@ -71,7 +72,7 @@
 	//	WSops.OpName = [WebService, needs_SOAPAction];
 	//		OpName				The name of the Web Service operation -> These names are unique
 	//		WebService			The name of the WebService this operation belongs to
-	//		needs_SOAPAction	Boolean indicating whether the operation needs to have the SOAPAction passed in the setRequestHeaderfunction.
+	//		needs_SOAPAction	Boolean indicating whether the operatio needs to have the SOAPAction passed in the setRequestHeaderfunction.
 	//							true if the operation does a write, else false
 
 	var WSops = [];
@@ -142,11 +143,6 @@
 	WSops.QueryEx									= [SEARCH, false];
 	WSops.Registration								= [SEARCH, false];
 	WSops.Status									= [SEARCH, false];
-
-	WSops.SPQuery									= [SPSEARCH, false];
-	WSops.SPQueryEx									= [SPSEARCH, false];
-	WSops.SPRegistration							= [SPSEARCH, false];
-	WSops.SPStatus									= [SPSEARCH, false];
 
 	WSops.SendClientScriptErrorReport				= [SHAREPOINTDIAGNOSTICS,true];
 
@@ -648,16 +644,6 @@
 				SOAPEnvelope.payload += wrapNode("registrationXml", encodeXml(opt.registrationXml));
 				break;
 			case "Status":
-				break;
-
-			// SPSEARCH OPERATIONS
-			case "SPQuery":
-				SOAPEnvelope.payload += wrapNode("queryXml", encodeXml(opt.queryXml));
-				break;
-			case "SPQueryEx":
-				SOAPEnvelope.opheader = "<" + opt.operation + " xmlns='http://microsoft.com/webservices/OfficeServer/QueryService'>";
-				SOAPAction = "http://microsoft.com/webservices/OfficeServer/QueryService/" + opt.operation;
-				SOAPEnvelope.payload += wrapNode("queryXml", encodeXml(opt.queryXml));
 				break;
 
 			// SHAREPOINTDIAGNOSTICS OPERATIONS
@@ -1207,9 +1193,6 @@
 			cachedPromise = promisesCache[msg];
 		}
 
-		// If we don't have a completefunc, then we won't attempt to call it
-		var thisHasCompletefunc = $.isFunction(opt.completefunc);
-
 		if(typeof cachedPromise === "undefined") {
 		
 			// Finally, make the Ajax call
@@ -1217,7 +1200,7 @@
 				// The relative URL for the AJAX call
 				url: ajaxURL,
 				// By default, the AJAX calls are asynchronous.  You can specify false to require a synchronous call.
-				async: thisHasCompletefunc ? false : opt.async,
+				async: opt.async,
 				// Before sending the msg, need to send the request header
 				beforeSend: function (xhr) {
 					// If we need to pass the SOAPAction, do so
@@ -1235,18 +1218,32 @@
 				contentType: "text/xml;charset='utf-8'",
 				complete: function(xData, Status) {
 					// When the call is complete, call the completefunc if there is one
-					if(thisHasCompletefunc) {
+					if($.isFunction(opt.completefunc)) {
 						opt.completefunc(xData, Status);
+
 					}
 				}
 			});
 			
+/*			spservicesPromise.then(
+				function() {
+					// Cache the promise if requested
+					if(opt.cacheXML) {
+						promisesCache[msg] = spservicesPromise;
+					}
+				},
+				function() {
+																		// TODO: Allow for fail function
+				}
+			);
+*/
 			// Return the promise
+//			return spservicesPromise;
 			return promisesCache[msg];
 
 		} else {
 			// Call the completefunc if there is one
-			if(thisHasCompletefunc) {
+			if($.isFunction(opt.completefunc)) {
 				opt.completefunc(cachedPromise, null);
 			}
 			// Return the cached promise
@@ -1260,7 +1257,7 @@
 	// we allow for all in a standardized way.
 	$.fn.SPServices.defaults = {
 
-		cacheXML: false,			// If true, we'll cache the XML results for the call
+		cacheXML: false,			// If true, we'll cache the XML results with jQuery's .data() function
 		operation: "",				// The Web Service operation
 		webURL: "",					// URL of the target Web
 		makeViewDefault: false,		// true to make the view the default view for the list
@@ -1304,13 +1301,15 @@
 	$.fn.SPServices.SPGetCurrentSite = function() {
 
 		// We've already determined the current site...
-		if(SPServicesContext.thisSite.length > 0) {
-			return SPServicesContext.thisSite;
+		if(currentContext.thisSite.length > 0) {
+			return currentContext.thisSite;
 		}
 
 		// If we still don't know the current site, we call WebUrlFromPageUrlResult.
 		var msg = SOAPEnvelope.header +
-				"<WebUrlFromPageUrl xmlns='" + SCHEMASharePoint + "/soap/' ><pageUrl>" + location.protocol + "//" + location.host + location.pathname + "</pageUrl></WebUrlFromPageUrl>" +
+				"<WebUrlFromPageUrl xmlns='" + SCHEMASharePoint + "/soap/' ><pageUrl>" +
+				((location.href.indexOf("?") > 0) ? location.href.substr(0, location.href.indexOf("?")) : location.href) +
+				"</pageUrl></WebUrlFromPageUrl>" +
 				SOAPEnvelope.footer;
 		$.ajax({
 			async: false, // Need this to be synchronous so we're assured of a valid value
@@ -1319,12 +1318,12 @@
 			data: msg,
 			dataType: "xml",
 			contentType: "text/xml;charset=\"utf-8\"",
-			complete: function (xData) {
-				SPServicesContext.thisSite = $(xData.responseXML).find("WebUrlFromPageUrlResult").text();
+			complete: function (xData, Status) {
+				currentContext.thisSite = $(xData.responseXML).find("WebUrlFromPageUrlResult").text();
 			}
 		});
 
-		return SPServicesContext.thisSite; // Return the URL
+		return currentContext.thisSite; // Return the URL
 
 	}; // End $.fn.SPServices.SPGetCurrentSite
 
@@ -1428,18 +1427,19 @@
 				// Multi-select hybrid
 				case "M":
 					// Handle the dblclick on the candidate select
-					parentSelect.Obj.bind("dblclick", function() {
+					$(parentSelect.master.candidateControl).bind("dblclick", function() {
 						cascadeDropdown(opt.parentColumn, parentSelect);
 					});
 					// Handle the dblclick on the selected values
-					parentSelect.Obj.closest("span").find("select[id$='SelectResult']").bind("dblclick", function() {
+					$(parentSelect.master.resultControl).bind("dblclick", function() {
 						cascadeDropdown(opt.parentColumn, parentSelect);
 					});
-					// Handle a button click
-					parentSelect.Obj.closest("span").find("button").each(function() {
-						$(this).bind("click", function() {
+					// Handle button clicks
+					$(parentSelect.master.addControl).bind("click", function() {
 						cascadeDropdown(opt.parentColumn, parentSelect);
-						});
+					});
+					$(parentSelect.master.removeControl).bind("click", function() {
+						cascadeDropdown(opt.parentColumn, parentSelect);
 					});
 					break;
 				default:
@@ -1455,9 +1455,6 @@
 		var choices = "";
 		var parentSelectSelected;
 		var childSelectSelected = null;
-		var MultiLookupElements;
-		var MultiLookupPickerdata;
-		var master;
 		var newMultiLookupPickerdata;
 		var numChildOptions;
 		var firstChildOptionId;
@@ -1472,7 +1469,6 @@
 			var childSelect = this.childSelect;
 			var childColumnStatic = this.childColumnStatic;
 			var childColumnRequired = this.childColumnRequired;
-			var currentSelection;
 
 			// Get the parent column selection(s)
 			parentSelectSelected = getDropdownSelected(parentSelect, opt.matchOnId);
@@ -1489,15 +1485,6 @@
 
 			// Get the current child column selection(s)
 			childSelectSelected = getDropdownSelected(childSelect, true);
-
-			// Find the important bits of the multi-select
-			if(childSelect.Type === "M") {
-
-				MultiLookupElements = new MultiLookupPicker(childSelect.Obj);
-				MultiLookupPickerdata = MultiLookupElements.MultiLookupPickerdata;
-				master = MultiLookupElements.master;
-				currentSelection = childSelect.Obj.closest("span").find("select[ID$='SelectResult']");
-			}
 
 			// When the parent column's selected option changes, get the matching items from the relationship list
 			// Get the list items which match the current selection
@@ -1593,7 +1580,7 @@
 							break;
 						case "M":
 							// Remove all of the existing options
-							$(childSelect.Obj).find("option").remove();
+							$(childSelect.master.candidateControl).find("option").remove();
 							newMultiLookupPickerdata = "";
 							break;
 						default:
@@ -1642,7 +1629,7 @@
 								choices = choices + ((choices.length > 0) ? "|" : "") + thisOption.value + "|" + thisOption.id;
 								break;
 							case "M":
-								childSelect.Obj.append("<option value='" + thisOption.id + "'>" + thisOption.value + "</option>");
+								$(childSelect.master.candidateControl).append("<option value='" + thisOption.id + "'>" + thisOption.value + "</option>");
 								newMultiLookupPickerdata += thisOption.id + "|t" + thisOption.value + "|t |t |t";
 								break;
 							default:
@@ -1675,40 +1662,33 @@
 							break;
 						case "M":
 							// Clear the master
-							master.data = "";
-							MultiLookupPickerdata.attr("value", newMultiLookupPickerdata);
+							childSelect.master.data = "";
+							childSelect.MultiLookupPickerdata.attr("value", newMultiLookupPickerdata);
 
 							// Clear any prior selections that are no longer valid or aren't selected
-							$(currentSelection).find("option").each(function() {
+							$(childSelect.master.resultControl).find("option").each(function() {
 								var thisSelected = $(this);
-								var thisValue = $(this).html();
-								$(this).attr("selected", "selected");
-								$(childSelect.Obj).find("option").filter(function() {
-									return $(this).text() === thisValue.replace(/&amp;/, "&");	
-								}).each(function() {
-									if($(this).html() === thisValue) {
-										thisSelected.removeAttr("selected");
-									}
+								thisSelected.prop("selected", true);
+								$(childSelect.master.candidateControl).find("option[value='" + thisSelected.val() + "']").each(function() {
+									thisSelected.prop("selected", false);
 								});
 							});
-							GipRemoveSelectedItems(master);
+							GipRemoveSelectedItems(childSelect.master);
 
 							// Hide any options in the candidate list which are already selected
-							$(childSelect.Obj).find("option").each(function() {
+							$(childSelect.master.candidateControl).find("option").each(function() {
 								var thisSelected = $(this);
-								$(currentSelection).find("option").each(function() {
-									if($(this).html() === thisSelected.html()) {
-										thisSelected.remove();
-									}
+								$(childSelect.master.resultControl).find("option[value='" + thisSelected.val() + "']").each(function() {
+									thisSelected.remove();
 								});
 							});
-							GipAddSelectedItems(master);
+							GipAddSelectedItems(childSelect.master);
 
 							// Set master.data to the newly allowable values
-							master.data = GipGetGroupData(newMultiLookupPickerdata);
+							childSelect.master.data = GipGetGroupData(newMultiLookupPickerdata);
 
 							// Trigger a dblclick so that the child will be cascaded if it is a multiselect.
-							childSelect.Obj.trigger("dblclick");
+							$(childSelect.master.candidateControl).trigger("dblclick");
 
 							break;
 						default:
@@ -1720,7 +1700,7 @@
 			if(opt.completefunc !== null) {
 				opt.completefunc();
 			}
-		}); // childColumns each
+		}); // $(childColumns).each(function()
 
 	} // End cascadeDropdown
 
@@ -1833,7 +1813,6 @@
 				// Get info about the related list
 				relatedListXML = $(xData.responseXML).find("List");
 				// Save the information about each column requested
-				relatedColumnsXML[opt.relatedListColumn] = $(xData.responseXML).find("Fields > Field[Name='" + opt.relatedColumn + "']");
 				for (i=0; i < opt.relatedColumns.length; i++) {
 					relatedColumnsXML[opt.relatedColumns[i]] = $(xData.responseXML).find("Fields > Field[Name='" + opt.relatedColumns[i] + "']");
 				}
@@ -2018,9 +1997,6 @@
 	
 		var choices = "";
 		var columnSelectSelected = null;
- 		var MultiLookupElements;
- 		var MultiLookupPickerdata;
-		var master;
 		var newMultiLookupPickerdata;
 		var columnColumnRequired;
 		var thisFunction = "SPServices.SPFilterDropdown";
@@ -2109,7 +2085,7 @@
 						break;
 					case "M":
 						// Remove all of the existing options
-						$(columnSelect.Obj).find("option").remove();
+						$(columnSelect.master.candidateControl).find("option").remove();
 						newMultiLookupPickerdata = "";
 						break;
 					default:
@@ -2151,7 +2127,7 @@
 							choices = choices + ((choices.length > 0) ? "|" : "") + thisOption.value + "|" + thisOption.id;
 							break;
 						case "M":
-							columnSelect.Obj.append("<option value='" + thisOption.id + "'>" + thisOption.value + "</option>");
+							$(columnSelect.master.candidateControl).append("<option value='" + thisOption.id + "'>" + thisOption.value + "</option>");
 							newMultiLookupPickerdata += thisOption.id + "|t" + thisOption.value + "|t |t |t";
 							break;
 						default:
@@ -2168,42 +2144,36 @@
 						columnSelect.Obj.trigger("propertychange");
 						break;
 					case "M":
-						// Find the important bits of the multi-select
-						MultiLookupElements = new MultiLookupPicker(columnSelect.Obj);
-						MultiLookupPickerdata = MultiLookupElements.MultiLookupPickerdata;
-						master = MultiLookupElements.master;
-
-						var currentSelection = columnSelect.Obj.closest("span").find("select[ID$='SelectResult']");
-
 						// Clear the master
-						master.data = "";
-						MultiLookupPickerdata.attr("value", newMultiLookupPickerdata);
+						columnSelect.master.data = "";
+
+						columnSelect.MultiLookupPickerdata.attr("value", newMultiLookupPickerdata);
 						// Clear any prior selections that are no longer valid
-						$(currentSelection).find("option").each(function() {
+						$(columnSelect.master.resultControl).find("option").each(function() {
 							var thisSelected = $(this);
 							$(this).attr("selected", "selected");
-							$(columnSelect.Obj).find("option").each(function() {
+							$(columnSelect.master.candidateControl).find("option").each(function() {
 								if($(this).html() === thisSelected.html()) {
 									thisSelected.removeAttr("selected");
 								}
 							});
 						});
-						GipRemoveSelectedItems(master);
+						GipRemoveSelectedItems(columnSelect.master);
 						// Hide any options in the candidate list which are already selected
-						$(columnSelect.Obj).find("option").each(function() {
+						$(columnSelect.master.candidateControl).find("option").each(function() {
 							var thisSelected = $(this);
-							$(currentSelection).find("option").each(function() {
+							$(columnSelect.master.resultControl).find("option").each(function() {
 								if($(this).html() === thisSelected.html()) {
 									thisSelected.remove();
 								}
 							});
 						});
-						GipAddSelectedItems(master);
+						GipAddSelectedItems(columnSelect.master);
 						// Set master.data to the newly allowable values
-						master.data = GipGetGroupData(newMultiLookupPickerdata);
+						columnSelect.master.data = GipGetGroupData(newMultiLookupPickerdata);
 
 						// Trigger a dblclick so that the child will be cascaded if it is a multiselect.
-						columnSelect.Obj.trigger("dblclick");
+						$(columnSelect.master.candidateControl).trigger("dblclick");
 
 						break;
 					default:
@@ -2284,8 +2254,8 @@
 		}, options);
 
 		// The current user's ID is reliably available in an existing JavaScript variable
-		if(opt.fieldName === "ID" && typeof SPServicesContext.thisUserId !== "undefined") {
-			return SPServicesContext.thisUserId;
+		if(opt.fieldName === "ID" && typeof currentContext.thisUserId !== "undefined") {
+			return currentContext.thisUserId;
 		}
 
 		var thisField = "";
@@ -2301,7 +2271,7 @@
 			// Force parameter forces redirection to a page that displays the information as stored in the UserInfo table rather than My Site.
 			// Adding the extra Query String parameter with the current date/time forces the server to view this as a new request.
 			url: thisWeb + "/_layouts/userdisp.aspx?Force=True&" + new Date().getTime(),
-			complete: function (xData) {
+			complete: function (xData, Status) {
 				thisUserDisp = xData;
 			}
 		});
@@ -2310,7 +2280,7 @@
 
 			// The current user's ID is reliably available in an existing JavaScript variable
 			if(opt.fieldNames[i] === "ID") {
-				thisField = SPServicesContext.thisUserId;
+				thisField = currentContext.thisUserId;
 			} else {
 				var thisTextValue;
 				if(fieldCount > 1) {
@@ -2384,7 +2354,7 @@
 			async: false,
 			cacheXML: true,
 			listName: $().SPServices.SPListNameFromUrl(),
-			completefunc: function (xData) {
+			completefunc: function (xData, Status) {
 				$(xData.responseXML).find("Field[DisplayName='" + opt.lookupColumn + "']").each(function() {
 					lookupColumnStaticName = $(this).attr("StaticName");
 					// Use GetList for the Lookup column's list to determine the list's URL
@@ -2393,7 +2363,7 @@
 						async: false,
 						cacheXML: true,
 						listName: $(this).attr("List"),
-						completefunc: function (xData) {
+						completefunc: function (xData, Status) {
 							$(xData.responseXML).find("List").each(function() {
 								lookupListUrl = $(this).attr("WebFullUrl");
 								// Need to handle when list is in the root site
@@ -2451,7 +2421,7 @@
 			webURL: opt.webURL,
 			async: false,
 			userLoginName: (opt.userAccount !== "") ? opt.userAccount : $().SPServices.SPGetCurrentUser(),
-			completefunc: function (xData) {
+			completefunc: function (xData, Status) {
 				$(xData.responseXML).find("User").each(function() {
 					userId = $(this).attr("ID");
 				});
@@ -2506,7 +2476,7 @@
 		// Get the current item's ID from the Query String
 		var queryStringVals = $().SPServices.SPGetQueryString();
 		var thisID = queryStringVals.ID;
-		SPServicesContext.thisList = $().SPServices.SPListNameFromUrl();
+		currentContext.thisList = $().SPServices.SPListNameFromUrl();
 
 		// Set the messages based on the options provided
 		var msg = "<span id='SPRequireUnique" + opt.columnStaticName + "' class='{0}'>{1}</span><br/>";
@@ -2514,7 +2484,7 @@
 		
 		// We need the DisplayName
 		var columnDisplayName = $().SPServices.SPGetDisplayFromStatic({
-			listName: SPServicesContext.thisList,
+			listName: currentContext.thisList,
 			columnStaticName: opt.columnStaticName
 		});
 		var columnObj = $("input[Title='" + columnDisplayName + "']");
@@ -2530,7 +2500,7 @@
 			$().SPServices({
 				operation: "GetListItems",
 				async: false,
-				listName: SPServicesContext.thisList,
+				listName: currentContext.thisList,
 				// Make sure we get all the items, ignoring any filters on the default view.
 				CAMLQuery: "<Query><Where><IsNotNull><FieldRef Name='" + opt.columnStaticName + "'/></IsNotNull></Where></Query>",
 				// Filter based on columnStaticName's value
@@ -2655,7 +2625,7 @@
 										// parameter name than ID. Specify that name here, if needed.
 		}, options);
 
-		SPServicesContext.thisList = $().SPServices.SPListNameFromUrl();
+		currentContext.thisList = $().SPServices.SPListNameFromUrl();
 		var queryStringVals = $().SPServices.SPGetQueryString();
 		var lastID = queryStringVals.ID;
 		var QSList = queryStringVals.List;
@@ -2666,7 +2636,7 @@
 		// original Source.
 		if(typeof queryStringVals.ID === "undefined") {
 			lastID = $().SPServices.SPGetLastItemId({
-				listName: SPServicesContext.thisList
+				listName: currentContext.thisList
 			});
 			$("form[name='aspnetForm']").each(function() {
 				// This page...
@@ -2702,15 +2672,13 @@
 		} else {
 			while(queryStringVals.ID === lastID) {
 				lastID = $().SPServices.SPGetLastItemId({
-					listName: SPServicesContext.thisList
+					listName: currentContext.thisList
 				});
 			}
 			// If there is a RedirectURL parameter on the Query String, then redirect there instead of the value
 			// specified in the options (opt.redirectUrl)
 			var thisRedirectUrl = (typeof queryStringVals.RedirectURL === "string") ? queryStringVals.RedirectURL : opt.redirectUrl;
-			location.href = thisRedirectUrl +
-				 (thisRedirectUrl.indexOf("?") > 0) ? "&" : "?" +
-				 opt.qsParamName + "=" + lastID +
+			location.href = thisRedirectUrl + "?" + opt.qsParamName + "=" + lastID +
 				((typeof queryStringVals.RealSource === "string") ? ("&Source=" + queryStringVals.RealSource) : "");
 		}
 	}; // End $.fn.SPServices.SPRedirectWithID
@@ -2733,15 +2701,10 @@
 		if(thisMultiSelect.Obj.html() === null && opt.debug) { errBox(thisFunction, "multiSelectColumn: " + opt.multiSelectColumn, TXTColumnNotFound);return;}
 		if(thisMultiSelect.Type !== "M" && opt.debug) { errBox(thisFunction, "multiSelectColumn: " + opt.multiSelectColumn, "Column is not multi-select.");return;}
 
-		var possibleValues = thisMultiSelect.Obj;
-		var selectedValues = possibleValues.closest("span").find("select[ID$='SelectResult']");
-
 		// Create a temporary clone of the select to use to determine the appropriate width settings.
 		// We'll append it to the end of the enclosing span.
 		var cloneId = genContainerId("SPSetMultiSelectSizes", opt.multiSelectColumn);
-		var enclosingSpan = possibleValues.closest("span");
-		enclosingSpan.append("<select id='" + cloneId + "' ></select>");
-		var cloneObj = enclosingSpan.find("> select");
+		var cloneObj = $("<select id='" + cloneId + "' ></select>").appendTo(thisMultiSelect.container);
 		cloneObj.css({
 			"width": "auto",		// We want the clone to resize its width based on the contents
 			"height": 0,			// Just to keep the page clean while we are using the clone
@@ -2749,9 +2712,13 @@
 		})
 
 		// Add all the values to the cloned select.  First the left (possible values) select...
-		cloneObj.append(possibleValues.find("option").clone());
+		$(thisMultiSelect.master.candidateControl).find("option").each(function() {
+			cloneObj.append("<option value='" + $(this).html() + "'>" + $(this).html() + "</option>");
+		});
 		// ...then the right (selected values) select (in case some values have already been selected)
-		cloneObj.append(selectedValues.find("option").clone());
+		$(thisMultiSelect.master.resultControl).find("option").each(function() {
+			cloneObj.append("<option value='" + $(this).val() + "'>" + $(this).html() + "</option>");
+		});
 
 		// We'll add 5px for a little padding on the right.
 		var divWidth = cloneObj.width() + 5;
@@ -2770,13 +2737,8 @@
 		var selectWidth = divWidth;
 
 		// Set the new widths
-		possibleValues.css("width", selectWidth + "px").parent().css("width", newDivWidth + "px");
-		selectedValues.css("width", selectWidth + "px").parent().css("width", newDivWidth + "px");
-		// If the new widths are wide enough, remove the x scroll bar
-		if(opt.maxWidth === 0 || opt.maxWidth > newDivWidth) {
-			possibleValues.parent().css("overflow-x", "hidden");
-			selectedValues.parent().css("overflow-x", "hidden");
-		}
+		$(thisMultiSelect.master.candidateControl).css("width", selectWidth + "px").parent().css("width", newDivWidth + "px");
+		$(thisMultiSelect.master.resultControl).css("width", selectWidth + "px").parent().css("width", newDivWidth + "px");
 
 		// Remove the select's clone, since we're done with it
 		cloneObj.remove();
@@ -2824,7 +2786,7 @@
 				operation: "GetListCollection",
 				webURL: opt.webURL,
 				async: false, // Need this to be synchronous so we're assured of a valid value
-				completefunc: function (xData) {
+				completefunc: function (xData, Status) {
 					$(xData.responseXML).find("List").each(function() {
 						listXml = $(this);
 							
@@ -2841,7 +2803,7 @@
 										webURL: opt.webURL,
 										listName: listXml.attr("ID"),
 										async: false, // Need this to be synchronous so we're assured of a valid value
-										completefunc: function (xData) {
+										completefunc: function (xData, Status) {
 											$(xData.responseXML).find("ContentType").each(function() {
 												// Don't deal with folders
 												if($(this).attr("ID").substring(0,6) !== "0x0120") {
@@ -2878,7 +2840,7 @@
 										webURL: opt.webURL,
 										listName: listXml.attr("ID"),
 										async: false, // Need this to be synchronous so we're assured of a valid value
-										completefunc: function (xData) {
+										completefunc: function (xData, Status) {
 											$(xData.responseXML).find("View").each(function() {
 												SPScriptAuditPage(opt, listXml, "View", $(this).attr("DisplayName"), $(this).attr("Url"));
 											});
@@ -2912,7 +2874,7 @@
 					cacheXML: true,
 					webURL: opt.webURL,
 					listName: listsArray[i],
-					completefunc: function (xData) {
+					completefunc: function (xData, Status) {
 						$(xData.responseXML).find("List").each(function() {
 							listXml = $(this);
 						});
@@ -3044,22 +3006,23 @@
 			listName: opt.listName
 		});
 
-		// When the promise is available...		
+		// when the promise is available...		
 		thisGetList.done(function() {
-			
-			// Figure out if we need to handle fill in choices
-			columnFillInChoice = ($(thisGetList.responseXML).find("Field[DisplayName='" + opt.columnName + "']").attr("FillInChoice") === "TRUE") ? true : false;
+			$(thisGetList.responseXML).find("Field[DisplayName='" + opt.columnName + "']").each(function() {
+				// Determine whether columnName allows a fill-in choice
+				columnFillInChoice = ($(this).attr("FillInChoice") === "TRUE") ? true : false;
+				// Stop looking;we're done
+				return false;
+			});
 
-			// Find the column in the form
 			var thisFormField = findFormField(opt.columnName);
 		
 			var totalChoices = $(thisFormField).find("tr").length;
 			var choiceNumber = 0;
 			var fillinPrompt;
 			var fillinInput;
-
 			// Collect all of the choices
-			$(thisFormField).find("tr").each(function(i) {
+			$(thisFormField).find("tr").each(function() {
 				choiceNumber++;
 				// If this is the fill-in prompt, save it...
 				if(columnFillInChoice && choiceNumber === (totalChoices - 1)) {
@@ -3072,6 +3035,7 @@
 					columnOptions.push($(this).html());
 				}
 			});
+			out = "<TR>";
 
 			// If randomize is true, randomly sort the options
 			if(opt.randomize) {
@@ -3079,7 +3043,6 @@
 			}
 
 			// Add all of the options to the out string
-			out = "<tr>";
 			for(i=0; i < columnOptions.length; i++) {
 				out += columnOptions[i];
 				// If we've already got perRow columnOptions in the row, close off the row
@@ -3087,11 +3050,11 @@
 					out += "</TR><TR>";
 				}
 			}
-			out += "</tr>";
+			out += "</TR>";
 
 			// If we are allowing a fill-in choice, add that option in a separate row at the bottom
 			if(columnFillInChoice) {
-				out += "<tr><td colspan='99'>" + fillinPrompt + fillinInput + "</td></tr>";
+				out += "<TR><TD colspan='99'>" + fillinPrompt + fillinInput + "</TD></TR>";
 			}
 
 			// Remove the existing rows...
@@ -3107,7 +3070,7 @@
 	$.fn.SPServices.SPAutocomplete = function (options) {
 
 		var opt = $.extend({}, {
-			WebURL: "",							// [Optional] The name of the Web (site) which contains the sourceList
+			webURL: "",							// [Optional] The name of the Web (site) which contains the sourceList
 			sourceList: "",						// The name of the list which contains the values
 			sourceColumn: "",					// The static name of the column which contains the values
 			columnName: "",						// The display name of the column in the form
@@ -3129,8 +3092,7 @@
 
 		// Find the input control for the column and save some of its attributes
 		var columnObj = $("input[Title='" + opt.columnName + "']");
-		$("input[Title='" + opt.columnName + "']").css("position", "");
-		var columnObjId = columnObj.attr("ID");
+		columnObj.css("position", "");
 		var columnObjColor = columnObj.css("color");
 		var columnObjWidth = columnObj.css("width");
 
@@ -3146,11 +3108,11 @@
 		columnObj.wrap("<div>");
 
 		// Create a div to contain the matching values and add it to the DOM
-		var containerId = genContainerId("SPAutocomplete", opt.columnName);		
+		var containerId = genContainerId("SPAutocomplete", opt.columnName);
 		columnObj.after("<div><ul id='" + containerId + "' style='width:" + columnObjWidth + ";display:none;padding:2px;border:1px solid #2A1FAA;background-color:#FFF;position:absolute;z-index:40;margin:0'></div>");
 
 		// Set the width to match the width of the input control
-		$("#" + containerId).css("width", columnObjWidth);		
+		$("#" + containerId).css("width", columnObjWidth);
 
 		// Handle keypresses
 		$(columnObj).keyup(function () {
@@ -3181,7 +3143,7 @@
 			if(opt.CAMLQuery.length > 0) {
 				camlQuery += "<And>";
 			}
-			camlQuery += "<" + opt.filterType + "><FieldRef Name='" + opt.sourceColumn + "'/><Value Type='Text'>" + columnValue + "</Value></" + opt.filterType + ">";			
+			camlQuery += "<" + opt.filterType + "><FieldRef Name='" + opt.sourceColumn + "'/><Value Type='Text'>" + columnValue + "</Value></" + opt.filterType + ">";
 			if(opt.CAMLQuery.length > 0) {
 				camlQuery += opt.CAMLQuery + "</And>";
 			}
@@ -3230,7 +3192,7 @@
 				// If a highlightClass has been supplied, wrap a span around each match
 				if(opt.highlightClass.length > 0) {
 					// Set up Regex based on whether we want to ignore case
-					var thisRegex = RegExp(columnValue, opt.ignoreCase ? "gi" : "g");
+					var thisRegex = new RegExp(columnValue, opt.ignoreCase ? "gi" : "g");
 					// Look for all occurrences
 					var matches = matchArray[i].match(thisRegex);
 					var startLoc = 0;
@@ -3252,7 +3214,7 @@
 			// Set up hehavior for the available values in the list element
 			$("#" + containerId + " li").click(function () {
 				$("#" + containerId).fadeOut(opt.slideUpSpeed);
-				$("#" + columnObjId).val($(this).text());
+				columnObj.val($(this).text());
 			}).mouseover(function () {
 				var mouseoverCss = {
 					"cursor": "hand",
@@ -3310,11 +3272,11 @@
 
 		// Has the list name or GUID been passed in?
 		if(opt.listName.length > 0) {
-			SPServicesContext.thisList = opt.listName;
-			return SPServicesContext.thisList;
+			currentContext.thisList = opt.listName;
+			return currentContext.thisList;
 		// Do we already know the current list?
-		} else if(SPServicesContext.thisList.length > 0) {
-			return SPServicesContext.thisList;
+		} else if(currentContext.thisList.length > 0) {
+			return currentContext.thisList;
 		}
 
 		// Parse out the list's root URL from the current location or the passed url
@@ -3326,12 +3288,12 @@
 		$().SPServices({
 			operation: "GetListCollection",
 			async: false,
-			completefunc: function(xData) {
+			completefunc: function(xData, Status) {
 				$(xData.responseXML).find("List").each(function() {
 					var defaultViewUrl = $(this).attr("DefaultViewUrl");
 					var listCollList = defaultViewUrl.substring(0, defaultViewUrl.lastIndexOf(SLASH) + 1).toUpperCase();
 					if(listPath.indexOf(listCollList) > 0) {
-						SPServicesContext.thisList = $(this).attr("ID");
+						currentContext.thisList = $(this).attr("ID");
 						return false;
 					}
 				});
@@ -3339,7 +3301,7 @@
 		});
 
 		// Return the list GUID (ID)
-		return SPServicesContext.thisList;
+		return currentContext.thisList;
 
 	}; // End $.fn.SPServices.SPListNameFromUrl
 
@@ -3353,7 +3315,6 @@
 			batchCmd: "Update",	// The operation to perform. By default, Update.
 			valuepairs: [],		// Valuepairs for the update in the form [[fieldname1, fieldvalue1], [fieldname2, fieldvalue2]...]
 			completefunc: null,	// Function to call on completion of rendering the change.
-			folder: "", 		// If specified, we will look only at items in that folder
 			debug: false		// If true, show error messages;if false, run silent
 		}, options);
 
@@ -3368,9 +3329,7 @@
 			webURL: opt.webURL,
 			listName: opt.listName,
 			CAMLQuery: opt.CAMLQuery,
-			CAMLQueryOptions: "<QueryOptions><ViewAttributes Scope='Recursive' />" +
-					((opt.folder.length > 0) ? "<Folder>" + opt.folder + "</Folder>" : "") + 
-				"</QueryOptions>",
+			CAMLQueryOptions: "<QueryOptions><ViewAttributes Scope='Recursive' /></QueryOptions>",
 			completefunc: function(xData) {
 				$(xData.responseXML).SPFilterNode("z:row").each(function() {
 					itemsToUpdate.push($(this).attr("ows_ID"));
@@ -3406,36 +3365,12 @@
 			completefunc: function(xData) {
 				// If present, call completefunc when all else is done
 				if(opt.completefunc !== null) {
-					opt.completefunc(xData);
+					opt.completefunc(xData, Status);
 				}
 			}
 		});
 
 	}; // End $.fn.SPServices.SPUpdateMultipleListItems
-
-
-	// Convert a JavaScript date to the ISO 8601 format required by SharePoint to update list items
-	$.fn.SPServices.SPConvertDateToISO = function (options) {
-
-		var opt = $.extend({}, {
-			dateToConvert: new Date(),		// The JavaScript date we'd like to convert. If no date is passed, the function returns the current date/time
-			dateOffset: "-05:00"			// The time zone offset requested. Default is EST
-		}, options);
-
-		//Generate ISO 8601 date/time formatted string
-		var s = "";
-		var d = opt.dateToConvert;
-		s += d.getFullYear() + "-";
-		s += pad(d.getMonth() + 1) + "-";
-		s += pad(d.getDate());
-		s += "T" + pad(d.getHours()) + ":";
-		s += pad(d.getMinutes()) + ":";
-		s += pad(d.getSeconds()) + "Z" + opt.dateOffset;
-		//Return the ISO8601 date string
-		return s;
-
-	}; // End $.fn.SPServices.SPConvertDateToISO
-
 
 	// This method for finding specific nodes in the returned XML was developed by Steve Workman. See his blog post
 	// http://www.steveworkman.com/html5-2/javascript/2011/improving-javascript-xml-node-finding-performance-by-2000/
@@ -3530,6 +3465,9 @@
 				break;
 			case "Calc":
 				colValue = calcToJsonObject(v);
+				break;
+			case "Attachments":
+				colValue = lookupToJsonObject(v);
 				break;
 			default:
 				// All other objectTypes will be simple strings
@@ -3639,8 +3577,7 @@
 	//   contents - The element which contains the current value
 	//   currentValue - The current value if it is set
 	//   checkNames - The Check Names image (in case you'd like to click it at some point)
-
-	$.fn.SPServices.SPFindPeoplePicker = function(options) {
+	$.fn.SPFindPeoplePicker = function(options) {
 
 		var opt = $.extend({}, {
 			peoplePickerDisplayName: "",	// The displayName of the People Picker on the form
@@ -3713,50 +3650,7 @@
 		});
 	
 		return {row: thisRow, contents: thisContents, currentValue: thisCurrentValue, checkNames: thisCheckNames, dictionaryEntries: dictionaryEntries};
-
-	}; // End $.fn.SPServices.SPFindPeoplePicker
-
-	// Mistakenly released previously outside the SPServices namespace. This takes care of offering both.
-	$.fn.SPFindPeoplePicker = function(options) {
-		return $().SPServices.SPFindPeoplePicker(options);
-	}; // End $.fn.SPFindPeoplePicker
-
-
-
-	// Find a People Picker in the page
-	// Returns references to:
-	//   row - The TR which contains the People Picker (useful if you'd like to hide it at some point)
-	//   contents - The element which contains the current value
-	//   currentValue - The current value if it is set
-	//   checkNames - The Check Names image (in case you'd like to click it at some point)
-	$.fn.SPServices.SPFindMMSPicker = function(options) {
-
-		var opt = $.extend({}, {
-			MMSDisplayName: ""				// The displayName of the MMS Picker on the form
-		}, options);
-
-		var thisTerms = [];
-
-		// Find the div for the column which contains the entered data values
-		var thisDiv = $("div[title='" + opt.MMSDisplayName + "']");
-		var thisHiddenInput = thisDiv.closest("td").find("input[type='hidden']");
-		var thisTermArray = thisHiddenInput.val().split(";");
-		
-		for(var i=0; i < thisTermArray.length; i++) {
-			var thisOne = thisTermArray[i].split("|");
-			thisTerms.push({
-				value: thisOne[0],
-				guid: thisOne[1]
-			});
-		
-		}
-
-		return {
-			terms: thisTerms
-		};
-
-	}; // End $.fn.SPServices.SPFindMMSPicker
-	
+	};
 
 	// Return the current version of SPServices as a string
 	$.fn.SPServices.Version = function () {
@@ -3774,12 +3668,12 @@
 	
 		// SharePoint 2010 gives us a context variable
 		if(typeof _spPageContextInfo !== "undefined") {
-			this.thisSite = _spPageContextInfo.webServerRelativeUrl;
+			this.thisSite = _spPageContextInfo.webAbsoluteUrl;
 			this.thisList = _spPageContextInfo.pageListId;
 			this.thisUserId = _spPageContextInfo.userId;
-		// In SharePoint 2007, we know the site and UserId
+		// In SharePoint 2007, we know the UserID only
 		} else {
-			this.thisSite = (typeof L_Menu_BaseUrl !== "undefined") ? L_Menu_BaseUrl : "";
+			this.thisSite = "";
 			this.thisList = "";
 			this.thisUserId = (typeof _spUserId !== "undefined") ? _spUserId : undefined;
 		}
@@ -3951,27 +3845,17 @@
 		} else {
 			this.Type = null;
 		}
+		
+		if(this.Type === "M") {
+			// Find the important bits of the multiselect control
+			this.container = this.Obj.closest("span");
+			this.MultiLookupPickerdata = this.container.find("input[id$='" + multiLookupPrefix + "_data'], input[id$='" + multiLookupPrefix2013 + "_data']");
+			var addButtonId = this.container.find("[id$='AddButton']").attr("id");
+			this.master =
+				window[addButtonId.replace(/AddButton/, multiLookupPrefix + "_m")] ||	// SharePoint 2007
+				window[addButtonId.replace(/AddButton/, multiLookupPrefix2013 + "_m")];	// SharePoint 2013
+		}
 	} // End of function DropdownCtl
-
-
-
-	// Find the MultiLookupPickerdata input element. The structures are slightly different in 2013 vs. prior versions.
-	function MultiLookupPicker(o) {
-
-		// Find input element that contains 'MultiLookup' and ends with 'data'. This holds all available values.
-	 	this.MultiLookupPickerdata = o.closest("span").find("input[id*='MultiLookup'][id$='data']");
-
-		// The ids in 2013 are different than prior versions, so we need to parse them out.
-		var thisMultiLookupPickerdataId = this.MultiLookupPickerdata.attr("id");
-	 	var thisIdEndLoc = thisMultiLookupPickerdataId.indexOf("Multi");
-	 	var thisIdEnd = thisMultiLookupPickerdataId.substr(thisIdEndLoc);
-	 	var thisMasterId = thisMultiLookupPickerdataId.substr(0, thisIdEndLoc) + thisIdEnd.substr(0, thisIdEnd.indexOf("_") + 1) + "m";
-
-	 	this.master = window[thisMasterId];
-
-	} // End of function MultiLookupPicker
-
-
 
 	// Returns the selected value(s) for a dropdown in an array. Expects a dropdown object as returned by the DropdownCtl function.
 	// If matchOnId is true, returns the ids rather than the text values for the selection options(s).
@@ -3991,13 +3875,16 @@
 				if(matchOnId) {
 					columnSelectSelected.push($("input[id='"+ columnSelect.Obj.attr("optHid") + "']").val() || []);
 				} else {
-					columnSelectSelected.push(columnSelect.Obj.attr("value") || []);
+					columnSelectSelected.push(columnSelect.Obj.val() || []);
 				}				
 				break;
 			case "M":
-				var columnSelections = columnSelect.Obj.closest("span").find("select[ID$='SelectResult']");
-				$(columnSelections).find("option").each(function() {
-					columnSelectSelected.push($(this).html());
+				$(columnSelect.master.resultControl).find("option").each(function() {
+					if(matchOnId) {
+						columnSelectSelected.push($(this).val());
+					} else {
+						columnSelectSelected.push($(this).html());					
+					}
 				});
 				break;
 			default:
@@ -4047,7 +3934,7 @@
 			operation: "GetFormCollection",
 			async: false,
 			listName: l,
-			completefunc: function (xData) {
+			completefunc: function (xData, Status) {
 				u = $(xData.responseXML).find("Form[Type='" + f + "']").attr("Url");
 			}
 		});
@@ -4099,7 +3986,7 @@
 		});
 		return thisFormBody;
 	} // End of function findFormField
-
+	
 	// The SiteData operations have the same names as other Web Service operations. To make them easy to call and unique, I'm using
 	// the SiteData prefix on their names. This function replaces that name with the right name in the SOAPEnvelope.
 	function siteDataFixSOAPEnvelope(SOAPEnvelope, siteDataOperation) {
@@ -4176,8 +4063,5 @@
 		this.value = spl[1];
 	}
 
-	function pad(n) {
-		return n < 10 ? "0" + n : n;
-	}
 
 })(jQuery);
