@@ -1,32 +1,39 @@
 ﻿/*
  * SPServices - Work with SharePoint's Web Services using jQuery
- * Version 0.7.2 -> Note to Marc: Also change var VERSION below.
- * @requires jQuery v1.4.2 or greater - jQuery 1.7+ recommended
+ * Version 2013.01
+ * @requires jQuery v1.5 or greater - jQuery 1.7+ recommended
  *
- * Copyright (c) 2009-2012 Sympraxis Consulting LLC
+ * Copyright (c) 2009-2013 Sympraxis Consulting LLC
  * Examples and docs at:
  * http://spservices.codeplex.com
  * Licensed under the MIT license:
  * http://www.opensource.org/licenses/mit-license.php
  */
-/**
+/*
  * @description Work with SharePoint's Web Services using jQuery
  * @type jQuery
  * @name SPServices
  * @category Plugins/SPServices
  * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
  */
+/* jshint undef: true */
+/* global _spUserId, _spPageContextInfo, GipAddSelectedItems, GipRemoveSelectedItems, GipGetGroupData */
 
 (function ($) {
 
+	"use strict";
+  
 	// Version info
-	var VERSION					= "0.7.2";
+	var VERSION					= "2013.01";			// TODO: Update version
 
 	// String constants
 	//   General
 	var SLASH					= "/";
 	var TXTColumnNotFound		= "Column not found on page";
 	var SCHEMASharePoint		= "http://schemas.microsoft.com/sharepoint";
+
+	// Caching
+	var promisesCache = {};
 
 	//   Web Service names
 	var ALERTS					= "Alerts";
@@ -39,6 +46,7 @@
 	var PERMISSIONS				= "Permissions";
 	var PUBLISHEDLINKSSERVICE	= "PublishedLinksService";
 	var SEARCH					= "Search";
+	var SPSEARCH				= "SPSearch";
 	var SHAREPOINTDIAGNOSTICS	= "SharePointDiagnostics";
 	var SITEDATA				= "SiteData";
 	var SITES					= "Sites";
@@ -54,16 +62,16 @@
 	var WORKFLOW				= "Workflow";
 
 	// Global variables
-	var thisSite = "";		// The current site
-	var thisList = "";		// The current list when in a list context
-	var i = 0;				// Generic loop counter
-	var t = "";				// Temporary string variable
+	var SPServicesContext = new SPServicesContext();	// Variable to hold the current context as we figure it out
+	var i = 0;											// Generic loop counter
+	var encodeOptionList = ["listName", "description"]; // Used to encode options which may contain special characters
+
 
 	// Array to store Web Service information
 	//	WSops.OpName = [WebService, needs_SOAPAction];
 	//		OpName				The name of the Web Service operation -> These names are unique
 	//		WebService			The name of the WebService this operation belongs to
-	//		needs_SOAPAction	Boolean indicating whether the operatio needs to have the SOAPAction passed in the setRequestHeaderfunction.
+	//		needs_SOAPAction	Boolean indicating whether the operation needs to have the SOAPAction passed in the setRequestHeaderfunction.
 	//							true if the operation does a write, else false
 
 	var WSops = [];
@@ -134,6 +142,11 @@
 	WSops.QueryEx									= [SEARCH, false];
 	WSops.Registration								= [SEARCH, false];
 	WSops.Status									= [SEARCH, false];
+
+	WSops.SPQuery									= [SPSEARCH, false];
+	WSops.SPQueryEx									= [SPSEARCH, false];
+	WSops.SPRegistration							= [SPSEARCH, false];
+	WSops.SPStatus									= [SPSEARCH, false];
 
 	WSops.SendClientScriptErrorReport				= [SHAREPOINTDIAGNOSTICS,true];
 
@@ -331,6 +344,13 @@
 
 		// If there are no options passed in, use the defaults.  Extend replaces each default with the passed option.
 		var opt = $.extend({}, $.fn.SPServices.defaults, options);
+		
+		// Encode options which may contain special character, esp. ampersand
+		for(var i=0; i < encodeOptionList.length; i++) {
+			if(typeof opt[encodeOptionList[i]] === "string") {
+				opt[encodeOptionList[i]] = encodeXml(opt[encodeOptionList[i]]);
+			}
+		}
 
 		// Put together operation header and SOAPAction for the SOAP call based on which Web Service we're calling
 		SOAPEnvelope.opheader = "<" + opt.operation + " ";
@@ -364,7 +384,7 @@
 				SOAPAction = "http://microsoft.com/webservices/SharePointPortalServer/SocialDataService/";
 				break;
 			case SPELLCHECK:
-				SOAPEnvelope.opheader += "xmlns='http://schemas.microsoft.com/sharepoint/publishing/spelling/'";
+				SOAPEnvelope.opheader += "xmlns='http://schemas.microsoft.com/sharepoint/publishing/spelling/' >";
 				SOAPAction = "http://schemas.microsoft.com/sharepoint/publishing/spelling/SpellCheck";
 				break;
             case TAXONOMYSERVICE:
@@ -542,7 +562,7 @@
 				break;
 			case "UpdateListItems":
 				addToPayload(opt, ["listName"]);
-				if(opt.updates !== undefined && opt.updates.length > 0) {
+				if(typeof opt.updates !== "undefined" && opt.updates.length > 0) {
 					addToPayload(opt, ["updates"]);
 				} else {
 					SOAPEnvelope.payload += "<updates><Batch OnError='Continue'><Method ID='1' Cmd='" + opt.batchCmd + "'>";
@@ -610,24 +630,34 @@
 			case "GetQuerySuggestions":
 				SOAPEnvelope.opheader = "<" + opt.operation + " xmlns='http://microsoft.com/webservices/OfficeServer/QueryService'>";
 				SOAPAction = "http://microsoft.com/webservices/OfficeServer/QueryService/" + opt.operation;
-				SOAPEnvelope.payload += wrapNode("queryXml", escapeHTML(opt.queryXml));
+				SOAPEnvelope.payload += wrapNode("queryXml", encodeXml(opt.queryXml));
 				break;
 			case "GetSearchMetadata":
 				SOAPEnvelope.opheader = "<" + opt.operation + " xmlns='http://microsoft.com/webservices/OfficeServer/QueryService'>";
 				SOAPAction = "http://microsoft.com/webservices/OfficeServer/QueryService/" + opt.operation;
 				break;
 			case "Query":
-				SOAPEnvelope.payload += wrapNode("queryXml", escapeHTML(opt.queryXml));
+				SOAPEnvelope.payload += wrapNode("queryXml", encodeXml(opt.queryXml));
 				break;
 			case "QueryEx":
 				SOAPEnvelope.opheader = "<" + opt.operation + " xmlns='http://microsoft.com/webservices/OfficeServer/QueryService'>";
 				SOAPAction = "http://microsoft.com/webservices/OfficeServer/QueryService/" + opt.operation;
-				SOAPEnvelope.payload += wrapNode("queryXml", escapeHTML(opt.queryXml));
+				SOAPEnvelope.payload += wrapNode("queryXml", encodeXml(opt.queryXml));
 				break;
 			case "Registration":
-				SOAPEnvelope.payload += wrapNode("registrationXml", escapeHTML(opt.registrationXml));
+				SOAPEnvelope.payload += wrapNode("registrationXml", encodeXml(opt.registrationXml));
 				break;
 			case "Status":
+				break;
+
+			// SPSEARCH OPERATIONS
+			case "SPQuery":
+				SOAPEnvelope.payload += wrapNode("queryXml", encodeXml(opt.queryXml));
+				break;
+			case "SPQueryEx":
+				SOAPEnvelope.opheader = "<" + opt.operation + " xmlns='http://microsoft.com/webservices/OfficeServer/QueryService'>";
+				SOAPAction = "http://microsoft.com/webservices/OfficeServer/QueryService/" + opt.operation;
+				SOAPEnvelope.payload += wrapNode("queryXml", encodeXml(opt.queryXml));
 				break;
 
 			// SHAREPOINTDIAGNOSTICS OPERATIONS
@@ -667,9 +697,9 @@
 
 			// SITES OPERATIONS
 			case "CreateWeb":
-				addToPayload(opt, ["urlType", "titleType", "descriptionType", "templateNameType", "languageType", "languageSpecifiedType",
-					"localeType", "localeSpecifiedType", "collationLocaleType", "collationLocaleSpecifiedType", "uniquePermissionsType",
-					"uniquePermissionsSpecifiedType", "anonymousType", "anonymousSpecifiedType", "presenceType", "presenceSpecifiedType"]);
+				addToPayload(opt, ["url", "title", "description", "templateName", "language", "languageSpecified",
+					"locale", "localeSpecified", "collationLocale", "collationLocaleSpecified", "uniquePermissions",
+					"uniquePermissionsSpecified", "anonymous", "anonymousSpecified", "presence", "presenceSpecified"]);
 				break;
 			case "DeleteWeb":
 				addToPayload(opt, ["url"]);
@@ -741,7 +771,7 @@
 				break;
 			case "GetCommentsOnUrl":
 				addToPayload(opt, ["url", "maximumItemsToReturn", "startIndex"]);
-				if(opt.excludeItemsTime !== undefined && opt.excludeItemsTime.length > 0) {
+				if(typeof opt.excludeItemsTime !== "undefined" && opt.excludeItemsTime.length > 0) {
 					SOAPEnvelope.payload += wrapNode("excludeItemsTime", opt.excludeItemsTime);
 				}
 				break;
@@ -999,7 +1029,7 @@
 				break;
 			case "GetUserProfileByName":
 				// Note that this operation is inconsistent with the others, using AccountName rather than accountName
-				if(opt.accountName !== undefined && opt.accountName.length > 0) {
+				if(typeof opt.accountName !== "undefined" && opt.accountName.length > 0) {
 					addToPayload(opt, [["AccountName", "accountName"]]);
 				} else {
 					addToPayload(opt, ["AccountName"]);
@@ -1169,46 +1199,58 @@
 		}
 
 		// Glue together the pieces of the SOAP message
-		var msg = SOAPEnvelope.header +
-			SOAPEnvelope.opheader +
-			SOAPEnvelope.payload +
-			SOAPEnvelope.opfooter +
-			SOAPEnvelope.footer;
+		var msg = SOAPEnvelope.header + SOAPEnvelope.opheader + SOAPEnvelope.payload + SOAPEnvelope.opfooter + SOAPEnvelope.footer;
 
-		var cachedXML;
-		var status = null;
-
+		// Check to see if we've already cached the results
+		var cachedPromise;
 		if(opt.cacheXML) {
-			cachedXML = $("body").data(msg);
+			cachedPromise = promisesCache[msg];
 		}
+
+		// If we don't have a completefunc, then we won't attempt to call it
+		var thisHasCompletefunc = $.isFunction(opt.completefunc);
+
+		if(typeof cachedPromise === "undefined") {
 		
-		if(cachedXML === undefined) {
-			// Make the Ajax call
-			$.ajax({
-				url: ajaxURL,											// The relative URL for the AJAX call
-				async: opt.async,										// By default, the AJAX calls are asynchronous.  You can specify false to require a synchronous call.
-				beforeSend: function (xhr) {							// Before sending the msg, need to send the request header
+			// Finally, make the Ajax call
+			promisesCache[msg] = $.ajax({
+				// The relative URL for the AJAX call
+				url: ajaxURL,
+				// By default, the AJAX calls are asynchronous.  You can specify false to require a synchronous call.
+				async: thisHasCompletefunc ? false : opt.async,
+				// Before sending the msg, need to send the request header
+				beforeSend: function (xhr) {
 					// If we need to pass the SOAPAction, do so
 					if(WSops[opt.operation][1]) {
 						xhr.setRequestHeader("SOAPAction", SOAPAction);
 					}
 				},
-				type: "POST",											// This is a POST
-				data: msg,												// Here is the SOAP request we've built above
-				dataType: "xml",										// We're getting XML; tell jQuery so that it doesn't need to do a best guess
-				contentType: "text/xml;charset='utf-8'",				// and this is its content type
+				// Always a POST
+				type: "POST",
+				// Here is the SOAP request we've built above
+				data: msg,
+				// We're getting XML; tell jQuery so that it doesn't need to do a best guess
+				dataType: "xml",
+				// and this is its content type
+				contentType: "text/xml;charset='utf-8'",
 				complete: function(xData, Status) {
-					if(opt.cacheXML) {
-						$("body").data(msg, xData);				// Cache the results
+					// When the call is complete, call the completefunc if there is one
+					if(thisHasCompletefunc) {
+						opt.completefunc(xData, Status);
 					}
-					cachedXML = xData;
-					status = Status;
-					opt.completefunc(cachedXML, status);				// When the call is complete, do this
 				}
 			});
+			
+			// Return the promise
+			return promisesCache[msg];
 
 		} else {
-			opt.completefunc(cachedXML, status);						// Call the completefunc
+			// Call the completefunc if there is one
+			if(thisHasCompletefunc) {
+				opt.completefunc(cachedPromise, null);
+			}
+			// Return the cached promise
+			return cachedPromise;
 		}
 
 	}; // End $.fn.SPServices
@@ -1218,7 +1260,7 @@
 	// we allow for all in a standardized way.
 	$.fn.SPServices.defaults = {
 
-		cacheXML: false,				// If true, we'll cache the XML results with jQuery's .data() function
+		cacheXML: false,			// If true, we'll cache the XML results for the call
 		operation: "",				// The Web Service operation
 		webURL: "",					// URL of the target Web
 		makeViewDefault: false,		// true to make the view the default view for the list
@@ -1261,19 +1303,14 @@
 	// The function is also available as a public function.
 	$.fn.SPServices.SPGetCurrentSite = function() {
 
-		// Do we already know the current site?
-		if(thisSite.length > 0) {
-			return thisSite;
+		// We've already determined the current site...
+		if(SPServicesContext.thisSite.length > 0) {
+			return SPServicesContext.thisSite;
 		}
 
-		// SharePoint 2010 provides the current context, so if available, let's use it
-//		thisSite = (typeof SP !== "undefined") ? SP.ClientContext.get_current().get_url() : undefined;
-//		if(thisSite !== undefined) return thisSite = location.protocol + "//" + location.hostname + thisSite;
-		
+		// If we still don't know the current site, we call WebUrlFromPageUrlResult.
 		var msg = SOAPEnvelope.header +
-				"<WebUrlFromPageUrl xmlns='" + SCHEMASharePoint + "/soap/' ><pageUrl>" +
-				((location.href.indexOf("?") > 0) ? location.href.substr(0, location.href.indexOf("?")) : location.href) +
-				"</pageUrl></WebUrlFromPageUrl>" +
+				"<WebUrlFromPageUrl xmlns='" + SCHEMASharePoint + "/soap/' ><pageUrl>" + location.protocol + "//" + location.host + location.pathname + "</pageUrl></WebUrlFromPageUrl>" +
 				SOAPEnvelope.footer;
 		$.ajax({
 			async: false, // Need this to be synchronous so we're assured of a valid value
@@ -1282,11 +1319,13 @@
 			data: msg,
 			dataType: "xml",
 			contentType: "text/xml;charset=\"utf-8\"",
-			complete: function (xData, Status) {
-				thisSite = $(xData.responseXML).find("WebUrlFromPageUrlResult").text();
+			complete: function (xData) {
+				SPServicesContext.thisSite = $(xData.responseXML).find("WebUrlFromPageUrlResult").text();
 			}
 		});
-		return thisSite; // Return the URL
+
+		return SPServicesContext.thisSite; // Return the URL
+
 	}; // End $.fn.SPServices.SPGetCurrentSite
 
 	// Function to set up cascading dropdowns on a SharePoint form
@@ -1304,6 +1343,7 @@
 			childColumn: "",					// The display name of the child column in the form
 			listName: $().SPServices.SPListNameFromUrl(),		// The list the form is working with. This is useful if the form is not in the list context.
 			CAMLQuery: "",						// [Optional] For power users, this CAML fragment will be Anded with the default query on the relationshipList
+			CAMLQueryOptions: "<QueryOptions><IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns></QueryOptions>", // [Optional] For power users, ability to specify Query Options
 			promptText: "",						// [DEPRECATED] Text to use as prompt. If included, {0} will be replaced with the value of childColumn. IOrignal value "Choose {0}..."
 			noneText: "(None)",					// [Optional] Text to use for the (None) selection. Provided for non-English language support.
 			simpleChild: false,					// [Optional] If set to true and childColumn is a complex dropdown, convert it to a simple dropdown
@@ -1333,6 +1373,8 @@
 			// Set the childSelect to reference the new simple dropdown
 			childSelect = new DropdownCtl(opt.childColumn);
 		}
+      
+		var childColumnRequired, childColumnStatic;
 
 		// Get information about the childColumn from the current list
 		$().SPServices({
@@ -1340,7 +1382,7 @@
 			async: false,
 			cacheXML: true,
 			listName: opt.listName,
-			completefunc: function(xData, Status) {
+			completefunc: function(xData) {
 				$(xData.responseXML).find("Fields").each(function() {
 					$(this).find("Field[DisplayName='" + opt.childColumn + "']").each(function() {
 						// Determine whether childColumn is Required
@@ -1358,7 +1400,7 @@
 		var childColumns = parentSelect.Obj.data("SPCascadeDropdownsChildColumns");
 
 		// If this is the first child for this parent, then create the data object to hold the settings
-		if(childColumns === undefined) {
+		if(typeof childColumns === "undefined") {
 			parentSelect.Obj.data("SPCascadeDropdownsChildColumns", [childColumn]);
 		// If we already have a data object for this parent, then add the setting for this child to it
 		} else {
@@ -1390,8 +1432,7 @@
 						cascadeDropdown(opt.parentColumn, parentSelect);
 					});
 					// Handle the dblclick on the selected values
-					parentSelections = parentSelect.Obj.closest("span").find("select[id$='SelectResult']");
-					parentSelections.bind("dblclick", function() {
+					parentSelect.Obj.closest("span").find("select[id$='SelectResult']").bind("dblclick", function() {
 						cascadeDropdown(opt.parentColumn, parentSelect);
 					});
 					// Handle a button click
@@ -1414,8 +1455,9 @@
 		var choices = "";
 		var parentSelectSelected;
 		var childSelectSelected = null;
-		var master;
+		var MultiLookupElements;
 		var MultiLookupPickerdata;
+		var master;
 		var newMultiLookupPickerdata;
 		var numChildOptions;
 		var firstChildOptionId;
@@ -1430,6 +1472,7 @@
 			var childSelect = this.childSelect;
 			var childColumnStatic = this.childColumnStatic;
 			var childColumnRequired = this.childColumnRequired;
+			var currentSelection;
 
 			// Get the parent column selection(s)
 			parentSelectSelected = getDropdownSelected(parentSelect, opt.matchOnId);
@@ -1449,8 +1492,10 @@
 
 			// Find the important bits of the multi-select
 			if(childSelect.Type === "M") {
-				MultiLookupPickerdata = childSelect.Obj.closest("span").find("input[name$='MultiLookupPicker$data']");
-				master = window[childSelect.Obj.closest("tr").find("button[id$='AddButton']").attr("id").replace(/AddButton/,'MultiLookupPicker_m')];
+
+				MultiLookupElements = new MultiLookupPicker(childSelect.Obj);
+				MultiLookupPickerdata = MultiLookupElements.MultiLookupPickerdata;
+				master = MultiLookupElements.master;
 				currentSelection = childSelect.Obj.closest("span").find("select[ID$='SelectResult']");
 			}
 
@@ -1509,8 +1554,8 @@
 				// Override the default view rowlimit and get all appropriate rows
 				CAMLRowLimit: 0,
 				// Even though setting IncludeMandatoryColumns to FALSE doesn't work as the docs describe, it fixes a bug in GetListItems with mandatory multi-selects
-				CAMLQueryOptions: "<QueryOptions><IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns></QueryOptions>",
-				completefunc: function(xData, Status) {
+				CAMLQueryOptions: opt.CAMLQueryOptions,
+				completefunc: function(xData) {
 
 					// Handle errors
 					$(xData.responseXML).find("errorstring").each(function() {
@@ -1561,46 +1606,44 @@
 					// Add an option for each child item
 					$(xData.responseXML).SPFilterNode("z:row").each(function() {
 
-						var thisOptionId, thisOptionValue;
+						var thisOption = {};
 
 						// If relationshipListChildColumn is a Lookup column, then the ID should be for the Lookup value,
 						// else the ID of the relationshipList item
 						var thisValue = $(this).attr("ows_" + opt.relationshipListChildColumn);
 						
-						if(thisValue !== undefined && thisValue.indexOf(";#") > 0) {
-							var splitValue = thisValue.split(";#");
-							thisOptionId = splitValue[0];
-							thisOptionValue = splitValue[1];
+						if(typeof thisValue !== "undefined" && thisValue.indexOf(";#") > 0) {
+							thisOption = new SplitIndex(thisValue);
 						} else {
-							thisOptionId = $(this).attr("ows_ID");
-							thisOptionValue = thisValue;						
+							thisOption.id = $(this).attr("ows_ID");
+							thisOption.value = thisValue;						
 						}
 
 						// If the relationshipListChildColumn is a calculated column, then the value isn't preceded by the ID,
-						// but by the datatype.  In this case, thisOptionId should be the ID of the relationshipList item.
+						// but by the datatype.  In this case, thisOption.id should be the ID of the relationshipList item.
 						// e.g., float;#12345.67
-						if(isNaN(thisOptionId)) {
-							thisOptionId = $(this).attr("ows_ID");
+						if(isNaN(thisOption.id)) {
+							thisOption.id = $(this).attr("ows_ID");
 						}
 					
 						// Save the id and value for the first child option in case we need to select it (selectSingleOption option is true)
-						firstChildOptionId = thisOptionId;
-						firstChildOptionValue = thisOptionValue;
+						firstChildOptionId = thisOption.id;
+						firstChildOptionValue = thisOption.value;
 					
 						switch(childSelect.Type) {
 							case "S":
 								var selected = ($(this).attr("ows_ID") === childSelectSelected[0]) ? " selected='selected'" : "";
-								childSelect.Obj.append("<option" + selected + " value='" + thisOptionId + "'>" + thisOptionValue + "</option>");
+								childSelect.Obj.append("<option" + selected + " value='" + thisOption.id + "'>" + thisOption.value + "</option>");
 								break;
 							case "C":
-								if(thisOptionId === childSelectSelected[0]) {
-									childSelect.Obj.attr("value", thisOptionValue);
+								if(thisOption.id === childSelectSelected[0]) {
+									childSelect.Obj.attr("value", thisOption.value);
 								}
-								choices = choices + ((choices.length > 0) ? "|" : "") + thisOptionValue + "|" + thisOptionId;
+								choices = choices + ((choices.length > 0) ? "|" : "") + thisOption.value + "|" + thisOption.id;
 								break;
 							case "M":
-								childSelect.Obj.append("<option value='" + thisOptionId + "'>" + thisOptionValue + "</option>");
-								newMultiLookupPickerdata += thisOptionId + "|t" + thisOptionValue + "|t |t |t";
+								childSelect.Obj.append("<option value='" + thisOption.id + "'>" + thisOption.value + "</option>");
+								newMultiLookupPickerdata += thisOption.id + "|t" + thisOption.value + "|t |t |t";
 								break;
 							default:
 								break;
@@ -1641,7 +1684,7 @@
 								var thisValue = $(this).html();
 								$(this).attr("selected", "selected");
 								$(childSelect.Obj).find("option").filter(function() {
-									return $(this).text() == thisValue.replace(/&amp;/, "&");	
+									return $(this).text() === thisValue.replace(/&amp;/, "&");	
 								}).each(function() {
 									if($(this).html() === thisValue) {
 										thisSelected.removeAttr("selected");
@@ -1677,7 +1720,7 @@
 			if(opt.completefunc !== null) {
 				opt.completefunc();
 			}
-		}); // $(childColumns).each(function()
+		}); // childColumns each
 
 	} // End cascadeDropdown
 
@@ -1782,7 +1825,7 @@
 			cacheXML: true,
 			webURL: opt.relatedWebURL,
 			listName: opt.relatedList,
-			completefunc: function(xData, Status) {
+			completefunc: function(xData) {
 				// If debug is on, notify about an error
 				$(xData.responseXML).find("faultcode").each(function() {
 					if(opt.debug) {errBox(thisFunction, "relatedList: " + opt.relatedList, "List not found"); return; }
@@ -1790,8 +1833,9 @@
 				// Get info about the related list
 				relatedListXML = $(xData.responseXML).find("List");
 				// Save the information about each column requested
+				relatedColumnsXML[opt.relatedListColumn] = $(xData.responseXML).find("Fields > Field[Name='" + opt.relatedColumn + "']");
 				for (i=0; i < opt.relatedColumns.length; i++) {
-					relatedColumnsXML[i] = $(xData.responseXML).find("Fields > Field[Name='" + opt.relatedColumns[i] + "']");
+					relatedColumnsXML[opt.relatedColumns[i]] = $(xData.responseXML).find("Fields > Field[Name='" + opt.relatedColumns[i] + "']");
 				}
 			}
 		});
@@ -1855,9 +1899,17 @@
 			camlQuery += "<And>";
 		}
 
-		camlQuery += "<Eq><FieldRef Name='" + opt.relatedListColumn +
-			(opt.matchOnId ? "' LookupId='True'/><Value Type='Integer'>" : "'/><Value Type='Text'>") +
-			escapeColumnValue(columnSelectSelected[0]) + "</Value></Eq>";
+		// Need to handle Lookup columns differently than static columns
+		var relatedListColumnType = relatedColumnsXML[opt.relatedListColumn].attr("Type");
+		if(relatedListColumnType === "Lookup") {
+			camlQuery += "<Eq><FieldRef Name='" + opt.relatedListColumn +
+				(opt.matchOnId ? "' LookupId='True'/><Value Type='Integer'>" : "'/><Value Type='Text'>") +
+				escapeColumnValue(columnSelectSelected[0]) + "</Value></Eq>";
+		} else {
+			camlQuery += "<Eq><FieldRef Name='" +
+				(opt.matchOnId ? "ID' /><Value Type='Counter'>" : opt.relatedListColumn + "'/><Value Type='Text'>") +
+				escapeColumnValue(columnSelectSelected[0]) + "</Value></Eq>";
+		};
 
 		if(opt.CAMLQuery.length > 0) {
 			camlQuery += opt.CAMLQuery + "</And>";
@@ -1879,7 +1931,7 @@
 			CAMLViewFields: "<ViewFields>" + viewFields +  "</ViewFields>",
 			// Override the default view rowlimit and get all appropriate rows
 			CAMLRowLimit: 0,
-			completefunc: function(xData, Status) {
+			completefunc: function(xData) {
 
 				// Handle errors
 				$(xData.responseXML).find("errorstring").each(function() {
@@ -1904,15 +1956,15 @@
 						outString = "<table>";
 						outString += "<tr>";
 						for (i=0; i < opt.relatedColumns.length; i++) {
-							if(typeof relatedColumnsXML[i] === 'undefined' && opt.debug) {errBox(thisFunction, "columnName: " + opt.relatedColumns[i], "Column not found in relatedList"); return; }
-							outString += "<th class='" + opt.headerCSSClass + "'>" + relatedColumnsXML[i].attr("DisplayName") + "</th>";
+							if(typeof relatedColumnsXML[opt.relatedColumns[i]] === "undefined" && opt.debug) {errBox(thisFunction, "columnName: " + opt.relatedColumns[i], "Column not found in relatedList"); return; }
+							outString += "<th class='" + opt.headerCSSClass + "'>" + relatedColumnsXML[opt.relatedColumns[i]].attr("DisplayName") + "</th>";
 						}
 						outString += "</tr>";
 						// Add an option for each child item
 						$(xData.responseXML).SPFilterNode("z:row").each(function() {
 							outString += "<tr>";
 							for (i=0; i < opt.relatedColumns.length; i++) {
-								outString += "<td class='" + opt.rowCSSClass + "'>" + showColumn(relatedListXML, relatedColumnsXML[i], $(this).attr("ows_" + opt.relatedColumns[i]), opt) + "</td>";
+								outString += "<td class='" + opt.rowCSSClass + "'>" + showColumn(relatedListXML, relatedColumnsXML[opt.relatedColumns[i]], $(this).attr("ows_" + opt.relatedColumns[i]), opt) + "</td>";
 							}
 							outString += "</tr>";
 						});
@@ -1923,10 +1975,10 @@
 						outString = "<table>";
 						$(xData.responseXML).SPFilterNode("z:row").each(function() {
 							for (i=0; i < opt.relatedColumns.length; i++) {
-								if(typeof relatedColumnsXML[i] === 'undefined' && opt.debug) {errBox(thisFunction, "columnName: " + opt.relatedColumns[i], "Column not found in relatedList"); return; }
+								if(typeof relatedColumnsXML[opt.relatedColumns[i]] === "undefined" && opt.debug) {errBox(thisFunction, "columnName: " + opt.relatedColumns[i], "Column not found in relatedList"); return; }
 								outString += "<tr>";
-								outString += "<th class='" + opt.headerCSSClass + "'>" + relatedColumnsXML[i].attr("DisplayName") + "</th>";
-								outString += "<td class='" + opt.rowCSSClass + "'>" + showColumn(relatedListXML, relatedColumnsXML[i], $(this).attr("ows_" + opt.relatedColumns[i]), opt) + "</td>";
+								outString += "<th class='" + opt.headerCSSClass + "'>" + relatedColumnsXML[opt.relatedColumns[i]].attr("DisplayName") + "</th>";
+								outString += "<td class='" + opt.rowCSSClass + "'>" + showColumn(relatedListXML, relatedColumnsXML[opt.relatedColumns[i]], $(this).attr("ows_" + opt.relatedColumns[i]), opt) + "</td>";
 								outString += "</tr>";
 							}
 						});
@@ -1948,25 +2000,27 @@
 	// Function to filter a lookup based dropdown 
 	$.fn.SPServices.SPFilterDropdown = function(options) {
 		var opt = $.extend({}, {
-			relationshipWebURL: "",				// [Optional] The name of the Web (site) which contains the relationshipList
-			relationshipList: "",				// The name of the list which contains the lookup values
-			relationshipListColumn: "",			// The internal name of the column in the relationship list
-			relationshipListSortColumn: "",		// [Optional] If specified, sort the options in the dropdown by this column,
-												// otherwise the options are sorted by relationshipListColumn
-			columnName: "",						// The display name of the column in the form
+			relationshipWebURL: "",					// [Optional] The name of the Web (site) which contains the relationshipList
+			relationshipList: "",					// The name of the list which contains the lookup values
+			relationshipListColumn: "",				// The internal name of the column in the relationship list
+			relationshipListSortColumn: "",			// [Optional] If specified, sort the options in the dropdown by this column,
+													// otherwise the options are sorted by relationshipListColumn
+			relationshipListSortAscending: true,	// [Optional] By default, the sort is ascending. If false, descending
+			columnName: "",							// The display name of the column in the form
 			listName: $().SPServices.SPListNameFromUrl(),		// The list the form is working with. This is useful if the form is not in the list context.
-			promptText: "",						// [DEPRECATED] Text to use as prompt. If included, {0} will be replaced with the value of columnName. IOrignal value "Choose {0}..."
-			noneText: "(None)",					// [Optional] Text to use for the (None) selection. Provided for non-English language support.
-			CAMLQuery: "",						// This CAML fragment will be applied to the relationshipList
+			promptText: "",							// [DEPRECATED] Text to use as prompt. If included, {0} will be replaced with the value of columnName. IOrignal value "Choose {0}..."
+			noneText: "(None)",						// [Optional] Text to use for the (None) selection. Provided for non-English language support.
+			CAMLQuery: "",							// This CAML fragment will be applied to the relationshipList
 			CAMLQueryOptions: "<QueryOptions><IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns><ViewAttributes Scope='RecursiveAll'/></QueryOptions>", // Need this to mirror SharePoint's behavior, but it can be overridden
-			completefunc: null,					// Function to call on completion of rendering the change.
-			debug: false						// If true, show error messages; if false, run silent
+			completefunc: null,						// Function to call on completion of rendering the change.
+			debug: false							// If true, show error messages; if false, run silent
 		}, options);
 	
 		var choices = "";
 		var columnSelectSelected = null;
+ 		var MultiLookupElements;
+ 		var MultiLookupPickerdata;
 		var master;
-		var MultiLookupPickerdata;
 		var newMultiLookupPickerdata;
 		var columnColumnRequired;
 		var thisFunction = "SPServices.SPFilterDropdown";
@@ -1980,7 +2034,8 @@
 
 		// Get the relationshipList items which match the current selection
 		var sortColumn = (opt.relationshipListSortColumn.length > 0) ? opt.relationshipListSortColumn : opt.relationshipListColumn;
-		var camlQuery = "<Query><OrderBy><FieldRef Name='" + sortColumn + "'/></OrderBy><Where>";
+		var sortOrder = (opt.relationshipListSortAscending === true) ? "" : "Ascending='FALSE'";
+		var camlQuery = "<Query><OrderBy><FieldRef Name='" + sortColumn + "' " + sortOrder + "/></OrderBy><Where>";
 		if(opt.CAMLQuery.length > 0) {
 			camlQuery += opt.CAMLQuery;
 		}
@@ -1992,7 +2047,7 @@
 			async: false,
 			cacheXML: true,
 			listName: opt.listName,
-			completefunc: function(xData, Status) {
+			completefunc: function(xData) {
 				$(xData.responseXML).find("Fields").each(function() {
 					$(this).find("Field[DisplayName='" + opt.columnName + "']").each(function() {
 						// Determine whether columnName is Required
@@ -2018,7 +2073,7 @@
 			CAMLRowLimit: 0,
 			// Even though setting IncludeMandatoryColumns to FALSE doesn't work as the docs describe, it fixes a bug in GetListItems with mandatory multi-selects
 			CAMLQueryOptions: opt.CAMLQueryOptions,
-			completefunc: function(xData, Status) {
+			completefunc: function(xData) {
 
 				// Handle errors
 				$(xData.responseXML).find("errorstring").each(function() {
@@ -2064,42 +2119,40 @@
 				// Add an option for each item
 				$(xData.responseXML).SPFilterNode("z:row").each(function() {
 					
-					var thisOptionId, thisOptionValue;
+					var thisOption = {};
 
 					// If relationshipListColumn is a Lookup column, then the ID should be for the Lookup value,
 					// else the ID of the relationshipList item
 					var thisValue = $(this).attr("ows_" + opt.relationshipListColumn);
 					
-					if(thisValue !== undefined && thisValue.indexOf(";#") > 0) {
-						var splitValue = thisValue.split(";#");
-						thisOptionId = splitValue[0];
-						thisOptionValue = splitValue[1];
+					if(typeof thisValue !== "undefined" && thisValue.indexOf(";#") > 0) {
+						thisOption = new SplitIndex(thisValue);
 					} else {
-						thisOptionId = $(this).attr("ows_ID");
-						thisOptionValue = thisValue;						
+						thisOption.id = $(this).attr("ows_ID");
+						thisOption.value = thisValue;						
 					}
 
 					// If the relationshipListColumn is a calculated column, then the value isn't preceded by the ID,
-					// but by the datatype.  In this case, thisOptionId should be the ID of the relationshipList item.
+					// but by the datatype.  In this case, thisOption.id should be the ID of the relationshipList item.
 					// e.g., float;#12345.67
-					if(isNaN(thisOptionId)) {
-						thisOptionId = $(this).attr("ows_ID");
+					if(isNaN(thisOption.id)) {
+						thisOption.id = $(this).attr("ows_ID");
 					}
 					
 					switch(columnSelect.Type) {
 						case "S":
 							var selected = ($(this).attr("ows_ID") === columnSelectSelected[0]) ? " selected='selected'" : "";
-							columnSelect.Obj.append("<option" + selected + " value='" + thisOptionId + "'>" + thisOptionValue + "</option>");
+							columnSelect.Obj.append("<option" + selected + " value='" + thisOption.id + "'>" + thisOption.value + "</option>");
 							break;
 						case "C":
-							if(thisOptionId === columnSelectSelected[0]) {
-								columnSelect.Obj.attr("value", thisOptionValue);
+							if(thisOption.id === columnSelectSelected[0]) {
+								columnSelect.Obj.attr("value", thisOption.value);
 							}
-							choices = choices + ((choices.length > 0) ? "|" : "") + thisOptionValue + "|" + thisOptionId;
+							choices = choices + ((choices.length > 0) ? "|" : "") + thisOption.value + "|" + thisOption.id;
 							break;
 						case "M":
-							columnSelect.Obj.append("<option value='" + thisOptionId + "'>" + thisOptionValue + "</option>");
-							newMultiLookupPickerdata += thisOptionId + "|t" + thisOptionValue + "|t |t |t";
+							columnSelect.Obj.append("<option value='" + thisOption.id + "'>" + thisOption.value + "</option>");
+							newMultiLookupPickerdata += thisOption.id + "|t" + thisOption.value + "|t |t |t";
 							break;
 						default:
 							break;
@@ -2116,12 +2169,14 @@
 						break;
 					case "M":
 						// Find the important bits of the multi-select
-						MultiLookupPickerdata = columnSelect.Obj.closest("span").find("input[name$='MultiLookupPicker$data']");
-						master = window[columnSelect.Obj.closest("tr").find("button[id$='AddButton']").attr("id").replace(/AddButton/,'MultiLookupPicker_m')];
-						currentSelection = columnSelect.Obj.closest("span").find("select[ID$='SelectResult']");
+						MultiLookupElements = new MultiLookupPicker(columnSelect.Obj);
+						MultiLookupPickerdata = MultiLookupElements.MultiLookupPickerdata;
+						master = MultiLookupElements.master;
+
+						var currentSelection = columnSelect.Obj.closest("span").find("select[ID$='SelectResult']");
+
 						// Clear the master
 						master.data = "";
-
 						MultiLookupPickerdata.attr("value", newMultiLookupPickerdata);
 						// Clear any prior selections that are no longer valid
 						$(currentSelection).find("option").each(function() {
@@ -2187,7 +2242,7 @@
 			outString += "<tr><td width='100px' style='font-weight:bold;'>" + opt.node.nodeName +
 				"</td><td>" + ((opt.node.nodeValue !== null) ? checkLink(opt.node.nodeValue) : "&nbsp;") + "</td></tr>";
 			if (opt.node.attributes) {
-				outString += "<tr><td colspan='99'>" + showAttrs(opt.node, opt) + "</td></tr>";
+				outString += "<tr><td colspan='99'>" + showAttrs(opt.node) + "</td></tr>";
 			}
 		// A CDATA_SECTION node
 		} else if (opt.node.hasChildNodes() && opt.node.firstChild.nodeType === NODE_CDATA_SECTION) {
@@ -2201,7 +2256,7 @@
 		} else {
 			outString += "<tr><td width='100px' style='font-weight:bold;' colspan='99'>" + opt.node.nodeName + "</td></tr>";
 			if (opt.node.attributes) {
-				outString += "<tr><td colspan='99'>" + showAttrs(opt.node, opt) + "</td></tr>";
+				outString += "<tr><td colspan='99'>" + showAttrs(opt.node) + "</td></tr>";
 			}
 			// Since the node has child nodes, recurse
 			outString += "<tr><td>";
@@ -2222,20 +2277,22 @@
 	$.fn.SPServices.SPGetCurrentUser = function(options) {
 
 		var opt = $.extend({}, {
-			fieldName: "Name",				// Specifies which field to return from the userdisp.aspx page
-			fieldNames: {},					// Specifies which fields to return from the userdisp.aspx page - added in v0.7.2 to allow multiple columns
-			debug: false					// If true, show error messages; if false, run silent
+			webURL: "",				// URL of the target Site Collection.  If not specified, the current Web is used.
+			fieldName: "Name",		// Specifies which field to return from the userdisp.aspx page
+			fieldNames: {},			// Specifies which fields to return from the userdisp.aspx page - added in v0.7.2 to allow multiple columns
+			debug: false			// If true, show error messages; if false, run silent
 		}, options);
 
 		// The current user's ID is reliably available in an existing JavaScript variable
-		if(opt.fieldName === "ID" && _spUserId != undefined) {
-			return _spUserId;
+		if(opt.fieldName === "ID" && typeof SPServicesContext.thisUserId !== "undefined") {
+			return SPServicesContext.thisUserId;
 		}
 
 		var thisField = "";
 		var theseFields = {};
 		var fieldCount = opt.fieldNames.length > 0 ? opt.fieldNames.length : 1;
 		var thisUserDisp;
+		var thisWeb = opt.webURL.length > 0 ? opt.webURL : $().SPServices.SPGetCurrentSite();
 
 		// Get the UserDisp.aspx page using AJAX
 		$.ajax({
@@ -2243,8 +2300,8 @@
 			async: false,
 			// Force parameter forces redirection to a page that displays the information as stored in the UserInfo table rather than My Site.
 			// Adding the extra Query String parameter with the current date/time forces the server to view this as a new request.
-			url: $().SPServices.SPGetCurrentSite() + "/_layouts/userdisp.aspx?Force=True&" + new Date().getTime(),
-			complete: function (xData, Status) {
+			url: thisWeb + "/_layouts/userdisp.aspx?Force=True&" + new Date().getTime(),
+			complete: function (xData) {
 				thisUserDisp = xData;
 			}
 		});
@@ -2253,7 +2310,7 @@
 
 			// The current user's ID is reliably available in an existing JavaScript variable
 			if(opt.fieldNames[i] === "ID") {
-				thisField = _spUserId;
+				thisField = SPServicesContext.thisUserId;
 			} else {
 				var thisTextValue;
 				if(fieldCount > 1) {
@@ -2285,7 +2342,7 @@
 				});
 			}
 			if(opt.fieldNames[i] !== "ID") {
-				thisField = (thisField !== undefined) ? thisField.replace(/(^[\s\xA0]+|[\s\xA0]+$)/g, '') : null;
+				thisField = (typeof thisField !== "undefined") ? thisField.replace(/(^[\s\xA0]+|[\s\xA0]+$)/g, '') : null;
 			}
 			if(fieldCount > 1) {
 				theseFields[opt.fieldNames[i]] = thisField;
@@ -2327,7 +2384,7 @@
 			async: false,
 			cacheXML: true,
 			listName: $().SPServices.SPListNameFromUrl(),
-			completefunc: function (xData, Status) {
+			completefunc: function (xData) {
 				$(xData.responseXML).find("Field[DisplayName='" + opt.lookupColumn + "']").each(function() {
 					lookupColumnStaticName = $(this).attr("StaticName");
 					// Use GetList for the Lookup column's list to determine the list's URL
@@ -2336,7 +2393,7 @@
 						async: false,
 						cacheXML: true,
 						listName: $(this).attr("List"),
-						completefunc: function (xData, Status) {
+						completefunc: function (xData) {
 							$(xData.responseXML).find("List").each(function() {
 								lookupListUrl = $(this).attr("WebFullUrl");
 								// Need to handle when list is in the root site
@@ -2363,7 +2420,7 @@
 			newHref += opt.newWindow ?
 					((opt.ContentTypeID.length > 0) ? "?ContentTypeID=" + opt.ContentTypeID : "") + "' target='_blank'" :
 					"?" + ((opt.ContentTypeID.length > 0) ? "ContentTypeID=" + opt.ContentTypeID + "&" : "") + "Source=" + escapeUrl(location.href) + "'";
-			newLink = "<div id='SPLookupAddNew_" + lookupColumnStaticName + "'>" + "<a href='" + newHref + ">" + opt.promptText.replace(/\{0\}/g, opt.lookupColumn) + "</a></div>";
+			var newLink = "<div id='SPLookupAddNew_" + lookupColumnStaticName + "'>" + "<a href='" + newHref + ">" + opt.promptText.replace(/\{0\}/g, opt.lookupColumn) + "</a></div>";
 			// Append the link to the Lookup columns's formbody table cell
 			$(lookupSelect.Obj).parents("td.ms-formbody").append(newLink);
 		} else if(opt.debug) {
@@ -2394,7 +2451,7 @@
 			webURL: opt.webURL,
 			async: false,
 			userLoginName: (opt.userAccount !== "") ? opt.userAccount : $().SPServices.SPGetCurrentUser(),
-			completefunc: function (xData, Status) {
+			completefunc: function (xData) {
 				$(xData.responseXML).find("User").each(function() {
 					userId = $(this).attr("ID");
 				});
@@ -2422,7 +2479,7 @@
 			CAMLViewFields: "<ViewFields><FieldRef Name='ID'/></ViewFields>",
 			CAMLRowLimit: 1,
 			CAMLQueryOptions: "<QueryOptions><ViewAttributes Scope='Recursive' /></QueryOptions>",
-			completefunc: function(xData, Status) {
+			completefunc: function(xData) {
 				$(xData.responseXML).SPFilterNode("z:row").each(function() {
 					lastId = $(this).attr("ows_ID");
 				});
@@ -2449,7 +2506,7 @@
 		// Get the current item's ID from the Query String
 		var queryStringVals = $().SPServices.SPGetQueryString();
 		var thisID = queryStringVals.ID;
-		var thisList = $().SPServices.SPListNameFromUrl();
+		SPServicesContext.thisList = $().SPServices.SPListNameFromUrl();
 
 		// Set the messages based on the options provided
 		var msg = "<span id='SPRequireUnique" + opt.columnStaticName + "' class='{0}'>{1}</span><br/>";
@@ -2457,7 +2514,7 @@
 		
 		// We need the DisplayName
 		var columnDisplayName = $().SPServices.SPGetDisplayFromStatic({
-			listName: thisList,
+			listName: SPServicesContext.thisList,
 			columnStaticName: opt.columnStaticName
 		});
 		var columnObj = $("input[Title='" + columnDisplayName + "']");
@@ -2473,14 +2530,14 @@
 			$().SPServices({
 				operation: "GetListItems",
 				async: false,
-				listName: thisList,
+				listName: SPServicesContext.thisList,
 				// Make sure we get all the items, ignoring any filters on the default view.
 				CAMLQuery: "<Query><Where><IsNotNull><FieldRef Name='" + opt.columnStaticName + "'/></IsNotNull></Where></Query>",
 				// Filter based on columnStaticName's value
 				CAMLViewFields: "<ViewFields><FieldRef Name='ID' /><FieldRef Name='" + opt.columnStaticName + "' /></ViewFields>",
 				// Override the default view rowlimit and get all appropriate rows
 				CAMLRowLimit: 0,
-				completefunc: function(xData, Status) {
+				completefunc: function(xData) {
 					var testValue = opt.ignoreCase ? columnValue.toUpperCase() : columnValue;
 					$(xData.responseXML).SPFilterNode("z:row").each(function() {
 						var thisValue = opt.ignoreCase ? $(this).attr("ows_" + opt.columnStaticName).toUpperCase() : $(this).attr("ows_" + opt.columnStaticName);
@@ -2538,7 +2595,7 @@
 			cacheXML: true,
 			webURL: opt.webURL,
 			listName: opt.listName,
-			completefunc: function(xData, Status) {
+			completefunc: function(xData) {
 				if(nameCount > 1) {
 					for(i=0; i < nameCount; i++) {
 						displayNames[opt.columnStaticNames[i]] = $(xData.responseXML).find("Field[StaticName='" + opt.columnStaticNames[i] + "']").attr("DisplayName");
@@ -2573,7 +2630,7 @@
 			cacheXML: true,
 			webURL: opt.webURL,
 			listName: opt.listName,
-			completefunc: function(xData, Status) {
+			completefunc: function(xData) {
 				if(nameCount > 1) {
 					for(i=0; i < nameCount; i++) {
 						staticNames[opt.columnDisplayNames[i]] = $(xData.responseXML).find("Field[DisplayName='" + opt.columnDisplayNames[i] + "']").attr("StaticName");
@@ -2598,7 +2655,7 @@
 										// parameter name than ID. Specify that name here, if needed.
 		}, options);
 
-		var thisList = $().SPServices.SPListNameFromUrl();
+		SPServicesContext.thisList = $().SPServices.SPListNameFromUrl();
 		var queryStringVals = $().SPServices.SPGetQueryString();
 		var lastID = queryStringVals.ID;
 		var QSList = queryStringVals.List;
@@ -2607,9 +2664,9 @@
 		
 		// On first load, change the form actions to redirect back to this page with the current lastID for this user and the
 		// original Source.
-		if(typeof queryStringVals.ID === 'undefined') {
+		if(typeof queryStringVals.ID === "undefined") {
 			lastID = $().SPServices.SPGetLastItemId({
-				listName: thisList
+				listName: SPServicesContext.thisList
 			});
 			$("form[name='aspnetForm']").each(function() {
 				// This page...
@@ -2619,13 +2676,13 @@
 					"Source=" + queryStringVals.Source.replace(/\//g, "%2f").replace(/:/g, "%3a") : "";
 				
 				var newQS = [];
-				if(typeof QSList !== 'undefined') {
+				if(typeof QSList !== "undefined") {
 					newQS.push("List=" + QSList);
 				}
-				if(typeof QSRootFolder !== 'undefined') {
+				if(typeof QSRootFolder !== "undefined") {
 					newQS.push("RootFolder=" + QSRootFolder);
 				}
-				if(typeof QSContentTypeId !== 'undefined') {
+				if(typeof QSContentTypeId !== "undefined") {
 					newQS.push("ContentTypeId=" + QSContentTypeId);
 				}
 
@@ -2645,13 +2702,15 @@
 		} else {
 			while(queryStringVals.ID === lastID) {
 				lastID = $().SPServices.SPGetLastItemId({
-					listName: thisList
+					listName: SPServicesContext.thisList
 				});
 			}
 			// If there is a RedirectURL parameter on the Query String, then redirect there instead of the value
 			// specified in the options (opt.redirectUrl)
 			var thisRedirectUrl = (typeof queryStringVals.RedirectURL === "string") ? queryStringVals.RedirectURL : opt.redirectUrl;
-			location.href = thisRedirectUrl + "?" + opt.qsParamName + "=" + lastID +
+			location.href = thisRedirectUrl +
+				 (thisRedirectUrl.indexOf("?") > 0) ? "&" : "?" +
+				 opt.qsParamName + "=" + lastID +
 				((typeof queryStringVals.RealSource === "string") ? ("&Source=" + queryStringVals.RealSource) : "");
 		}
 	}; // End $.fn.SPServices.SPRedirectWithID
@@ -2680,27 +2739,22 @@
 		// Create a temporary clone of the select to use to determine the appropriate width settings.
 		// We'll append it to the end of the enclosing span.
 		var cloneId = genContainerId("SPSetMultiSelectSizes", opt.multiSelectColumn);
-		possibleValues.clone().appendTo(possibleValues.closest("span")).css({
+		var enclosingSpan = possibleValues.closest("span");
+		enclosingSpan.append("<select id='" + cloneId + "' ></select>");
+		var cloneObj = enclosingSpan.find("> select");
+		cloneObj.css({
 			"width": "auto",		// We want the clone to resize its width based on the contents
 			"height": 0,			// Just to keep the page clean while we are using the clone
 			"visibility": "hidden"	// And let's keep it hidden
-		}).attr({
-			id: cloneId,			// We don't want the clone to have the same id as its source
-			length: 0				// And let's start with no options
-		});
-		var cloneObj = $("#" + cloneId);
+		})
 
 		// Add all the values to the cloned select.  First the left (possible values) select...
-		possibleValues.find("option").each(function() {
-			cloneObj.append("<option value='" + $(this).html() + "'>" + $(this).html() + "</option>");
-		});
+		cloneObj.append(possibleValues.find("option").clone());
 		// ...then the right (selected values) select (in case some values have already been selected)
-		selectedValues.find("option").each(function() {
-			cloneObj.append("<option value='" + $(this).html() + "'>" + $(this).html() + "</option>");
-		});
+		cloneObj.append(selectedValues.find("option").clone());
 
 		// We'll add 5px for a little padding on the right.
-		var divWidth = $("#" + cloneId).width() + 5;
+		var divWidth = cloneObj.width() + 5;
 		var newDivWidth = divWidth;
 		if(opt.minWidth > 0 || opt.maxWidth > 0) {
 			if(divWidth < opt.minWidth) {
@@ -2718,9 +2772,15 @@
 		// Set the new widths
 		possibleValues.css("width", selectWidth + "px").parent().css("width", newDivWidth + "px");
 		selectedValues.css("width", selectWidth + "px").parent().css("width", newDivWidth + "px");
+		// If the new widths are wide enough, remove the x scroll bar
+		if(opt.maxWidth === 0 || opt.maxWidth > newDivWidth) {
+			possibleValues.parent().css("overflow-x", "hidden");
+			selectedValues.parent().css("overflow-x", "hidden");
+		}
 
 		// Remove the select's clone, since we're done with it
-		$("#" + cloneId).remove();
+		cloneObj.remove();
+
 	}; // End $.fn.SPServices.SPSetMultiSelectSizes
 
 	// Does an audit of a site's list forms to show where script is in use.
@@ -2764,7 +2824,7 @@
 				operation: "GetListCollection",
 				webURL: opt.webURL,
 				async: false, // Need this to be synchronous so we're assured of a valid value
-				completefunc: function (xData, Status) {
+				completefunc: function (xData) {
 					$(xData.responseXML).find("List").each(function() {
 						listXml = $(this);
 							
@@ -2781,7 +2841,7 @@
 										webURL: opt.webURL,
 										listName: listXml.attr("ID"),
 										async: false, // Need this to be synchronous so we're assured of a valid value
-										completefunc: function (xData, Status) {
+										completefunc: function (xData) {
 											$(xData.responseXML).find("ContentType").each(function() {
 												// Don't deal with folders
 												if($(this).attr("ID").substring(0,6) !== "0x0120") {
@@ -2818,7 +2878,7 @@
 										webURL: opt.webURL,
 										listName: listXml.attr("ID"),
 										async: false, // Need this to be synchronous so we're assured of a valid value
-										completefunc: function (xData, Status) {
+										completefunc: function (xData) {
 											$(xData.responseXML).find("View").each(function() {
 												SPScriptAuditPage(opt, listXml, "View", $(this).attr("DisplayName"), $(this).attr("Url"));
 											});
@@ -2852,7 +2912,7 @@
 					cacheXML: true,
 					webURL: opt.webURL,
 					listName: listsArray[i],
-					completefunc: function (xData, Status) {
+					completefunc: function (xData) {
 						$(xData.responseXML).find("List").each(function() {
 							listXml = $(this);
 						});
@@ -2867,10 +2927,11 @@
 					CAMLQuery: "<Query><Where><Neq><FieldRef Name='ContentType'/><Value Type='Text'>Folder</Value></Neq></Where></Query>",
 					CAMLViewFields: "<ViewFields><FieldRef Name='Title'/><FieldRef Name='FileRef'/></ViewFields>",
 					CAMLRowLimit: 0,
-					completefunc: function(xData, Status) {
+					completefunc: function(xData) {
 						$(xData.responseXML).SPFilterNode("z:row").each(function() {
 							var thisPageUrl = $(this).attr("ows_FileRef").split(";#")[1];
-							var thisPageType = (typeof $(this).attr("ows_Title") !== 'undefined') ? $(this).attr("ows_Title") : "";
+							var thisTitle = $(this).attr("ows_Title");
+							var thisPageType = (typeof thisTitle !== "undefined") ? thisTitle : "";
 							if(thisPageUrl.indexOf(".aspx") > 0) {
 								SPScriptAuditPage(opt, listXml, "Page", thisPageType, SLASH + thisPageUrl);
 							}
@@ -2901,6 +2962,8 @@
 			dataType: "text",
 			async: false,
 			success: function(xData) {
+
+				var scriptMatch;
 
 				while (scriptMatch = scriptRegex.exec(xData)) {
 					var scriptLanguage = getScriptAttribute(scriptMatch, "language");
@@ -2939,6 +3002,7 @@
 	} // End of function SPScriptAuditPage
 	
 	function getScriptAttribute(source, attribute) {
+		var matches;
 		var regex = RegExp(attribute + "=(\"([^\"]*)\")|('([^']*)')", "gi");
 		if(matches = regex.exec(source)) {
 			return matches[2];
@@ -2962,7 +3026,7 @@
 	$.fn.SPServices.SPArrangeChoices = function (options) {
 
 		var opt = $.extend({}, {
-			listName: "",					// The list name for the current form
+			listName: $().SPServices.SPListNameFromUrl(),					// The list name for the current form
 			columnName: "",					// The display name of the column in the form
 			perRow: 99,						// Maximum number of choices desired per row.
 			randomize: false				// If true, randomize the order of the options
@@ -2973,69 +3037,69 @@
 		var out;
 		
 		// Get information about columnName from the list to determine if we're allowing fill-in choices
-		$().SPServices({
+		var thisGetList = $().SPServices({
 			operation: "GetList",
 			async: false,
 			cacheXML: true,
-			listName: (opt.listName.length > 0) ? opt.listName : $().SPServices.SPListNameFromUrl(),
-			completefunc: function(xData, Status) {
-				$(xData.responseXML).find("Fields").each(function() {
-					$(this).find("Field[DisplayName='" + opt.columnName + "']").each(function() {
-						// Determine whether columnName allows a fill-in choice
-						columnFillInChoice = ($(this).attr("FillInChoice") === "TRUE") ? true : false;
-						// Stop looking;we're done
-						return false;
-					});
-				});
-			}
+			listName: opt.listName
 		});
 
-		var thisFormField = findFormField(opt.columnName);
+		// When the promise is available...		
+		thisGetList.done(function() {
+			
+			// Figure out if we need to handle fill in choices
+			columnFillInChoice = ($(thisGetList.responseXML).find("Field[DisplayName='" + opt.columnName + "']").attr("FillInChoice") === "TRUE") ? true : false;
+
+			// Find the column in the form
+			var thisFormField = findFormField(opt.columnName);
 		
-		var totalChoices = $(thisFormField).find("tr").length;
-		var choiceNumber = 0;
-		var fillinPrompt;
-		var fillinInput;
-		// Collect all of the choices
-		$(thisFormField).find("tr").each(function() {
-			choiceNumber++;
-			// If this is the fill-in prompt, save it...
-			if(columnFillInChoice && choiceNumber === (totalChoices - 1)) {
-				fillinPrompt = $(this).find("td").html();
-			// ...or if it is the fill-in input box, save it...
-			} else if(columnFillInChoice && choiceNumber === totalChoices) {
-				fillinInput = $(this).find("td").html();
-			// ...else push into the columnOptions array.
-			} else {
-				columnOptions.push($(this).html());
+			var totalChoices = $(thisFormField).find("tr").length;
+			var choiceNumber = 0;
+			var fillinPrompt;
+			var fillinInput;
+
+			// Collect all of the choices
+			$(thisFormField).find("tr").each(function(i) {
+				choiceNumber++;
+				// If this is the fill-in prompt, save it...
+				if(columnFillInChoice && choiceNumber === (totalChoices - 1)) {
+					fillinPrompt = $(this).find("td").html();
+				// ...or if it is the fill-in input box, save it...
+				} else if(columnFillInChoice && choiceNumber === totalChoices) {
+					fillinInput = $(this).find("td").html();
+				// ...else push into the columnOptions array.
+				} else {
+					columnOptions.push($(this).html());
+				}
+			});
+
+			// If randomize is true, randomly sort the options
+			if(opt.randomize) {
+				columnOptions.sort(randOrd);
 			}
+
+			// Add all of the options to the out string
+			out = "<tr>";
+			for(i=0; i < columnOptions.length; i++) {
+				out += columnOptions[i];
+				// If we've already got perRow columnOptions in the row, close off the row
+				if((i+1) % opt.perRow === 0) {
+					out += "</TR><TR>";
+				}
+			}
+			out += "</tr>";
+
+			// If we are allowing a fill-in choice, add that option in a separate row at the bottom
+			if(columnFillInChoice) {
+				out += "<tr><td colspan='99'>" + fillinPrompt + fillinInput + "</td></tr>";
+			}
+
+			// Remove the existing rows...
+			$(thisFormField).find("tr").remove();
+			// ...and append the out string
+			$(thisFormField).find("table").append(out);
+
 		});
-		out = "<TR>";
-
-		// If randomize is true, randomly sort the options
-		if(opt.randomize) {
-			columnOptions.sort(randOrd);
-		}
-
-		// Add all of the options to the out string
-		for(i=0; i < columnOptions.length; i++) {
-			out += columnOptions[i];
-			// If we've already got perRow columnOptions in the row, close off the row
-			if((i+1) % opt.perRow === 0) {
-				out += "</TR><TR>";
-			}
-		}
-		out += "</TR>";
-
-		// If we are allowing a fill-in choice, add that option in a separate row at the bottom
-		if(columnFillInChoice) {
-			out += "<TR><TD colspan='99'>" + fillinPrompt + fillinInput + "</TD></TR>";
-		}
-
-		// Remove the existing rows...
-		$(thisFormField).find("tr").remove();
-		// ...and append the out string
-		$(thisFormField).find("table").append(out);
 
 	}; // End $.fn.SPServices.SPArrangeChoices
 
@@ -3133,7 +3197,7 @@
 				CAMLQueryOptions: opt.CAMLQueryOptions,
 				CAMLViewFields: "<ViewFields><FieldRef Name='" + opt.sourceColumn + "' /></ViewFields>",
 				CAMLRowLimit: opt.CAMLRowLimit,
-				completefunc: function(xData, Status) {
+				completefunc: function(xData) {
 					// Handle upper/lower case if ignoreCase = true
 					var testValue = opt.ignoreCase ? columnValue.toUpperCase() : columnValue;
 					// See which values match and add the ones that do to matchArray
@@ -3218,17 +3282,16 @@
 	// Get the Query String parameters and their values and return in an array
 	$.fn.SPServices.SPGetQueryString = function () {
 
-		var i;
 		var queryStringVals = {};
-
+		var matches;
 		var qs = location.search.substring(1, location.search.length);
 		var args = qs.split("&");
 		var rxQS = /^([^=]+)=(.*)/i;
 
-		for (i=0; i < args.length; i++) {
+		for(var i=0; i < args.length; i++) {
 			matches = rxQS.exec(args[i]);
-			if (rxQS.test(location.href)) {
-				if (matches !== null && matches.length > 2) {
+			if(rxQS.test(location.href)) {
+				if(matches !== null && matches.length > 2) {
 					queryStringVals[matches[1]] = unescape(matches[2]).replace(/\+/g,' ');
 				}
 			}
@@ -3245,13 +3308,13 @@
 			listName: ""		// [Optional] Pass in the name or GUID of a list if you are not in its context. e.g., on a Web Part pages in the Pages library
 		}, options);
 
-		// Has the name or GUID been passed in?
+		// Has the list name or GUID been passed in?
 		if(opt.listName.length > 0) {
-			thisList = opt.listName;
-			return thisList;
+			SPServicesContext.thisList = opt.listName;
+			return SPServicesContext.thisList;
 		// Do we already know the current list?
-		} else if(thisList.length > 0) {
-			return thisList;
+		} else if(SPServicesContext.thisList.length > 0) {
+			return SPServicesContext.thisList;
 		}
 
 		// Parse out the list's root URL from the current location or the passed url
@@ -3263,20 +3326,21 @@
 		$().SPServices({
 			operation: "GetListCollection",
 			async: false,
-			completefunc: function(xData, Status) {
+			completefunc: function(xData) {
 				$(xData.responseXML).find("List").each(function() {
 					var defaultViewUrl = $(this).attr("DefaultViewUrl");
 					var listCollList = defaultViewUrl.substring(0, defaultViewUrl.lastIndexOf(SLASH) + 1).toUpperCase();
 					if(listPath.indexOf(listCollList) > 0) {
-						thisList = $(this).attr("ID");
+						SPServicesContext.thisList = $(this).attr("ID");
 						return false;
 					}
 				});
 			}
 		});
 
-		// Return the GUID (ID)
-		return thisList;
+		// Return the list GUID (ID)
+		return SPServicesContext.thisList;
+
 	}; // End $.fn.SPServices.SPListNameFromUrl
 
 	// SPUpdateMultipleListItems allows you to update multiple items in a list based upon some common characteristic or metadata criteria.
@@ -3289,6 +3353,7 @@
 			batchCmd: "Update",	// The operation to perform. By default, Update.
 			valuepairs: [],		// Valuepairs for the update in the form [[fieldname1, fieldvalue1], [fieldname2, fieldvalue2]...]
 			completefunc: null,	// Function to call on completion of rendering the change.
+			folder: "", 		// If specified, we will look only at items in that folder
 			debug: false		// If true, show error messages;if false, run silent
 		}, options);
 
@@ -3303,8 +3368,10 @@
 			webURL: opt.webURL,
 			listName: opt.listName,
 			CAMLQuery: opt.CAMLQuery,
-			CAMLQueryOptions: "<QueryOptions><ViewAttributes Scope='Recursive' /></QueryOptions>",
-			completefunc: function(xData, Status) {
+			CAMLQueryOptions: "<QueryOptions><ViewAttributes Scope='Recursive' />" +
+					((opt.folder.length > 0) ? "<Folder>" + opt.folder + "</Folder>" : "") + 
+				"</QueryOptions>",
+			completefunc: function(xData) {
 				$(xData.responseXML).SPFilterNode("z:row").each(function() {
 					itemsToUpdate.push($(this).attr("ows_ID"));
 					var fileRef = $(this).attr("ows_FileRef");
@@ -3336,15 +3403,39 @@
 			webURL: opt.webURL,
 			listName: opt.listName,
 			updates: batch,
-			completefunc: function(xData, Status) {
+			completefunc: function(xData) {
 				// If present, call completefunc when all else is done
 				if(opt.completefunc !== null) {
-					opt.completefunc(xData, Status);
+					opt.completefunc(xData);
 				}
 			}
 		});
 
 	}; // End $.fn.SPServices.SPUpdateMultipleListItems
+
+
+	// Convert a JavaScript date to the ISO 8601 format required by SharePoint to update list items
+	$.fn.SPServices.SPConvertDateToISO = function (options) {
+
+		var opt = $.extend({}, {
+			dateToConvert: new Date(),		// The JavaScript date we'd like to convert. If no date is passed, the function returns the current date/time
+			dateOffset: "-05:00"			// The time zone offset requested. Default is EST
+		}, options);
+
+		//Generate ISO 8601 date/time formatted string
+		var s = "";
+		var d = opt.dateToConvert;
+		s += d.getFullYear() + "-";
+		s += pad(d.getMonth() + 1) + "-";
+		s += pad(d.getDate());
+		s += "T" + pad(d.getHours()) + ":";
+		s += pad(d.getMinutes()) + ":";
+		s += pad(d.getSeconds()) + "Z" + opt.dateOffset;
+		//Return the ISO8601 date string
+		return s;
+
+	}; // End $.fn.SPServices.SPConvertDateToISO
+
 
 	// This method for finding specific nodes in the returned XML was developed by Steve Workman. See his blog post
 	// http://www.steveworkman.com/html5-2/javascript/2011/improving-javascript-xml-node-finding-performance-by-2000/
@@ -3366,12 +3457,11 @@
 			removeOws: true			// Specifically for GetListItems, if true, the leading ows_ will be stripped off the field name
 		}, options);
 
-		var colNum;
+		var attrNum;
 		var jsonObject = [];
 
 		this.each(function() {
 			var row = {};
-			var colValue;
 			var rowAttrs = this.attributes;
 
 			// Bring back all mapped columns, even those with no value
@@ -3383,8 +3473,8 @@
 			for(attrNum = 0; attrNum < rowAttrs.length; attrNum++) {
 				var thisAttrName = rowAttrs[attrNum].name;
 				var thisMapping = opt.mapping[thisAttrName];
-				var thisObjectName = thisMapping !== undefined ? thisMapping.mappedName : opt.removeOws ? thisAttrName.split("ows_")[1] : thisAttrName;
-				var thisObjectType = thisMapping !== undefined ? thisMapping.objectType : undefined;
+				var thisObjectName = typeof thisMapping !== "undefined" ? thisMapping.mappedName : opt.removeOws ? thisAttrName.split("ows_")[1] : thisAttrName;
+				var thisObjectType = typeof thisMapping !== "undefined" ? thisMapping.objectType : undefined;
 				if(opt.includeAllAttrs || thisMapping !== undefined) {
 					row[thisObjectName] = attrToJson(rowAttrs[attrNum].value, thisObjectType);
 				}
@@ -3402,9 +3492,11 @@
 
 	function attrToJson(v, objectType) {
 
+		var colValue;
+
 		switch (objectType) {
 			case "DateTime":
-			case "datetime": 							// For calculated columns, stored as datetime;#value
+			case "datetime":	// For calculated columns, stored as datetime;#value
 				// Dates have dashes instead of slashes: ows_Created="2009-08-25 14:24:48"
 				colValue = dateToJsonObject(v);
 				break;
@@ -3467,13 +3559,13 @@
         if (s.length === 0) {
 			return null;
         } else {
-            var thisUser = s.split(";#"); 
-            var thisUserExpanded = thisUser[1].split(",#");
-            if(thisUserExpanded.length == 1) {
-                return {userId: thisUser[0], userName: thisUser[1]};
+            var thisUser = new SplitIndex(s); 
+            var thisUserExpanded = thisUser.value.split(",#");
+            if(thisUserExpanded.length === 1) {
+                return {userId: thisUser.Id, userName: thisUser.value};
             } else {
                 return {
-					userId: thisUser[0], 
+					userId: thisUser.Id, 
 					userName: thisUserExpanded[0].replace( /(,,)/g, ","), 
 					loginName: thisUserExpanded[1].replace( /(,,)/g, ","), 
 					email: thisUserExpanded[2].replace( /(,,)/g, ","), 
@@ -3500,8 +3592,8 @@
 		if(s.length === 0) {
 			return null;
 		} else {
-			var thisLookup = s.split(";#");
-			return {lookupId: thisLookup[0], lookupValue: thisLookup[1]};
+			var thisLookup = new SplitIndex(s);
+			return {lookupId: thisLookup.id, lookupValue: thisLookup.value};
 		}
 	}
 	function lookupMultiToJsonObject(s) {
@@ -3547,7 +3639,8 @@
 	//   contents - The element which contains the current value
 	//   currentValue - The current value if it is set
 	//   checkNames - The Check Names image (in case you'd like to click it at some point)
-	$.fn.SPFindPeoplePicker = function(options) {
+
+	$.fn.SPServices.SPFindPeoplePicker = function(options) {
 
 		var opt = $.extend({}, {
 			peoplePickerDisplayName: "",	// The displayName of the People Picker on the form
@@ -3586,9 +3679,9 @@
 			var dictionaryEntry = {};
 
 			// Entity data is only available in IE
-			if(thisData != undefined) {
+			if(typeof thisData !== "undefined") {
 				var arrayOfDictionaryEntry = $.parseXML(thisData);
-				$xml = $(arrayOfDictionaryEntry);
+				var $xml = $(arrayOfDictionaryEntry);
 
 				$xml.find("DictionaryEntry").each(function() {
 					var key = $(this).find("Key").text();
@@ -3603,7 +3696,7 @@
 					async: false,
 					cacheXML: true,
 					userLoginName: $(this).attr("title"),
-					completefunc: function(xData, Status) {
+					completefunc: function(xData) {
 
 						$(xData.responseXML).find("User").each(function() {
 						
@@ -3620,7 +3713,50 @@
 		});
 	
 		return {row: thisRow, contents: thisContents, currentValue: thisCurrentValue, checkNames: thisCheckNames, dictionaryEntries: dictionaryEntries};
-	};
+
+	}; // End $.fn.SPServices.SPFindPeoplePicker
+
+	// Mistakenly released previously outside the SPServices namespace. This takes care of offering both.
+	$.fn.SPFindPeoplePicker = function(options) {
+		return $().SPServices.SPFindPeoplePicker(options);
+	}; // End $.fn.SPFindPeoplePicker
+
+
+
+	// Find a People Picker in the page
+	// Returns references to:
+	//   row - The TR which contains the People Picker (useful if you'd like to hide it at some point)
+	//   contents - The element which contains the current value
+	//   currentValue - The current value if it is set
+	//   checkNames - The Check Names image (in case you'd like to click it at some point)
+	$.fn.SPServices.SPFindMMSPicker = function(options) {
+
+		var opt = $.extend({}, {
+			MMSDisplayName: ""				// The displayName of the MMS Picker on the form
+		}, options);
+
+		var thisTerms = [];
+
+		// Find the div for the column which contains the entered data values
+		var thisDiv = $("div[title='" + opt.MMSDisplayName + "']");
+		var thisHiddenInput = thisDiv.closest("td").find("input[type='hidden']");
+		var thisTermArray = thisHiddenInput.val().split(";");
+		
+		for(var i=0; i < thisTermArray.length; i++) {
+			var thisOne = thisTermArray[i].split("|");
+			thisTerms.push({
+				value: thisOne[0],
+				guid: thisOne[1]
+			});
+		
+		}
+
+		return {
+			terms: thisTerms
+		};
+
+	}; // End $.fn.SPServices.SPFindMMSPicker
+	
 
 	// Return the current version of SPServices as a string
 	$.fn.SPServices.Version = function () {
@@ -3630,8 +3766,26 @@
 	}; // End $.fn.SPServices.Version
 
 
-
 ////// PRIVATE FUNCTIONS ////////
+
+	// Get the current context (as much as we can) on startup
+	// See: http://johnliu.net/blog/2012/2/3/sharepoint-javascript-current-page-context-info.html
+	function SPServicesContext() {
+	
+		// SharePoint 2010 gives us a context variable
+		if(typeof _spPageContextInfo !== "undefined") {
+			this.thisSite = _spPageContextInfo.webServerRelativeUrl;
+			this.thisList = _spPageContextInfo.pageListId;
+			this.thisUserId = _spPageContextInfo.userId;
+		// In SharePoint 2007, we know the site and UserId
+		} else {
+			this.thisSite = (typeof L_Menu_BaseUrl !== "undefined") ? L_Menu_BaseUrl : "";
+			this.thisList = "";
+			this.thisUserId = (typeof _spUserId !== "undefined") ? _spUserId : undefined;
+		}
+		
+	} // End of function SPServicesContext
+
 
 	// Display a column (field) formatted correctly based on its definition in the list.
 	// NOTE: Currently not dealing with locale differences.
@@ -3640,7 +3794,7 @@
 	//   opt				The current set of options
 	function showColumn(listXML, columnXML, columnValue, opt) {
 
-		if(typeof columnValue === 'undefined') {
+		if(typeof columnValue === "undefined") {
 			return "";
 		}
 
@@ -3689,13 +3843,13 @@
 				break;
 			case "Number":
 				numDecimals = columnXML.attr("Decimals");
-				outString = numDecimals === undefined ?
+				outString = typeof numDecimals === "undefined" ?
 					parseFloat(columnValue).toString() :
 					parseFloat(columnValue).toFixed(numDecimals).toString();
 				break;
 			case "Currency":
 				numDecimals = columnXML.attr("Decimals");
-				outString = numDecimals === undefined ?
+				outString = typeof numDecimals === "undefined" ?
 					parseFloat(columnValue).toFixed(2).toString() :
 					parseFloat(columnValue).toFixed(numDecimals).toString();
 				break;
@@ -3757,10 +3911,11 @@
 		return outString;
 	} // End of function showColumn
 
+
 	// Show a single attribute of a node, enclosed in a table
 	//   node				The XML node
 	//   opt				The current set of options
-	function showAttrs(node, opt) {
+	function showAttrs(node) {
 		var i;
 		var out = "<table class='ms-vb' width='100%'>";
 		for (i=0; i < node.attributes.length; i++) {
@@ -3770,6 +3925,7 @@
 		out += "</table>";
 		return out;
 	} // End of function showAttrs
+
 
 	// Find a dropdown (or multi-select) in the DOM. Returns the dropdown onject and its type:
 	// S = Simple (select);C = Compound (input + select hybrid);M = Multi-select (select hybrid)
@@ -3796,6 +3952,26 @@
 			this.Type = null;
 		}
 	} // End of function DropdownCtl
+
+
+
+	// Find the MultiLookupPickerdata input element. The structures are slightly different in 2013 vs. prior versions.
+	function MultiLookupPicker(o) {
+
+		// Find input element that contains 'MultiLookup' and ends with 'data'. This holds all available values.
+	 	this.MultiLookupPickerdata = o.closest("span").find("input[id*='MultiLookup'][id$='data']");
+
+		// The ids in 2013 are different than prior versions, so we need to parse them out.
+		var thisMultiLookupPickerdataId = this.MultiLookupPickerdata.attr("id");
+	 	var thisIdEndLoc = thisMultiLookupPickerdataId.indexOf("Multi");
+	 	var thisIdEnd = thisMultiLookupPickerdataId.substr(thisIdEndLoc);
+	 	var thisMasterId = thisMultiLookupPickerdataId.substr(0, thisIdEndLoc) + thisIdEnd.substr(0, thisIdEnd.indexOf("_") + 1) + "m";
+
+	 	this.master = window[thisMasterId];
+
+	} // End of function MultiLookupPicker
+
+
 
 	// Returns the selected value(s) for a dropdown in an array. Expects a dropdown object as returned by the DropdownCtl function.
 	// If matchOnId is true, returns the ids rather than the text values for the selection options(s).
@@ -3866,14 +4042,13 @@
 	// Get the URL for a specified form for a list
 	function getListFormUrl(l, f) {
 
-		var thisForm, u;
-
+		var u;
 		$().SPServices({
 			operation: "GetFormCollection",
 			async: false,
 			listName: l,
-			completefunc: function (xData, Status) {
-				u = $(xData.responseXML).find("Form[Type='" + f + "']").attr("Url");;
+			completefunc: function (xData) {
+				u = $(xData.responseXML).find("Form[Type='" + f + "']").attr("Url");
 			}
 		});
 		return u;
@@ -3904,10 +4079,10 @@
 	} // End of function addToPayload
 
 	// Finds the td which contains a form field in default forms using the comment which contains:
-	//   <!--  FieldName="Title"
-	//		 FieldInternalName="Title"
-	//		 FieldType="SPFieldText"
-	//	   -->
+	//	<!--  FieldName="Title"
+	//		FieldInternalName="Title"
+	//		FieldType="SPFieldText"
+	//	-->
 	// as the "anchor" to find it. Necessary because SharePoint doesn't give all field types ids or specific classes.
 	function findFormField(columnName) {
 		var thisFormBody;
@@ -3924,7 +4099,7 @@
 		});
 		return thisFormBody;
 	} // End of function findFormField
-	
+
 	// The SiteData operations have the same names as other Web Service operations. To make them easy to call and unique, I'm using
 	// the SiteData prefix on their names. This function replaces that name with the right name in the SOAPEnvelope.
 	function siteDataFixSOAPEnvelope(SOAPEnvelope, siteDataOperation) {
@@ -3936,7 +4111,7 @@
 
 	// Wrap an XML node (n) around a value (v)
 	function wrapNode(n, v) {
-		var thisValue = v !== undefined ? v : "";
+		var thisValue = typeof v !== "undefined" ? v : "";
 		return "<" + n + ">" + thisValue + "</" + n + ">";
 	}
 
@@ -3955,10 +4130,30 @@
 		return s.substring(s.lastIndexOf(SLASH)+1,s.length);
 	}
 
-	// Escape string characters
-	function escapeHTML(s) {
-		return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+/* Taken from http://dracoblue.net/dev/encodedecode-special-xml-characters-in-javascript/155/ */
+	var xml_special_to_escaped_one_map = {
+		'&': '&amp;',
+		'"': '&quot;',
+		'<': '&lt;',
+		'>': '&gt;'};
+	var escaped_one_to_xml_special_map = {
+		'&amp;': '&',
+		'&quot;': '"',
+		'&lt;': '<',
+		'&gt;': '>'};
+	
+	function encodeXml(string) {
+		return string.replace(/([\&"<>])/g, function(str, item) {
+			return xml_special_to_escaped_one_map[item];
+		});
 	}
+	function decodeXml(string) {
+		return string.replace(/(&quot;|&lt;|&gt;|&amp;)/g,
+			function(str, item) {
+				return escaped_one_to_xml_special_map[item];
+		});
+	}
+/* Taken from http://dracoblue.net/dev/encodedecode-special-xml-characters-in-javascript/155/ */
 
 	// Escape column values
 	function escapeColumnValue(s) {
@@ -3972,6 +4167,17 @@
 	// Escape Url
 	function escapeUrl(u) {
 		return u.replace(/&/g,'%26');
+	}
+
+	// Split values like 1;#value into id and value								
+	function SplitIndex(s) {
+		var spl = s.split(";#");
+		this.id = spl[0];
+		this.value = spl[1];
+	}
+
+	function pad(n) {
+		return n < 10 ? "0" + n : n;
 	}
 
 })(jQuery);
