@@ -1,6 +1,6 @@
 ﻿/*
  * SPServices - Work with SharePoint's Web Services using jQuery
- * Version 2013.02
+ * Version 2013.02a
  * @requires jQuery v1.8 or greater - jQuery 1.10.x recommended
  *
  * Copyright (c) 2009-2013 Sympraxis Consulting LLC
@@ -17,14 +17,14 @@
  * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
  */
 /* jshint undef: true */
-/* global _spUserId, _spPageContextInfo, GipAddSelectedItems, GipRemoveSelectedItems, GipGetGroupData */
+/* global L_Menu_BaseUrl, _spUserId, _spPageContextInfo, GipAddSelectedItems, GipRemoveSelectedItems, GipGetGroupData */
 
 (function ($) {
 
 	"use strict";
   
 	// Version info
-	var VERSION					= "2012.02";			// TODO: Update version
+	var VERSION					= "2012.02a";			// TODO: Update version
 
 	// String constants
 	//   General
@@ -416,12 +416,13 @@
 		// Build the URL for the Ajax call based on which operation we're calling
 		// If the webURL has been provided, then use it, else use the current site
 		var ajaxURL = "_vti_bin/" + WSops[opt.operation][0] + ".asmx";
+		var thisSite = $().SPServices.SPGetCurrentSite();
 		if(opt.webURL.charAt(opt.webURL.length - 1) === SLASH) {
 			ajaxURL = opt.webURL + ajaxURL;
 		} else if(opt.webURL.length > 0) {
 			ajaxURL = opt.webURL + SLASH + ajaxURL;
 		} else {
-			ajaxURL = $().SPServices.SPGetCurrentSite() + SLASH + ajaxURL;
+			ajaxURL = thisSite + ((thisSite.charAt(thisSite.length - 1) === SLASH) ? ajaxURL : (SLASH + ajaxURL));
 		}
 
 		SOAPEnvelope.payload = "";
@@ -536,7 +537,7 @@
 				addToPayload(opt, ["listName", "viewFields", "since", "contains"]);
 				break;
 			case "GetListItemChangesSinceToken":
-				addToPayload(opt, ["listName", "viewName", "query", "viewFields", "rowLimit", "queryOptions", "changeToken", "contains"]);
+				addToPayload(opt, ["listName", "viewName", ["query", "CAMLQuery"], ["viewFields", "CAMLViewFields"], ["rowLimit", "CAMLRowLimit"], ["queryOptions", "CAMLQueryOptions"], {name: "changeToken", sendNull: false}, {name: "contains", sendNull: false}]);
 				break;
 			case "GetVersionCollection":
 				addToPayload(opt, ["strlistID", "strlistItemID", "strFieldName"]);
@@ -1813,9 +1814,10 @@
 				// Get info about the related list
 				relatedListXML = $(xData.responseXML).find("List");
 				// Save the information about each column requested
-				for (i=0; i < opt.relatedColumns.length; i++) {
+				for(i=0; i < opt.relatedColumns.length; i++) {
 					relatedColumnsXML[opt.relatedColumns[i]] = $(xData.responseXML).find("Fields > Field[Name='" + opt.relatedColumns[i] + "']");
 				}
+				relatedColumnsXML[opt.relatedListColumn] = $(xData.responseXML).find("Fields > Field[Name='" + opt.relatedListColumn + "']");
 			}
 		});
 
@@ -1888,7 +1890,7 @@
 			camlQuery += "<Eq><FieldRef Name='" +
 				(opt.matchOnId ? "ID' /><Value Type='Counter'>" : opt.relatedListColumn + "'/><Value Type='Text'>") +
 				escapeColumnValue(columnSelectSelected[0]) + "</Value></Eq>";
-		};
+		}
 
 		if(opt.CAMLQuery.length > 0) {
 			camlQuery += opt.CAMLQuery + "</And>";
@@ -2709,7 +2711,7 @@
 			"width": "auto",		// We want the clone to resize its width based on the contents
 			"height": 0,			// Just to keep the page clean while we are using the clone
 			"visibility": "hidden"	// And let's keep it hidden
-		})
+		});
 
 		// Add all the values to the cloned select.  First the left (possible values) select...
 		$(thisMultiSelect.master.candidateControl).find("option").each(function() {
@@ -3254,7 +3256,7 @@
 			matches = rxQS.exec(args[i]);
 			if(rxQS.test(location.href)) {
 				if(matches !== null && matches.length > 2) {
-					queryStringVals[matches[1]] = unescape(matches[2]).replace(/\+/g,' ');
+					queryStringVals[matches[1]] = decodeURIComponent(matches[2]).replace(/\+/g,' ');
 				}
 			}
 		}
@@ -3365,7 +3367,7 @@
 			completefunc: function(xData) {
 				// If present, call completefunc when all else is done
 				if(opt.completefunc !== null) {
-					opt.completefunc(xData, Status);
+					opt.completefunc(xData);
 				}
 			}
 		});
@@ -3668,12 +3670,12 @@
 	
 		// SharePoint 2010 gives us a context variable
 		if(typeof _spPageContextInfo !== "undefined") {
-			this.thisSite = _spPageContextInfo.webAbsoluteUrl;
+			this.thisSite = _spPageContextInfo.webServerRelativeUrl;
 			this.thisList = _spPageContextInfo.pageListId;
 			this.thisUserId = _spPageContextInfo.userId;
 		// In SharePoint 2007, we know the UserID only
 		} else {
-			this.thisSite = "";
+			this.thisSite = L_Menu_BaseUrl;
 			this.thisList = "";
 			this.thisUserId = (typeof _spUserId !== "undefined") ? _spUserId : undefined;
 		}
@@ -3947,17 +3949,21 @@
 	//	paramArray = an array of option names to add to the payload
 	//		"paramName" if the parameter name and the option name match
 	//		["paramName", "optionName"] if the parameter name and the option name are different (this handles early "wrappings" with inconsistent naming)
+	//		{name: "paramName", sendNull: false} indicates the element is marked as "add to payload only if non-null"
 	function addToPayload(opt, paramArray) {
 
 		var i;
 
-		for (i=0; i < paramArray.length; i++) {
+		for(i=0; i < paramArray.length; i++) {
 			// the parameter name and the option name match
 			if(typeof paramArray[i] === "string") {
 				SOAPEnvelope.payload += wrapNode(paramArray[i], opt[paramArray[i]]);
 			// the parameter name and the option name are different 
-			} else if(paramArray[i].length === 2) {
+			} else if($.isArray(paramArray[i]) && paramArray[i].length === 2) {
 				SOAPEnvelope.payload += wrapNode(paramArray[i][0], opt[paramArray[i][1]]);
+			// the element not a string or an array and is marked as "add to payload only if non-null"
+			} else if((typeof paramArray[i] === "object") && (paramArray[i].sendNull !== undefined)) {
+				SOAPEnvelope.payload += ((opt[paramArray[i].name] === undefined) || (opt[paramArray[i].name].length === 0)) ? "" : wrapNode(paramArray[i].name, opt[paramArray[i].name]);
 			// something isn't right, so report it
 			} else {
 				errBox(opt.operation, "paramArray[" + i + "]: " + paramArray[i], "Invalid paramArray element passed to addToPayload()");
@@ -4062,6 +4068,5 @@
 		this.id = spl[0];
 		this.value = spl[1];
 	}
-
 
 })(jQuery);
