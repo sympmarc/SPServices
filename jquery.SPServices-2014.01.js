@@ -2362,7 +2362,12 @@
         var fieldCount = opt.fieldNames.length > 0 ? opt.fieldNames.length : 1;
         var thisUserDisp;
         var thisWeb = opt.webURL.length > 0 ? opt.webURL : $().SPServices.SPGetCurrentSite();
-
+		
+		// if thisWeb is located at the root of a web application, then the //_layouts/userdisp.aspx will fail for some browsers e.g. IE10
+		if (thisWeb == "/") {
+			thisWeb = "";
+		}
+		
         // Get the UserDisp.aspx page using AJAX
         $.ajax({
             // Need this to be synchronous so we're assured of a valid value
