@@ -2650,10 +2650,10 @@
             listName: currentContext.thisList,
             columnStaticName: opt.columnStaticName
         });
-        var columnObj = $("input[Title='" + columnDisplayName + "']");
-        $(columnObj).parent().append(firstMsg);
+        var columnObj = findFormField(columnDisplayName).find("input[Title^='" + columnDisplayName + "']");
+        columnObj.parent().append(firstMsg);
 
-        $(columnObj).blur(function () {
+        columnObj.blur(function () {
             var columnValueIDs = [];
             // Get the columnDisplayName's value
             var columnValue = $(this).val();
@@ -2692,7 +2692,7 @@
                 newMsg = opt.errMsg;
                 msgContainer.html(newMsg).attr("class", opt.errMsgCSSClass);
                 if (opt.duplicateAction === 1) {
-                    $("input[Title='" + opt.columnDisplayName + "']").focus();
+                    columnObj.focus();
                     $("input[value='OK'], input[value='Save']").attr("disabled", "disabled");
                 }
                 if (opt.showDupes) {
@@ -2835,7 +2835,6 @@
                 // Set the new form action
                 setTimeout(function() {
                     document.forms.aspnetForm.action = newAction;
-//                    $(this).attr("action", newAction);
                 }, 0);
             });
             // If this is the load after the item is saved, wait until the new item has been saved (commits are asynchronous),
@@ -3279,7 +3278,7 @@
         var matchNum;
 
         // Find the input control for the column and save some of its attributes
-        var columnObj = $("input[Title='" + opt.columnName + "']");
+        var columnObj = findFormField(columnName).find("input[Title^='" + columnName + "']");
         columnObj.css("position", "");
         var columnObjColor = columnObj.css("color");
         var columnObjWidth = columnObj.css("width");
