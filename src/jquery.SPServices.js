@@ -3278,7 +3278,7 @@
         var matchNum;
 
         // Find the input control for the column and save some of its attributes
-        var columnObj = findFormField(columnName).find("input[Title^='" + columnName + "']");
+        var columnObj = findFormField(opt.columnName).find("input[Title^='" + opt.columnName + "']");
         columnObj.css("position", "");
         var columnObjColor = columnObj.css("color");
         var columnObjWidth = columnObj.css("width");
