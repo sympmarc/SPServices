@@ -1416,7 +1416,7 @@
 
         // [SP2010 and later] Might as well make use of _spPageContextInfo.webServerRelativeUrl and window.location.origin
         if (_spPageContextInfo && _spPageContextInfo.webServerRelativeUrl) {
-            currentContext.thisSite = /*window.location.origin +*/ _spPageContextInfo.webServerRelativeUrl;
+            currentContext.thisSite = window.location.origin + _spPageContextInfo.webServerRelativeUrl;
             return currentContext.thisSite;
         }
         
