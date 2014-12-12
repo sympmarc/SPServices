@@ -1408,12 +1408,18 @@
     // Function to determine the current Web's URL.  We need this for successful Ajax calls.
     // The function is also available as a public function.
     $.fn.SPServices.SPGetCurrentSite = function () {
-
+        
         // We've already determined the current site...
         if (currentContext.thisSite.length > 0) {
             return currentContext.thisSite;
         }
 
+        // [SP2010 and later] Might as well make use of _spPageContextInfo.webServerRelativeUrl and window.location.origin
+        if (_spPageContextInfo && _spPageContextInfo.webServerRelativeUrl) {
+            currentContext.thisSite = window.location.origin + _spPageContextInfo.webServerRelativeUrl;
+            return currentContext.thisSite;
+        }
+        
         // If we still don't know the current site, we call WebUrlFromPageUrlResult.
         var msg = SOAPEnvelope.header +
             "<WebUrlFromPageUrl xmlns='" + SCHEMASharePoint + "/soap/' ><pageUrl>" +
