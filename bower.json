@@ -1,0 +1,18 @@
+{
+  "name": "SPServices",
+  "version": "2014.02",
+  "homepage": "http://spservices.codeplex.com/",
+  "authors": [
+    "Marc D Anderson"
+  ],
+  "description": "SPServices is a jQuery library which abstracts SharePoint's Web Services and makes them easier to use. It also includes functions which use the various Web Service operations to provide more useful (and cool) capabilities. It works entirely client side and requires no server install.",
+  "main": "jquery.SPServices-2014.02.min.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
