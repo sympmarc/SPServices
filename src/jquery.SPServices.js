@@ -481,13 +481,13 @@
         // Build the URL for the Ajax call based on which operation we're calling
         // If the webURL has been provided, then use it, else use the current site
         var ajaxURL = "_vti_bin/" + WSops[opt.operation][0] + ".asmx";
-        var thisSite = $().SPServices.SPGetCurrentSite();
         var webURL = opt.webURL !== undefined ? opt.webURL : opt.webUrl;
         if (webURL.charAt(webURL.length - 1) === SLASH) {
             ajaxURL = webURL + ajaxURL;
         } else if (webURL.length > 0) {
             ajaxURL = webURL + SLASH + ajaxURL;
         } else {
+            var thisSite = $().SPServices.SPGetCurrentSite();
             ajaxURL = thisSite + ((thisSite.charAt(thisSite.length - 1) === SLASH) ? ajaxURL : (SLASH + ajaxURL));
         }
 
