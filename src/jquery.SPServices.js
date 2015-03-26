@@ -3599,6 +3599,10 @@
             contains: opt.contains
         });
 
+		thisData.fail(function (a, b, c) {
+			result.reject(a, b, c);
+		});
+
         thisData.done(function () {
 
             var mappingKey = "SPGetListItemsJson" + opt.webURL + opt.listName;
