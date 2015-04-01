@@ -3985,7 +3985,7 @@
         }).closest("tr");
 
         var thisContents = thisRow.find("div[name='upLevelDiv']");
-        var thisCheckNames = thisRow.find("img[Title='"+checkNamesPhrase+"']:first");
+        var thisCheckNames = thisRow.find("img[Title='" + opt.checkNamesPhrase + "']:first");
 
         // If a value was provided, set the value
         if (opt.valueToSet.length > 0) {
