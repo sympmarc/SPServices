@@ -3445,7 +3445,7 @@
         for (var i = 0; i < qs.length; i++) {
             var param = qs[i].split('=');
             var paramName = opt.lowercase ? param[0].toLowerCase() : param[0];
-            queryStringVals[paramName] = decodeURIComponent(param[1] || "").replace(/\+/g, ' ');
+            queryStringVals[paramName] = decodeURIComponent(param[1] || "");
         }
 
         return queryStringVals;
