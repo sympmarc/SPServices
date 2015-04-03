@@ -1746,7 +1746,7 @@
 
                         switch (childSelect.Type) {
                             case dropdownType.simple:
-                                var selected = ($(this).attr("ows_ID") === childSelectSelected[0]) ? " selected='selected'" : "";
+                                var selected = (thisOption.id === childSelectSelected[0]) ? " selected='selected'" : "";
                                 childSelect.Obj.append("<option" + selected + " value='" + thisOption.id + "'>" + thisOption.value + "</option>");
                                 break;
                             case dropdownType.complex:
@@ -2276,7 +2276,7 @@
 
                     switch (columnSelect.Type) {
                         case dropdownType.simple:
-                            var selected = ($(this).attr("ows_ID") === columnSelectSelected[0]) ? " selected='selected'" : "";
+                            var selected = (thisOption.id === columnSelectSelected[0]) ? " selected='selected'" : "";
                             columnSelect.Obj.append("<option" + selected + " value='" + thisOption.id + "'>" + thisOption.value + "</option>");
                             break;
                         case dropdownType.complex:
