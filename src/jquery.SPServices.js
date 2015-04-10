@@ -77,6 +77,7 @@
 //      "WorkflowEventType", // NEW
 //        "Geolocation", // NEW
 //        "OutcomeChoice", // NEW
+        "RelatedItems", // Related Items in a Workflow Tasks list
 
         // Also seen
         "UserMulti", // Multiselect users
@@ -3798,8 +3799,11 @@
                 colValue = urlToJsonObject(v);
                 break;
             case "JSON":
+            case "RelatedItems":
                 colValue = jsonToJsonObject(v); // Special case for text JSON stored in text columns
                 break;
+
+            break;
             default:
                 // All other objectTypes will be simple strings
                 colValue = v;
@@ -4121,8 +4125,8 @@
             columnObj.Type = dropdownType.complex;
             // Simple, where the select's id begins with colStaticName (StaticName) - needed for required columns where title="DisplayName Required Field"
             //   Example: SP2013 <select title="Region Required Field" id="Region_59566f6f-1c3b-4efb-9b7b-6dbc35fe3b0a_$LookupField" showrelatedselected="3">
-        } else if ((columnObj.Obj = $("select:regex(id, (" + colStaticName + ")(_)[0-9a-fA-F]{8}(-))")).length === 1) {
-            columnObj.Type = dropdownType.simple;
+//        } else if ((columnObj.Obj = $("select:regex(id, (" + colStaticName + ")(_)[0-9a-fA-F]{8}(-))")).length === 1) {
+//            columnObj.Type = dropdownType.simple;
             // Multi-select: This will find the multi-select column control in English and most other language sites where the Title looks like 'Column Name possible values'
         } else if ((columnObj.Obj = $("select[ID$='SelectCandidate'][Title^='" + opt.displayName + " ']")).length === 1) {
             columnObj.Type = dropdownType.multiSelect;
@@ -4141,11 +4145,14 @@
 
         // Last ditch effort
         // Simple, finding based on the comment text at the top of the td.ms-formbody where the select's title begins with DisplayName - needed for required columns where title="DisplayName Required Field"
-        //   Example: SP2010 <select name="ctl00$m$g_308135f8_3f59_4d67_b5f8_c26776c498b7$ff51$ctl00$Lookup" id="ctl00_m_g_308135f8_3f59_4d67_b5f8_c26776c498b7_ff51_ctl00_Lookup" title="Region Required Field">
+        //   Examples: SP2010 <select name="ctl00$m$g_308135f8_3f59_4d67_b5f8_c26776c498b7$ff51$ctl00$Lookup" id="ctl00_m_g_308135f8_3f59_4d67_b5f8_c26776c498b7_ff51_ctl00_Lookup" title="Region Required Field">
+        //            SP2013 <select id="Soort_x0020_medicijn_ded19932-0b4f-4d71-bc3b-2d510e5f297a_$LookupField" title="Soort medicijn Vereist veld">
         if (columnObj.Type === null) {
             var fieldContainer = findFormField(opt.displayName);
             if (fieldContainer !== undefined) {
-                var fieldSelect = fieldContainer.find("select[title^='" + opt.displayName + " '][id$='_Lookup']");
+                var fieldSelect1 = fieldContainer.find("select[title^='" + opt.displayName + " '][id$='_Lookup']");
+                var fieldSelect2 = fieldContainer.find("select[title^='" + opt.displayName + " '][id$='LookupField']");
+                var fieldSelect = fieldSelect1.length > 0 ? fieldSelect1 : fieldSelect2;
 
                 if (fieldSelect && fieldSelect.length === 1) {
                     columnObj.Type = dropdownType.simple;
@@ -4558,7 +4565,7 @@
     }
 
     // James Padolsey's Regex Selector for jQuery http://james.padolsey.com/javascript/regex-selector-for-jquery/
-    $.expr[':'].regex = function (elem, index, match) {
+/*    $.expr[':'].regex = function (elem, index, match) {
         var matchParams = match[3].split(','),
             validLabels = /^(data|css):/,
             attr = {
@@ -4570,6 +4577,6 @@
             regex = new RegExp(matchParams.join('').replace(/^\s+|\s+$/g, ''), regexFlags);
         return regex.test($(elem)[attr.method](attr.property));
     };
-
+*/
 
 })(jQuery);
