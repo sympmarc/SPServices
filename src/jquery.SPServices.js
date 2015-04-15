@@ -3973,12 +3973,14 @@
     //   contents - The element which contains the current value
     //   currentValue - The current value if it is set
     //   checkNames - The Check Names image (in case you'd like to click it at some point)
+    //   checkNamesPhrase - you can pass your local phrase here to check names, like in russian it would be - Проверить имена
     $.fn.SPServices.SPFindPeoplePicker = function (options) {
 
         var opt = $.extend({}, {
             peoplePickerDisplayName: "", // The displayName of the People Picker on the form
             valueToSet: "", // The value to set the People Picker to. Should be a string containing each username or groupname separated by semi-colons.
-            checkNames: true // If set to true, the Check Names image will be clicked to resolve the names
+            checkNames: true, // If set to true, the Check Names image will be clicked to resolve the names
+            checkNamesPhrase: 'Check Names' // English default
         }, options);
 
         var thisRow = $("nobr").filter(function () {
@@ -3987,7 +3989,7 @@
         }).closest("tr");
 
         var thisContents = thisRow.find("div[name='upLevelDiv']");
-        var thisCheckNames = thisRow.find("img[Title='Check Names']:first");
+        var thisCheckNames = thisRow.find("img[Title='" + opt.checkNamesPhrase + "']:first");
 
         // If a value was provided, set the value
         if (opt.valueToSet.length > 0) {
