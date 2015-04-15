@@ -4184,7 +4184,7 @@
     function SPServicesContext() {
 
         // The SharePoint variables only give us a relative path. to match the result from WebUrlFromPageUrl, we need to add the protocol, host, and (if present) port.
-        var siteRoot = location.protocol + "//" + location.host + (location.port !== "" ? location.port : "");
+        var siteRoot = location.protocol + "//" + location.host; // + (location.port !== "" ? location.port : "");
 
         // SharePoint 2010 gives us a context variable
         if (typeof _spPageContextInfo !== "undefined") {
