@@ -1,22 +1,3 @@
-/*
- * SPServices - Work with SharePoint's Web Services using jQuery
- * Version 2014.02
- * @requires jQuery v1.8 or greater - jQuery 1.10.x+ recommended
- *
- * Copyright (c) 2009-2014 Sympraxis Consulting LLC
- * Examples and docs at:
- * http://spservices.codeplex.com
- * Licensed under the MIT license:
- * http://www.opensource.org/licenses/mit-license.php
- */
-/*
- * @description Work with SharePoint's Web Services using jQuery
- * @type jQuery
- * @name SPServices
- * @category Plugins/SPServices
- * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-*/
-
 /* jshint undef: true */
 /* global L_Menu_BaseUrl, _spUserId, _spPageContextInfo, GipAddSelectedItems, GipRemoveSelectedItems, GipGetGroupData */
 
