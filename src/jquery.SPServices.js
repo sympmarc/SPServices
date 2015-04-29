@@ -1693,7 +1693,8 @@
                     switch (childSelect.Type) {
                         case dropdownType.simple:
                             // Remove all of the existing options
-                            $(childSelect.Obj).find("option").remove();
+                            childSelect.Obj[0].innerHTML = "";
+//                            $(childSelect.Obj).find("option").remove();
                             // If the column is required or the promptText option is empty, don't add the prompt text
                             if (!childColumnRequired && (opt.promptText.length > 0)) {
                                 childSelect.Obj.append("<option value='0'>" + opt.promptText.replace(/\{0\}/g, opt.childColumn) + "</option>");
