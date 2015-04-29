@@ -8,6 +8,17 @@ module.exports = function(grunt) {
 
         pkg: grunt.file.readJSON('package.json'),
 
+        copy: {
+            license: {
+                src: "../src/license.txt",
+                dest: "../build/license.txt"
+            },
+            src: {
+                src: "../src/jquery.SPServices.js",
+                dest: "../build/jquery.SPServices.js"
+            }
+        },
+
         uglify: {
             options: {
                 banner: // '/*! <%= pkg.name %> <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
@@ -39,6 +50,7 @@ module.exports = function(grunt) {
 
         zip: {
             package: {
+//                cwd: "../",
                 src: "<%= pkg.package_zipfiles %>",
                 dest: '../build/<%= pkg.filename %>.zip'
             }
@@ -46,11 +58,12 @@ module.exports = function(grunt) {
 
     });
 
-    // Load the plugin that provides the "uglify" and "zip" tasks.
+    // Load the plugins for tasks.
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-zip');
 
     // Default task(s).
-    grunt.registerTask('default', ['uglify', 'zip']);
+    grunt.registerTask('default', ['copy', 'uglify', 'zip']);
 
 };
