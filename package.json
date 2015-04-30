@@ -19,6 +19,6 @@
     "grunt-zip": "~0.16.2"
   },
 
-  "package_zipfiles": ["../build/license.txt", "../build/<%= pkg.filename %>.js", "../build/<%= pkg.filename %>.min.js"]
+  "package_zipfiles": ["build/license.txt", "build/<%= pkg.filename %>.js", "build/<%= pkg.filename %>.min.js"]
 
 }

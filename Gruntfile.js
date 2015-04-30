@@ -32,15 +32,15 @@ module.exports = function(grunt) {
 
         concat: {
             license: {
-                src: "../src/license.txt",
-                dest: "../build/license.txt"
+                src: "src/license.txt",
+                dest: "build/license.txt"
             },
             src: {
                 options: {
                     banner: banner
                 },
-                src: "../src/jquery.SPServices.js",
-                dest: "../build/jquery.SPServices.js"
+                src: "src/jquery.SPServices.js",
+                dest: "build/jquery.SPServices.js"
             }
         },
 
@@ -49,15 +49,15 @@ module.exports = function(grunt) {
                 banner: banner
             },
             build: {
-                src: "../src/<%= pkg.filename %>.js",
-                dest: "../build/<%= pkg.filename %>.min.js"
+                src: "src/<%= pkg.filename %>.js",
+                dest: "build/<%= pkg.filename %>.min.js"
             }
         },
 
         zip: {
             package: {
                 src: "<%= pkg.package_zipfiles %>",
-                dest: '../build/<%= pkg.filename %>.zip'
+                dest: 'build/<%= pkg.filename %>.zip'
             }
         }
 
