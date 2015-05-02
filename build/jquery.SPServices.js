@@ -15,7 +15,7 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-! @build SPServices 1.36.0 2015-05-02 12:00:11
+! @build SPServices 1.36.0 2015-05-02 07:45:45
 */
 !(function (factory) {
     // If AMD is present, register SPServices an an annoymous
