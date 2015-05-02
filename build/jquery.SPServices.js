@@ -1,3 +1,22 @@
+/*
+* SPServices - Work with SharePoint's Web Services using jQuery
+* Version 1.36.0
+* @requires jQuery v1.8 or greater - jQuery 1.10.x+ recommended
+*
+* Copyright (c) 2009-2015 Sympraxis Consulting LLC
+* Examples and docs at:
+* http://spservices.codeplex.com/
+* Licensed under the MIT license:
+* http://www.opensource.org/licenses/mit-license.php
+*/
+/*
+* @description SPServices is a jQuery library which abstracts SharePoint's Web Services and makes them easier to use. It also includes functions which use the various Web Service operations to provide more useful (and cool) capabilities. It works entirely client side and requires no server install.
+* @type jQuery
+* @name SPServices
+* @category Plugins/SPServices
+* @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
+! @build SPServices 1.36.0 2015-05-02 12:00:11
+*/
 !(function (factory) {
     // If AMD is present, register SPServices an an annoymous
     // module that depends on 'jquery'

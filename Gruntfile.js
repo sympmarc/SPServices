@@ -5,7 +5,7 @@ module.exports = function(grunt) {
 
     "use strict";
 
-    var banner = "/*\n" +
+    var banner  = "/*\n" +
         "* <%= pkg.name %> - <%= pkg.description_short %>\n" +
         "* Version <%= pkg.version %>\n" +
         "* @requires <%= pkg.requires %>\n" +
@@ -23,7 +23,7 @@ module.exports = function(grunt) {
         "* @category Plugins/<%= pkg.name %>\n" +
         "* @author <%= pkg.authors %>\n" +
         "! @build <%= pkg.name %> <%= pkg.version %> <%= grunt.template.today('yyyy-mm-dd hh:MM:ss') %>\n" +
-        "*/\n"
+        "*/\n";
 
     // Project configuration.
     grunt.initConfig({
@@ -59,6 +59,32 @@ module.exports = function(grunt) {
                 src: "<%= pkg.package_zipfiles %>",
                 dest: 'build/<%= pkg.filename %>.zip'
             }
+        },
+
+        jshint : {
+            options : {
+                jshintrc : true,
+                ignores: [
+                    "src/jquery.SPServices Intellisense.js"
+                ]
+            },
+            gruntfile : {
+                src : 'Gruntfile.js'
+            },
+            src : {
+                src : ['src/**/*.js']
+            }
+        },
+
+        watch : {
+            gruntfile : {
+                files : 'Gruntfile.js',
+                tasks : ['jshint:gruntfile']
+            },
+            src : {
+                files : ['src/**/*'],
+                tasks : ['jshint:src']
+            }
         }
 
     });
@@ -68,8 +94,10 @@ module.exports = function(grunt) {
 //    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-zip');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Default task(s).
-    grunt.registerTask('default', ['concat', 'uglify', 'zip']);
+    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'zip']);
 
 };
