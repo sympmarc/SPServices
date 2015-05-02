@@ -1,7 +1,8 @@
 {
   "name": "SPServices",
   "filename": "jquery.SPServices",
-  "version": "2015.01",
+  "sp_version": "2015.01",
+  "version": "1.36.0",
   "description_short": "Work with SharePoint's Web Services using jQuery",
   "description_long": "SPServices is a jQuery library which abstracts SharePoint's Web Services and makes them easier to use. It also includes functions which use the various Web Service operations to provide more useful (and cool) capabilities. It works entirely client side and requires no server install.",
   "homepage": "http://spservices.codeplex.com/",
@@ -13,12 +14,16 @@
     "Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com"
   ],
   "devDependencies": {
-    "grunt": "~0.4.5",
+    "grunt": "^0.4.5",
     "grunt-contrib-concat": "~0.5.1",
+    "grunt-contrib-jshint": "^0.11.2",
     "grunt-contrib-uglify": "~0.9.1",
+    "grunt-contrib-watch": "^0.6.1",
     "grunt-zip": "~0.16.2"
   },
-
-  "package_zipfiles": ["build/license.txt", "build/<%= pkg.filename %>.js", "build/<%= pkg.filename %>.min.js"]
-
+  "package_zipfiles": [
+    "build/license.txt",
+    "build/<%= pkg.filename %>.js",
+    "build/<%= pkg.filename %>.min.js"
+  ]
 }

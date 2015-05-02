@@ -1,0 +1,27 @@
+{
+    "curly": true,
+    "eqeqeq": true,
+    "immed": true,
+    "latedef": false,
+    "newcap": false,
+    "noarg": true,
+    "sub": true,
+    "undef": true,
+    "unused": true,
+    "boss": true,
+    "eqnull": true,
+    "node": true,
+    "loopfunc": true,
+    "browser": true,
+    "expr": true,
+    "globals": {
+        "L_Menu_BaseUrl": true,
+        "_spUserId": true,
+        "_spPageContextInfo": true,
+        "GipAddSelectedItems": true,
+        "GipRemoveSelectedItems": true,
+        "GipGetGroupData": true,
+        "jQuery": true,
+        "define": true
+  }
+}
