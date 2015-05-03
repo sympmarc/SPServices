@@ -1,14 +1,18 @@
-!(function (factory) {
-    // If AMD is present, register SPServices an an annoymous
-    // module that depends on 'jquery'
-    if (typeof define === 'function' && define.amd) {
-        define(['jquery'], factory);
+/**
+ * Original SPservices modules... Will be broken down into individual modules.
+ */
+define([
+    "jquery",
+    "../utils/SPServices.utils",
+    "../utils/constants",
+    "../utils/getDropdownSelected"
+], function (
+    $,
+    utils,
+    constants,
+    getDropdownSelected
+) {
 
-        // Else, just make SPServices available in jQuery directly
-    } else {
-        factory(jQuery);
-    }
-}(function ($) {
     /* jshint undef: true */
     /* global L_Menu_BaseUrl, _spUserId, _spPageContextInfo, GipAddSelectedItems, GipRemoveSelectedItems, GipGetGroupData */
 
@@ -21,18 +25,9 @@
     // String constants
     //   General
     var SLASH = "/";
-    var spDelim = ";#";
-    var TXTColumnNotFound = "Column not found on page";
     var SCHEMASharePoint = "http://schemas.microsoft.com/sharepoint";
     var multiLookupPrefix = "MultiLookupPicker";
     var multiLookupPrefix2013 = "MultiLookup";
-
-    // Dropdown Types
-    var dropdownType = {
-        simple: "S",
-        complex: "C",
-        multiSelect: "M"
-    };
 
     // Known list field types - See: http://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.spfieldtype(v=office.15).aspx
     var spListFieldTypes = [
@@ -396,7 +391,7 @@
         // Encode options which may contain special character, esp. ampersand
         for (var i = 0; i < encodeOptionList.length; i++) {
             if (typeof opt[encodeOptionList[i]] === "string") {
-                opt[encodeOptionList[i]] = encodeXml(opt[encodeOptionList[i]]);
+                opt[encodeOptionList[i]] = utils.encodeXml(opt[encodeOptionList[i]]);
             }
         }
 
@@ -491,7 +486,7 @@
             case "DeleteAlerts":
                 SOAPEnvelope.payload += "<IDs>";
                 for (i = 0; i < opt.IDs.length; i++) {
-                    SOAPEnvelope.payload += wrapNode("string", opt.IDs[i]);
+                    SOAPEnvelope.payload += utils.wrapNode("string", opt.IDs[i]);
                 }
                 SOAPEnvelope.payload += "</IDs>";
                 break;
@@ -508,7 +503,7 @@
                 addToPayload(opt, ["SourceUrl"]);
                 SOAPEnvelope.payload += "<DestinationUrls>";
                 for (i = 0; i < opt.DestinationUrls.length; i++) {
-                    SOAPEnvelope.payload += wrapNode("string", opt.DestinationUrls[i]);
+                    SOAPEnvelope.payload += utils.wrapNode("string", opt.DestinationUrls[i]);
                 }
                 SOAPEnvelope.payload += "</DestinationUrls>";
                 addToPayload(opt, ["Fields", "Stream", "Results"]);
@@ -517,7 +512,7 @@
                 addToPayload(opt, ["SourceUrl"]);
                 SOAPEnvelope.payload += "<DestinationUrls>";
                 for (i = 0; i < opt.DestinationUrls.length; i++) {
-                    SOAPEnvelope.payload += wrapNode("string", opt.DestinationUrls[i]);
+                    SOAPEnvelope.payload += utils.wrapNode("string", opt.DestinationUrls[i]);
                 }
                 SOAPEnvelope.payload += "</DestinationUrls>";
                 break;
@@ -635,7 +630,7 @@
                 } else {
                     SOAPEnvelope.payload += "<updates><Batch OnError='Continue'><Method ID='1' Cmd='" + opt.batchCmd + "'>";
                     for (i = 0; i < opt.valuepairs.length; i++) {
-                        SOAPEnvelope.payload += "<Field Name='" + opt.valuepairs[i][0] + "'>" + escapeColumnValue(opt.valuepairs[i][1]) + "</Field>";
+                        SOAPEnvelope.payload += "<Field Name='" + opt.valuepairs[i][0] + "'>" + utils.escapeColumnValue(opt.valuepairs[i][1]) + "</Field>";
                     }
                     if (opt.batchCmd !== "New") {
                         SOAPEnvelope.payload += "<Field Name='ID'>" + opt.ID + "</Field>";
@@ -711,22 +706,22 @@
             case "GetQuerySuggestions":
                 SOAPEnvelope.opheader = "<" + opt.operation + " xmlns='http://microsoft.com/webservices/OfficeServer/QueryService'>";
                 SOAPAction = "http://microsoft.com/webservices/OfficeServer/QueryService/" + opt.operation;
-                SOAPEnvelope.payload += wrapNode("queryXml", encodeXml(opt.queryXml));
+                SOAPEnvelope.payload += utils.wrapNode("queryXml", utils.encodeXml(opt.queryXml));
                 break;
             case "GetSearchMetadata":
                 SOAPEnvelope.opheader = "<" + opt.operation + " xmlns='http://microsoft.com/webservices/OfficeServer/QueryService'>";
                 SOAPAction = "http://microsoft.com/webservices/OfficeServer/QueryService/" + opt.operation;
                 break;
             case "Query":
-                SOAPEnvelope.payload += wrapNode("queryXml", encodeXml(opt.queryXml));
+                SOAPEnvelope.payload += utils.wrapNode("queryXml", utils.encodeXml(opt.queryXml));
                 break;
             case "QueryEx":
                 SOAPEnvelope.opheader = "<" + opt.operation + " xmlns='http://microsoft.com/webservices/OfficeServer/QueryService'>";
                 SOAPAction = "http://microsoft.com/webservices/OfficeServer/QueryService/" + opt.operation;
-                SOAPEnvelope.payload += wrapNode("queryXml", encodeXml(opt.queryXml));
+                SOAPEnvelope.payload += utils.wrapNode("queryXml", utils.encodeXml(opt.queryXml));
                 break;
             case "Registration":
-                SOAPEnvelope.payload += wrapNode("registrationXml", encodeXml(opt.registrationXml));
+                SOAPEnvelope.payload += utils.wrapNode("registrationXml", utils.encodeXml(opt.registrationXml));
                 break;
             case "Status":
                 break;
@@ -844,7 +839,7 @@
             case "GetCommentsOnUrl":
                 addToPayload(opt, ["url", "maximumItemsToReturn", "startIndex"]);
                 if (typeof opt.excludeItemsTime !== "undefined" && opt.excludeItemsTime.length > 0) {
-                    SOAPEnvelope.payload += wrapNode("excludeItemsTime", opt.excludeItemsTime);
+                    SOAPEnvelope.payload += utils.wrapNode("excludeItemsTime", opt.excludeItemsTime);
                 }
                 break;
             case "GetRatingAverageOnUrl":
@@ -1444,12 +1439,12 @@
             displayName: opt.columnName
         });
         if (columnSelect.Obj.html() === null && opt.debug) {
-            errBox("SPServices.SPComplexToSimpleDropdown", "columnName: " + opt.columnName, TXTColumnNotFound);
+            utils.errBox("SPServices.SPComplexToSimpleDropdown", "columnName: " + opt.columnName, constants.TXTColumnNotFound);
             return;
         }
 
         // If we don't have a complex dropdown, then there is nothing to do
-        if (columnSelect.Type !== dropdownType.complex) {
+        if (columnSelect.Type !== constants.dropdownType.complex) {
             return;
         }
 
@@ -1528,7 +1523,7 @@
             displayName: opt.columnName
         });
         if (columnSelect.Obj.html() === null && opt.debug) {
-            errBox(thisFunction, "columnName: " + opt.columnName, TXTColumnNotFound);
+            utils.errBox(thisFunction, "columnName: " + opt.columnName, constants.TXTColumnNotFound);
             return;
         }
 
@@ -1546,7 +1541,7 @@
                 // If debug is on, notify about an error
                 $(xData.responseXML).find("faultcode").each(function () {
                     if (opt.debug) {
-                        errBox(thisFunction, "relatedList: " + opt.relatedList, "List not found");
+                        utils.errBox(thisFunction, "relatedList: " + opt.relatedList, "List not found");
 
                     }
                 });
@@ -1562,22 +1557,22 @@
 
         switch (columnSelect.Type) {
             // Plain old select
-            case dropdownType.simple:
+            case constants.dropdownType.simple:
                 columnSelect.Obj.bind("change", function () {
                     showRelated(opt, divId, relatedListXML, relatedColumnsXML);
                 });
                 break;
             // Input / Select hybrid
-            case dropdownType.complex:
+            case constants.dropdownType.complex:
                 // Bind to any change on the hidden input element
                 columnSelect.optHid.bind("propertychange", function () {
                     showRelated(opt, divId, relatedListXML, relatedColumnsXML);
                 });
                 break;
             // Multi-select hybrid
-            case dropdownType.multiSelect:
+            case constants.dropdownType.multiSelect:
                 if (opt.debug) {
-                    errBox(thisFunction, "columnName: " + opt.columnName, "Multi-select columns not supported by this function");
+                    utils.errBox(thisFunction, "columnName: " + opt.columnName, "Multi-select columns not supported by this function");
                 }
                 break;
             default:
@@ -1600,12 +1595,12 @@
 
         // Get the current column selection(s)
         columnSelectSelected = getDropdownSelected(columnSelect, opt.matchOnId);
-        if (columnSelect.Type === dropdownType.complex && opt.numChars > 0 && columnSelectSelected[0].length < opt.numChars) {
+        if (columnSelect.Type === constants.dropdownType.complex && opt.numChars > 0 && columnSelectSelected[0].length < opt.numChars) {
             return;
         }
 
         // If the selection hasn't changed, then there's nothing to do right now.  This is useful to reduce
-        // the number of Web Service calls when the parentSelect.Type = dropdownType.complex, as there are multiple propertychanges
+        // the number of Web Service calls when the parentSelect.Type = constants.dropdownType.complex, as there are multiple propertychanges
         // which don't require any action.
         if (columnSelect.Obj.attr("showRelatedSelected") === columnSelectSelected[0]) {
             return;
@@ -1628,11 +1623,11 @@
         if (relatedListColumnType === "Lookup") {
             camlQuery += "<Eq><FieldRef Name='" + opt.relatedListColumn +
                 (opt.matchOnId ? "' LookupId='True'/><Value Type='Integer'>" : "'/><Value Type='Text'>") +
-                escapeColumnValue(columnSelectSelected[0]) + "</Value></Eq>";
+                utils.escapeColumnValue(columnSelectSelected[0]) + "</Value></Eq>";
         } else {
             camlQuery += "<Eq><FieldRef Name='" +
                 (opt.matchOnId ? "ID' /><Value Type='Counter'>" : opt.relatedListColumn + "'/><Value Type='Text'>") +
-                escapeColumnValue(columnSelectSelected[0]) + "</Value></Eq>";
+                utils.escapeColumnValue(columnSelectSelected[0]) + "</Value></Eq>";
         }
 
         if (opt.CAMLQuery.length > 0) {
@@ -1661,11 +1656,11 @@
                 $(xData.responseXML).find("errorstring").each(function () {
                     var errorText = $(this).text();
                     if (opt.debug && errorText === "One or more field types are not installed properly. Go to the list settings page to delete these fields.") {
-                        errBox(thisFunction,
+                        utils.errBox(thisFunction,
                             "relatedListColumn: " + opt.relatedListColumn,
                             "Column not found in relatedList " + opt.relatedList);
                     } else if (opt.debug && errorText === "Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).") {
-                        errBox(thisFunction,
+                        utils.errBox(thisFunction,
                             "relatedList: " + opt.relatedList,
                             "List not found");
                     }
@@ -1681,7 +1676,7 @@
                         outString += "<tr>";
                         for (i = 0; i < opt.relatedColumns.length; i++) {
                             if (typeof relatedColumnsXML[opt.relatedColumns[i]] === "undefined" && opt.debug) {
-                                errBox(thisFunction, "columnName: " + opt.relatedColumns[i], "Column not found in relatedList");
+                                utils.errBox(thisFunction, "columnName: " + opt.relatedColumns[i], "Column not found in relatedList");
                                 return;
                             }
                             outString += "<th class='" + opt.headerCSSClass + "'>" + relatedColumnsXML[opt.relatedColumns[i]].attr("DisplayName") + "</th>";
@@ -1703,7 +1698,7 @@
                         $(xData.responseXML).SPFilterNode("z:row").each(function () {
                             for (i = 0; i < opt.relatedColumns.length; i++) {
                                 if (typeof relatedColumnsXML[opt.relatedColumns[i]] === "undefined" && opt.debug) {
-                                    errBox(thisFunction, "columnName: " + opt.relatedColumns[i], "Column not found in relatedList");
+                                    utils.errBox(thisFunction, "columnName: " + opt.relatedColumns[i], "Column not found in relatedList");
                                     return;
                                 }
                                 outString += "<tr>";
@@ -1757,7 +1752,7 @@
             displayName: opt.columnName
         });
         if (columnSelect.Obj.html() === null && opt.debug) {
-            errBox(thisFunction, "columnName: " + opt.columnName, TXTColumnNotFound);
+            utils.errBox(thisFunction, "columnName: " + opt.columnName, constants.TXTColumnNotFound);
             return;
         }
 
@@ -1811,11 +1806,11 @@
                 $(xData.responseXML).find("errorstring").each(function () {
                     var errorText = $(this).text();
                     if (opt.debug && errorText === "One or more field types are not installed properly. Go to the list settings page to delete these fields.") {
-                        errBox(thisFunction,
+                        utils.errBox(thisFunction,
                             "relationshipListColumn: " + opt.relationshipListColumn,
                             "Not found in relationshipList " + opt.relationshipList);
                     } else if (opt.debug && errorText === "Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).") {
-                        errBox(thisFunction,
+                        utils.errBox(thisFunction,
                             "relationshipList: " + opt.relationshipList,
                             "List not found");
                     }
@@ -1824,7 +1819,7 @@
 
                 // Add an explanatory prompt
                 switch (columnSelect.Type) {
-                    case dropdownType.simple:
+                    case constants.dropdownType.simple:
                         // Remove all of the existing options
                         $(columnSelect.Obj).find("option").remove();
                         // If the column is required or the promptText option is empty, don't add the prompt text
@@ -1834,12 +1829,12 @@
                             columnSelect.Obj.append("<option value='0'>" + opt.noneText + "</option>");
                         }
                         break;
-                    case dropdownType.complex:
+                    case constants.dropdownType.complex:
                         // If the column is required, don't add the "(None)" option
                         choices = columnColumnRequired ? "" : opt.noneText + "|0";
                         columnSelect.Obj.val("");
                         break;
-                    case dropdownType.multiSelect:
+                    case constants.dropdownType.multiSelect:
                         // Remove all of the existing options
                         $(columnSelect.master.candidateControl).find("option").remove();
                         newMultiLookupPickerdata = "";
@@ -1857,8 +1852,8 @@
                     // else the ID of the relationshipList item
                     var thisValue = $(this).attr("ows_" + opt.relationshipListColumn);
 
-                    if (typeof thisValue !== "undefined" && thisValue.indexOf(spDelim) > 0) {
-                        thisOption = new SplitIndex(thisValue);
+                    if (typeof thisValue !== "undefined" && thisValue.indexOf(constants.spDelim) > 0) {
+                        thisOption = new utils.SplitIndex(thisValue);
                     } else {
                         thisOption.id = $(this).attr("ows_ID");
                         thisOption.value = thisValue;
@@ -1872,17 +1867,17 @@
                     }
 
                     switch (columnSelect.Type) {
-                        case dropdownType.simple:
+                        case constants.dropdownType.simple:
                             var selected = ($(this).attr("ows_ID") === columnSelectSelected[0]) ? " selected='selected'" : "";
                             columnSelect.Obj.append("<option" + selected + " value='" + thisOption.id + "'>" + thisOption.value + "</option>");
                             break;
-                        case dropdownType.complex:
+                        case constants.dropdownType.complex:
                             if (thisOption.id === columnSelectSelected[0]) {
                                 columnSelect.Obj.val(thisOption.value);
                             }
                             choices = choices + ((choices.length > 0) ? "|" : "") + thisOption.value + "|" + thisOption.id;
                             break;
-                        case dropdownType.multiSelect:
+                        case constants.dropdownType.multiSelect:
                             $(columnSelect.master.candidateControl).append("<option value='" + thisOption.id + "'>" + thisOption.value + "</option>");
                             newMultiLookupPickerdata += thisOption.id + "|t" + thisOption.value + "|t |t |t";
                             break;
@@ -1892,14 +1887,14 @@
                 });
 
                 switch (columnSelect.Type) {
-                    case dropdownType.simple:
+                    case constants.dropdownType.simple:
                         columnSelect.Obj.trigger("change");
                         break;
-                    case dropdownType.complex:
+                    case constants.dropdownType.complex:
                         columnSelect.Obj.attr("choices", choices);
                         columnSelect.Obj.trigger("propertychange");
                         break;
-                    case dropdownType.multiSelect:
+                    case constants.dropdownType.multiSelect:
                         // Clear the master
                         columnSelect.master.data = "";
 
@@ -1966,7 +1961,7 @@
             // A node which has no children
         } else if (!opt.node.hasChildNodes()) {
             outString += "<tr><td width='100px' style='font-weight:bold;'>" + opt.node.nodeName +
-                "</td><td>" + ((opt.node.nodeValue !== null) ? checkLink(opt.node.nodeValue) : "&nbsp;") + "</td></tr>";
+                "</td><td>" + ((opt.node.nodeValue !== null) ? utils.checkLink(opt.node.nodeValue) : "&nbsp;") + "</td></tr>";
             if (opt.node.attributes) {
                 outString += "<tr><td colspan='99'>" + showAttrs(opt.node) + "</td></tr>";
             }
@@ -1977,7 +1972,7 @@
             // A TEXT node
         } else if (opt.node.hasChildNodes() && opt.node.firstChild.nodeType === NODE_TEXT) {
             outString += "<tr><td width='100px' style='font-weight:bold;'>" + opt.node.nodeName +
-                "</td><td>" + checkLink(opt.node.firstChild.nodeValue) + "</td></tr>";
+                "</td><td>" + utils.checkLink(opt.node.firstChild.nodeValue) + "</td></tr>";
             // Handle child nodes
         } else {
             outString += "<tr><td width='100px' style='font-weight:bold;' colspan='99'>" + opt.node.nodeName + "</td></tr>";
@@ -2101,7 +2096,7 @@
             displayName: opt.lookupColumn
         });
         if (lookupSelect.Obj.html() === null && opt.debug) {
-            errBox(thisFunction, "lookupColumn: " + opt.lookupColumn, TXTColumnNotFound);
+            utils.errBox(thisFunction, "lookupColumn: " + opt.lookupColumn, constants.TXTColumnNotFound);
             return;
         }
 
@@ -2140,7 +2135,7 @@
         });
 
         if (lookupListUrl.length === 0 && opt.debug) {
-            errBox(thisFunction, "lookupColumn: " + opt.lookupColumn, "This column does not appear to be a lookup column");
+            utils.errBox(thisFunction, "lookupColumn: " + opt.lookupColumn, "This column does not appear to be a lookup column");
             return;
         }
         if (newUrl.length > 0) {
@@ -2149,12 +2144,12 @@
             // If requested, open the link in a new window and if requested, pass the ContentTypeID
             newHref += opt.newWindow ?
             ((opt.ContentTypeID.length > 0) ? "?ContentTypeID=" + opt.ContentTypeID : "") + "' target='_blank'" :
-            "?" + ((opt.ContentTypeID.length > 0) ? "ContentTypeID=" + opt.ContentTypeID + "&" : "") + "Source=" + escapeUrl(location.href) + "'";
+            "?" + ((opt.ContentTypeID.length > 0) ? "ContentTypeID=" + opt.ContentTypeID + "&" : "") + "Source=" + utils.escapeUrl(location.href) + "'";
             var newLink = "<div id='SPLookupAddNew_" + lookupColumnStaticName + "'>" + "<a href='" + newHref + ">" + opt.promptText.replace(/\{0\}/g, opt.lookupColumn) + "</a></div>";
             // Append the link to the Lookup columns's formbody table cell
             $(lookupSelect.Obj).parents("td.ms-formbody").append(newLink);
         } else if (opt.debug) {
-            errBox(thisFunction, "lookupColumn: " + opt.lookupColumn, "NewForm cannot be found");
+            utils.errBox(thisFunction, "lookupColumn: " + opt.lookupColumn, "NewForm cannot be found");
             return;
         }
         // If present, call completefunc when all else is done
@@ -2469,11 +2464,11 @@
             displayName: opt.multiSelectColumn
         });
         if (thisMultiSelect.Obj.html() === null && opt.debug) {
-            errBox(thisFunction, "multiSelectColumn: " + opt.multiSelectColumn, TXTColumnNotFound);
+            utils.errBox(thisFunction, "multiSelectColumn: " + opt.multiSelectColumn, constants.TXTColumnNotFound);
             return;
         }
-        if (thisMultiSelect.Type !== dropdownType.multiSelect && opt.debug) {
-            errBox(thisFunction, "multiSelectColumn: " + opt.multiSelectColumn, "Column is not multi-select.");
+        if (thisMultiSelect.Type !== constants.dropdownType.multiSelect && opt.debug) {
+            utils.errBox(thisFunction, "multiSelectColumn: " + opt.multiSelectColumn, "Column is not multi-select.");
             return;
         }
 
@@ -2671,7 +2666,7 @@
                     CAMLRowLimit: 0,
                     completefunc: function (xData) {
                         $(xData.responseXML).SPFilterNode("z:row").each(function () {
-                            var thisPageUrl = $(this).attr("ows_FileRef").split(spDelim)[1];
+                            var thisPageUrl = $(this).attr("ows_FileRef").split(constants.spDelim)[1];
                             var thisTitle = $(this).attr("ows_Title");
                             var thisPageType = (typeof thisTitle !== "undefined") ? thisTitle : "";
                             if (thisPageUrl.indexOf(".aspx") > 0) {
@@ -2726,14 +2721,14 @@
                         "<td class=ms-vb2><a href='" + listXml.attr("DefaultViewUrl") + "'>" + listXml.attr("Title") + ((listXml.attr("Hidden") === "True") ? '(Hidden)' : '') + "</td>" +
                         "<td class=ms-vb2>" + pageClass + "</td>" +
                         "<td class=ms-vb2>" + pageType + "</td>" +
-                        "<td class=ms-vb2><a href='" + pageUrl + "'>" + fileName(pageUrl) + "</td>";
+                        "<td class=ms-vb2><a href='" + pageUrl + "'>" + utils.fileName(pageUrl) + "</td>";
                     if (opt.showSrc) {
                         var thisSrcPath;
                         out += "<td valign='top'><table width='100%' style='border-collapse: collapse;' border=0 cellSpacing=0 cellPadding=1>";
                         for (i = 0; i < pageScriptSrc.type.length; i++) {
                             thisSrcPath = (pageScriptSrc.src[i].substr(0, 1) !== SLASH) ? pagePath + pageScriptSrc.src[i] : pageScriptSrc.src[i];
                             out += "<tr><td class=ms-vb2 width='30%'>" + pageScriptSrc.type[i] + "</td>";
-                            out += "<td class=ms-vb2 width='70%'><a href='" + thisSrcPath + "'>" + fileName(pageScriptSrc.src[i]) + "</td></tr>";
+                            out += "<td class=ms-vb2 width='70%'><a href='" + thisSrcPath + "'>" + utils.fileName(pageScriptSrc.src[i]) + "</td></tr>";
                         }
                         out += "</table></td>";
                     }
@@ -2815,7 +2810,7 @@
 
             // If randomize is true, randomly sort the options
             if (opt.randomize) {
-                columnOptions.sort(randOrd);
+                columnOptions.sort(utils.randOrd);
             }
 
             //Create a new choices table to hold the arranged choices.
@@ -2881,7 +2876,7 @@
         var columnObjWidth = columnObj.css("width");
 
         if (columnObj.html() === null && opt.debug) {
-            errBox("SPServices.SPAutocomplete",
+            utils.errBox("SPServices.SPAutocomplete",
                 "columnName: " + opt.columnName,
                 "Column is not an input control or is not found on page");
             return;
@@ -3121,7 +3116,7 @@
                 $(xData.responseXML).SPFilterNode("z:row").each(function () {
                     itemsToUpdate.push($(this).attr("ows_ID"));
                     var fileRef = $(this).attr("ows_FileRef");
-                    fileRef = "/" + fileRef.substring(fileRef.indexOf(spDelim) + 2);
+                    fileRef = "/" + fileRef.substring(fileRef.indexOf(constants.spDelim) + 2);
                     documentsToUpdate.push(fileRef);
                 });
             }
@@ -3132,7 +3127,7 @@
         for (i = 0; i < itemsToUpdate.length; i++) {
             batch += "<Method ID='" + i + "' Cmd='" + opt.batchCmd + "'>";
             for (fieldNum = 0; fieldNum < opt.valuepairs.length; fieldNum++) {
-                batch += "<Field Name='" + opt.valuepairs[fieldNum][0] + "'>" + escapeColumnValue(opt.valuepairs[fieldNum][1]) + "</Field>";
+                batch += "<Field Name='" + opt.valuepairs[fieldNum][0] + "'>" + utils.escapeColumnValue(opt.valuepairs[fieldNum][1]) + "</Field>";
             }
             batch += "<Field Name='ID'>" + itemsToUpdate[i] + "</Field>";
             if (documentsToUpdate[i].length > 0) {
@@ -3278,11 +3273,11 @@
         var s = "";
         var d = opt.dateToConvert;
         s += d.getFullYear() + "-";
-        s += pad(d.getMonth() + 1) + "-";
-        s += pad(d.getDate());
-        s += "T" + pad(d.getHours()) + ":";
-        s += pad(d.getMinutes()) + ":";
-        s += pad(d.getSeconds()) + "Z" + opt.dateOffset;
+        s += utils.pad(d.getMonth() + 1) + "-";
+        s += utils.pad(d.getDate());
+        s += "T" + utils.pad(d.getHours()) + ":";
+        s += utils.pad(d.getMinutes()) + ":";
+        s += utils.pad(d.getSeconds()) + "Z" + opt.dateOffset;
         //Return the ISO8601 date string
         return s;
 
@@ -3432,7 +3427,7 @@
         if (s.length === 0) {
             return null;
         } else {
-            var thisUser = new SplitIndex(s);
+            var thisUser = new utils.SplitIndex(s);
             var thisUserExpanded = thisUser.value.split(",#");
             if (thisUserExpanded.length === 1) {
                 return {
@@ -3457,9 +3452,9 @@
             return null;
         } else {
             var thisUserMultiObject = [];
-            var thisUserMulti = s.split(spDelim);
+            var thisUserMulti = s.split(constants.spDelim);
             for (i = 0; i < thisUserMulti.length; i = i + 2) {
-                var thisUser = userToJsonObject(thisUserMulti[i] + spDelim + thisUserMulti[i + 1]);
+                var thisUser = userToJsonObject(thisUserMulti[i] + constants.spDelim + thisUserMulti[i + 1]);
                 thisUserMultiObject.push(thisUser);
             }
             return thisUserMultiObject;
@@ -3470,7 +3465,7 @@
         if (s.length === 0) {
             return null;
         } else {
-            var thisLookup = s.split(spDelim);
+            var thisLookup = s.split(constants.spDelim);
             return {
                 lookupId: thisLookup[0],
                 lookupValue: thisLookup[1]
@@ -3483,9 +3478,9 @@
             return null;
         } else {
             var thisLookupMultiObject = [];
-            var thisLookupMulti = s.split(spDelim);
+            var thisLookupMulti = s.split(constants.spDelim);
             for (i = 0; i < thisLookupMulti.length; i = i + 2) {
-                var thisLookup = lookupToJsonObject(thisLookupMulti[i] + spDelim + thisLookupMulti[i + 1]);
+                var thisLookup = lookupToJsonObject(thisLookupMulti[i] + constants.spDelim + thisLookupMulti[i + 1]);
                 thisLookupMultiObject.push(thisLookup);
             }
             return thisLookupMultiObject;
@@ -3497,7 +3492,7 @@
             return null;
         } else {
             var thisChoiceMultiObject = [];
-            var thisChoiceMulti = s.split(spDelim);
+            var thisChoiceMulti = s.split(constants.spDelim);
             for (i = 0; i < thisChoiceMulti.length; i++) {
                 if (thisChoiceMulti[i].length !== 0) {
                     thisChoiceMultiObject.push(thisChoiceMulti[i]);
@@ -3514,7 +3509,7 @@
             return s;
         } else {
             var thisObject = [];
-            var thisString = s.split(spDelim);
+            var thisString = s.split(constants.spDelim);
             for (i = 0; i < thisString.length; i++) {
                 if (thisString[i].length !== 0) {
                     var fileName = thisString[i];
@@ -3548,7 +3543,7 @@
         if (s.length === 0) {
             return null;
         } else {
-            var thisCalc = s.split(spDelim);
+            var thisCalc = s.split(constants.spDelim);
             // The first value will be the calculated column value type, the second will be the value
             return attrToJson(thisCalc[1], thisCalc[0]);
         }
@@ -3717,26 +3712,26 @@
         //      SP2010: <SELECT name=ctl00$m$g_d10479d7_6965_4da0_b162_510bbbc58a7f$ctl00$ctl05$ctl01$ctl00$ctl00$ctl04$ctl00$Lookup title=Country id=ctl00_m_g_d10479d7_6965_4da0_b162_510bbbc58a7f_ctl00_ctl05_ctl01_ctl00_ctl00_ctl04_ctl00_Lookup>
         //      SP2007: <select name="ctl00$m$g_e845e690_00da_428f_afbd_fbe804787763$ctl00$ctl04$ctl04$ctl00$ctl00$ctl04$ctl00$Lookup" Title="Country" id="ctl00_m_g_e845e690_00da_428f_afbd_fbe804787763_ctl00_ctl04_ctl04_ctl00_ctl00_ctl04_ctl00_Lookup">
         if ((columnObj.Obj = $("select[Title='" + opt.displayName + "']")).length === 1) {
-            columnObj.Type = dropdownType.simple;
+            columnObj.Type = constants.dropdownType.simple;
             // Compound
         } else if ((columnObj.Obj = $("input[Title='" + opt.displayName + "']")).length === 1) {
-            columnObj.Type = dropdownType.complex;
+            columnObj.Type = constants.dropdownType.complex;
             // Simple, where the select's id begins with colStaticName (StaticName) - needed for required columns where title="DisplayName Required Field"
             //   Example: SP2013 <select title="Region Required Field" id="Region_59566f6f-1c3b-4efb-9b7b-6dbc35fe3b0a_$LookupField" showrelatedselected="3">
 //        } else if ((columnObj.Obj = $("select:regex(id, (" + colStaticName + ")(_)[0-9a-fA-F]{8}(-))")).length === 1) {
-//            columnObj.Type = dropdownType.simple;
+//            columnObj.Type = constants.dropdownType.simple;
             // Multi-select: This will find the multi-select column control in English and most other language sites where the Title looks like 'Column Name possible values'
         } else if ((columnObj.Obj = $("select[ID$='SelectCandidate'][Title^='" + opt.displayName + " ']")).length === 1) {
-            columnObj.Type = dropdownType.multiSelect;
+            columnObj.Type = constants.dropdownType.multiSelect;
             // Multi-select: This will find the multi-select column control on a Russian site (and perhaps others) where the Title looks like '????????? ????????: Column Name'
         } else if ((columnObj.Obj = $("select[ID$='SelectCandidate'][Title$=': " + opt.displayName + "']")).length === 1) {
-            columnObj.Type = dropdownType.multiSelect;
-            // Multi-select: This will find the multi-select column control on a German site (and perhaps others) where the Title looks like 'Mögliche Werte für &quot;Column name&quot;.'
+            columnObj.Type = constants.dropdownType.multiSelect;
+            // Multi-select: This will find the multi-select column control on a German site (and perhaps others)
         } else if ((columnObj.Obj = $("select[ID$='SelectCandidate'][Title$='\"" + opt.displayName + "\".']")).length === 1) {
-            columnObj.Type = dropdownType.multiSelect;
+            columnObj.Type = constants.dropdownType.multiSelect;
             // Multi-select: This will find the multi-select column control on a Italian site (and perhaps others) where the Title looks like "Valori possibili Column name"
         } else if ((columnObj.Obj = $("select[ID$='SelectCandidate'][Title$=' " + opt.displayName + "']")).length === 1) {
-            columnObj.Type = dropdownType.multiSelect;
+            columnObj.Type = constants.dropdownType.multiSelect;
         } else {
             columnObj.Type = null;
         }
@@ -3753,15 +3748,15 @@
                 var fieldSelect = fieldSelect1.length > 0 ? fieldSelect1 : fieldSelect2;
 
                 if (fieldSelect && fieldSelect.length === 1) {
-                    columnObj.Type = dropdownType.simple;
+                    columnObj.Type = constants.dropdownType.simple;
                     columnObj.Obj = fieldSelect;
                 }
             }
         }
 
-        if (columnObj.Type === dropdownType.complex) {
+        if (columnObj.Type === constants.dropdownType.complex) {
             columnObj.optHid = $("input[id='" + columnObj.Obj.attr("optHid") + "']");
-        } else if (columnObj.Type === dropdownType.multiSelect) {
+        } else if (columnObj.Type === constants.dropdownType.multiSelect) {
             // Find the important bits of the multiselect control
             columnObj.container = columnObj.Obj.closest("span");
             columnObj.MultiLookupPickerdata = columnObj.container.find("input[id$='" + multiLookupPrefix + "_data'], input[id$='" + multiLookupPrefix2013 + "_data']");
@@ -3812,6 +3807,7 @@
 
         var i;
         var outString = "";
+        var fileName = "";
         var dispUrl;
         var numDecimals;
         var outArray = [];
@@ -3841,16 +3837,16 @@
                 break;
             case "User":
             case "UserMulti":
-                var userMultiValues = columnValue.split(spDelim);
+                var userMultiValues = columnValue.split(constants.spDelim);
                 for (i = 0; i < userMultiValues.length; i = i + 2) {
                     outArray.push("<a href='/_layouts/userdisp.aspx?ID=" + userMultiValues[i] +
-                        "&Source=" + escapeUrl(location.href) + "'>" +
+                        "&Source=" + utils.escapeUrl(location.href) + "'>" +
                         userMultiValues[i + 1] + "</a>");
                 }
                 outString = outArray.join(", ");
                 break;
             case "Calculated":
-                var calcColumn = columnValue.split(spDelim);
+                var calcColumn = columnValue.split(constants.spDelim);
                 outString = calcColumn[1];
                 break;
             case "Number":
@@ -3872,22 +3868,22 @@
                         dispUrl = listXML.attr("BaseType") === "1" ? listXML.attr("RootFolder") + SLASH + "Forms/DispForm.aspx" :
                         listXML.attr("RootFolder") + SLASH + "DispForm.aspx";
                         outString = "<a href='" + dispUrl +
-                            "?ID=" + columnValue.substring(0, columnValue.search(spDelim)) + "&RootFolder=*&Source=" + escapeUrl(location.href) + "'>" +
-                            columnValue.substring(columnValue.search(spDelim) + 2) + "</a>";
+                            "?ID=" + columnValue.substring(0, columnValue.search(constants.spDelim)) + "&RootFolder=*&Source=" + utils.escapeUrl(location.href) + "'>" +
+                            columnValue.substring(columnValue.search(constants.spDelim) + 2) + "</a>";
                         break;
                     case "FileDirRef":
                         // Get the display form URL for the lookup source list
-                        dispUrl = SLASH + columnValue.substring(columnValue.search(spDelim) + 2);
+                        dispUrl = SLASH + columnValue.substring(columnValue.search(constants.spDelim) + 2);
                         outString = "<a href='" + dispUrl + "'>" +
-                            columnValue.substring(columnValue.search(spDelim) + 2) + "</a>";
+                            columnValue.substring(columnValue.search(constants.spDelim) + 2) + "</a>";
                         break;
                     // Any other lookup column
                     default:
                         // Get the display form URL for the lookup source list
                         dispUrl = getListFormUrl(columnXML.attr("List"), "DisplayForm");
                         outString = "<a href='" + opt.relatedWebURL + SLASH + dispUrl +
-                            "?ID=" + columnValue.substring(0, columnValue.search(spDelim)) + "&RootFolder=*&Source=" + escapeUrl(location.href) + "'>" +
-                            columnValue.substring(columnValue.search(spDelim) + 2) + "</a>";
+                            "?ID=" + columnValue.substring(0, columnValue.search(constants.spDelim)) + "&RootFolder=*&Source=" + utils.escapeUrl(location.href) + "'>" +
+                            columnValue.substring(columnValue.search(constants.spDelim) + 2) + "</a>";
                         break;
                 }
                 break;
@@ -3897,17 +3893,17 @@
                 // Show all the values as links to the items, separated by commas
                 outString = "";
                 if (columnValue.length > 0) {
-                    var lookupMultiValues = columnValue.split(spDelim);
+                    var lookupMultiValues = columnValue.split(constants.spDelim);
                     for (i = 0; i < lookupMultiValues.length / 2; i++) {
                         outArray.push("<a href='" + webUrl + SLASH + dispUrl +
-                            "?ID=" + lookupMultiValues[i * 2] + "&RootFolder=*&Source=" + escapeUrl(location.href) + "'>" +
+                            "?ID=" + lookupMultiValues[i * 2] + "&RootFolder=*&Source=" + utils.escapeUrl(location.href) + "'>" +
                             lookupMultiValues[(i * 2) + 1] + "</a>");
                     }
                 }
                 outString = outArray.join(", ");
                 break;
             case "File":
-                fileName = columnValue.substring(columnValue.search(spDelim) + 2);
+                fileName = columnValue.substring(columnValue.search(constants.spDelim) + 2);
                 outString = "<a href='" + listXML.attr("RootFolder") + SLASH + fileName + "'>" + fileName + "</a>";
                 break;
             case "Counter":
@@ -3932,77 +3928,12 @@
         var out = "<table class='ms-vb' width='100%'>";
         for (i = 0; i < node.attributes.length; i++) {
             out += "<tr><td width='10px' style='font-weight:bold;'>" + i + "</td><td width='100px'>" +
-                node.attributes.item(i).nodeName + "</td><td>" + checkLink(node.attributes.item(i).nodeValue) + "</td></tr>";
+                node.attributes.item(i).nodeName + "</td><td>" + utils.checkLink(node.attributes.item(i).nodeValue) + "</td></tr>";
         }
         out += "</table>";
         return out;
     } // End of function showAttrs
 
-    // Returns the selected value(s) for a dropdown in an array. Expects a dropdown object as returned by the DropdownCtl function.
-    // If matchOnId is true, returns the ids rather than the text values for the selection options(s).
-    function getDropdownSelected(columnSelect, matchOnId) {
-
-        var columnSelectSelected = [];
-
-        switch (columnSelect.Type) {
-            case dropdownType.simple:
-                if (matchOnId) {
-                    columnSelectSelected.push(columnSelect.Obj.find("option:selected").val() || []);
-                } else {
-                    columnSelectSelected.push(columnSelect.Obj.find("option:selected").text() || []);
-                }
-                break;
-            case dropdownType.complex:
-                if (matchOnId) {
-                    columnSelectSelected.push(columnSelect.optHid.val() || []);
-                } else {
-                    columnSelectSelected.push(columnSelect.Obj.val() || []);
-                }
-                break;
-            case dropdownType.multiSelect:
-                $(columnSelect.master.resultControl).find("option").each(function () {
-                    if (matchOnId) {
-                        columnSelectSelected.push($(this).val());
-                    } else {
-                        columnSelectSelected.push($(this).html());
-                    }
-                });
-                break;
-            default:
-                break;
-        }
-        return columnSelectSelected;
-
-    } // End of function getDropdownSelected
-
-    // Build an error message based on passed parameters
-    function errBox(func, param, msg) {
-        var errMsg = "<b>Error in function</b><br/>" + func + "<br/>" +
-            "<b>Parameter</b><br/>" + param + "<br/>" +
-            "<b>Message</b><br/>" + msg + "<br/><br/>" +
-            "<span onmouseover='this.style.cursor=\"hand\";' onmouseout='this.style.cursor=\"inherit\";' style='width=100%;text-align:right;'>Click to continue</span></div>";
-        modalBox(errMsg);
-    } // End of function errBox
-
-    // Call this function to pop up a branded modal msgBox
-    function modalBox(msg) {
-        var boxCSS = "position:absolute;width:300px;height:150px;padding:10px;background-color:#000000;color:#ffffff;z-index:30;font-family:'Arial';font-size:12px;display:none;";
-        $("#aspnetForm").parent().append("<div id='SPServices_msgBox' style=" + boxCSS + ">" + msg);
-        var msgBoxObj = $("#SPServices_msgBox");
-        var height = msgBoxObj.height();
-        var width = msgBoxObj.width();
-        var leftVal = ($(window).width() / 2) - (width / 2) + "px";
-        var topVal = ($(window).height() / 2) - (height / 2) - 100 + "px";
-        msgBoxObj.css({
-            border: '5px #C02000 solid',
-            left: leftVal,
-            top: topVal
-        }).show().fadeTo("slow", 0.75).click(function () {
-            $(this).fadeOut("3000", function () {
-                $(this).remove();
-            });
-        });
-    } // End of function modalBox
 
     // Generate a unique id for a containing div using the function name and the column display name
     function genContainerId(funcname, columnName, listName) {
@@ -4042,16 +3973,16 @@
         for (i = 0; i < paramArray.length; i++) {
             // the parameter name and the option name match
             if (typeof paramArray[i] === "string") {
-                SOAPEnvelope.payload += wrapNode(paramArray[i], opt[paramArray[i]]);
+                SOAPEnvelope.payload += utils.wrapNode(paramArray[i], opt[paramArray[i]]);
                 // the parameter name and the option name are different
             } else if ($.isArray(paramArray[i]) && paramArray[i].length === 2) {
-                SOAPEnvelope.payload += wrapNode(paramArray[i][0], opt[paramArray[i][1]]);
+                SOAPEnvelope.payload += utils.wrapNode(paramArray[i][0], opt[paramArray[i][1]]);
                 // the element not a string or an array and is marked as "add to payload only if non-null"
             } else if ((typeof paramArray[i] === "object") && (paramArray[i].sendNull !== undefined)) {
-                SOAPEnvelope.payload += ((opt[paramArray[i].name] === undefined) || (opt[paramArray[i].name].length === 0)) ? "" : wrapNode(paramArray[i].name, opt[paramArray[i].name]);
+                SOAPEnvelope.payload += ((opt[paramArray[i].name] === undefined) || (opt[paramArray[i].name].length === 0)) ? "" : utils.wrapNode(paramArray[i].name, opt[paramArray[i].name]);
                 // something isn't right, so report it
             } else {
-                errBox(opt.operation, "paramArray[" + i + "]: " + paramArray[i], "Invalid paramArray element passed to addToPayload()");
+                utils.errBox(opt.operation, "paramArray[" + i + "]: " + paramArray[i], "Invalid paramArray element passed to addToPayload()");
             }
         }
     } // End of function addToPayload
@@ -4087,4 +4018,4 @@
         return SOAPEnvelope;
     } // End of function siteDataFixSOAPEnvelope
 
-}));
+});

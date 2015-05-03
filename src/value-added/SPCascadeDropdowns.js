@@ -1,8 +1,18 @@
 define([
     'jquery',
-    'core'
-], function ($,
-             core) {
+    '../utils/SPServices.utils',
+    "../utils/constants",
+    "../utils/getDropdownSelected",
+    //---------------------------
+    // We don't need local variables for these dependencies
+    // because they are added to the jQuery namaspace.
+    '../core/SPServices.core'
+], function (
+    $,
+    utils,
+    constants,
+    getDropdownSelected
+) {
     // Function to set up cascading dropdowns on a SharePoint form
     // (Newform.aspx, EditForm.aspx, or any other customized form.)
     $.fn.SPServices.SPCascadeDropdowns = function (options) {
@@ -37,7 +47,7 @@ define([
             displayName: opt.parentColumn
         });
         if (parentSelect.Obj.html() === null && opt.debug) {
-            errBox(thisFunction, "parentColumn: " + opt.parentColumn, TXTColumnNotFound);
+            utils.errBox(thisFunction, "parentColumn: " + opt.parentColumn, constants.TXTColumnNotFound);
             return;
         }
 
@@ -46,12 +56,12 @@ define([
             displayName: opt.childColumn
         });
         if (childSelect.Obj.html() === null && opt.debug) {
-            errBox(thisFunction, "childColumn: " + opt.childColumn, TXTColumnNotFound);
+            utils.errBox(thisFunction, "childColumn: " + opt.childColumn, constants.TXTColumnNotFound);
             return;
         }
 
         // If requested and the childColumn is a complex dropdown, convert to a simple dropdown
-        if (opt.simpleChild === true && childSelect.Type === dropdownType.complex) {
+        if (opt.simpleChild === true && childSelect.Type === constants.dropdownType.complex) {
             $().SPServices.SPComplexToSimpleDropdown({
                 listName: opt.listName,
                 columnName: opt.childColumn
@@ -106,20 +116,20 @@ define([
         if (!thisParentSetUp) {
             switch (parentSelect.Type) {
                 // Plain old select
-                case dropdownType.simple:
+                case constants.dropdownType.simple:
                     parentSelect.Obj.bind("change", function () {
                         cascadeDropdown(parentSelect);
                     });
                     break;
                 // Input / Select hybrid
-                case dropdownType.complex:
+                case constants.dropdownType.complex:
                     // Bind to any change on the hidden input element
                     parentSelect.optHid.bind("propertychange", function () {
                         cascadeDropdown(parentSelect);
                     });
                     break;
                 // Multi-select hybrid
-                case dropdownType.multiSelect:
+                case constants.dropdownType.multiSelect:
                     // Handle the dblclick on the candidate select
                     $(parentSelect.master.candidateControl).bind("dblclick", function () {
                         cascadeDropdown(parentSelect);
@@ -159,6 +169,7 @@ define([
         $(childColumns).each(function () {
 
             // Break out the data objects for this child column
+            var i;
             var opt = this.opt;
             var childSelect = this.childSelect;
             var childColumnStatic = this.childColumnStatic;
@@ -168,10 +179,10 @@ define([
             parentSelectSelected = getDropdownSelected(parentSelect, opt.matchOnId);
 
             // If the selection hasn't changed, then there's nothing to do right now.  This is useful to reduce
-            // the number of Web Service calls when the parentSelect.Type = dropdownType.complex or dropdownType.multiSelect, as there are multiple propertychanges
+            // the number of Web Service calls when the parentSelect.Type = constants.dropdownType.complex or constants.dropdownType.multiSelect, as there are multiple propertychanges
             // which don't require any action.  The attribute will be unique per child column in case there are
             // multiple children for a given parent.
-            var allParentSelections = parentSelectSelected.join(spDelim);
+            var allParentSelections = parentSelectSelected.join(constants.spDelim);
             if (parentSelect.Obj.data("SPCascadeDropdown_Selected_" + childColumnStatic) === allParentSelections) {
                 return;
             }
@@ -196,7 +207,7 @@ define([
                 // Only one value is selected
                 camlQuery += "<Eq><FieldRef Name='" + opt.relationshipListParentColumn +
                     (opt.matchOnId ? "' LookupId='True'/><Value Type='Integer'>" : "'/><Value Type='Text'>") +
-                    escapeColumnValue(parentSelectSelected[0]) + "</Value></Eq>";
+                    utils.escapeColumnValue(parentSelectSelected[0]) + "</Value></Eq>";
             } else {
                 var compound = (parentSelectSelected.length > 2);
                 for (i = 0; i < (parentSelectSelected.length - 1); i++) {
@@ -205,7 +216,7 @@ define([
                 for (i = 0; i < parentSelectSelected.length; i++) {
                     camlQuery += "<Eq><FieldRef Name='" + opt.relationshipListParentColumn +
                         (opt.matchOnId ? "' LookupId='True'/><Value Type='Integer'>" : "'/><Value Type='Text'>") +
-                        escapeColumnValue(parentSelectSelected[i]) + "</Value></Eq>";
+                        utils.escapeColumnValue(parentSelectSelected[i]) + "</Value></Eq>";
                     if (i > 0 && (i < (parentSelectSelected.length - 1)) && compound) {
                         camlQuery += "</Or>";
                     }
@@ -243,12 +254,12 @@ define([
                         var thisFunction = "SPServices.SPCascadeDropdowns";
                         var errorText = $(this).text();
                         if (opt.debug && errorText === "One or more field types are not installed properly. Go to the list settings page to delete these fields.") {
-                            errBox(thisFunction,
+                            utils.errBox(thisFunction,
                                 "relationshipListParentColumn: " + opt.relationshipListParentColumn + " or " +
                                 "relationshipListChildColumn: " + opt.relationshipListChildColumn,
                                 "Not found in relationshipList " + opt.relationshipList);
                         } else if (opt.debug && errorText === "Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).") {
-                            errBox(thisFunction,
+                            utils.errBox(thisFunction,
                                 "relationshipList: " + opt.relationshipList,
                                 "List not found");
                         }
@@ -257,7 +268,7 @@ define([
 
                     // Add an explanatory prompt
                     switch (childSelect.Type) {
-                        case dropdownType.simple:
+                        case constants.dropdownType.simple:
                             // Remove all of the existing options
                             childSelect.Obj[0].innerHTML = "";
 //                            $(childSelect.Obj).find("option").remove();
@@ -268,12 +279,12 @@ define([
                                 childSelect.Obj.append("<option value='0'>" + opt.noneText + "</option>");
                             }
                             break;
-                        case dropdownType.complex:
+                        case constants.dropdownType.complex:
                             // If the column is required, don't add the "(None)" option
                             choices = childColumnRequired ? "" : opt.noneText + "|0";
                             childSelect.Obj.val("");
                             break;
-                        case dropdownType.multiSelect:
+                        case constants.dropdownType.multiSelect:
                             // Remove all of the existing options
                             $(childSelect.master.candidateControl).find("option").remove();
                             newMultiLookupPickerdata = "";
@@ -294,8 +305,8 @@ define([
                         // else the ID of the relationshipList item
                         var thisValue = $(this).attr("ows_" + opt.relationshipListChildColumn);
 
-                        if (typeof thisValue !== "undefined" && thisValue.indexOf(spDelim) > 0) {
-                            thisOption = new SplitIndex(thisValue);
+                        if (typeof thisValue !== "undefined" && thisValue.indexOf(constants.spDelim) > 0) {
+                            thisOption = new utils.SplitIndex(thisValue);
                         } else {
                             thisOption.id = $(this).attr("ows_ID");
                             thisOption.value = thisValue;
@@ -313,17 +324,17 @@ define([
                         firstChildOptionValue = thisOption.value;
 
                         switch (childSelect.Type) {
-                            case dropdownType.simple:
+                            case constants.dropdownType.simple:
                                 var selected = ($(this).attr("ows_ID") === childSelectSelected[0]) ? " selected='selected'" : "";
                                 childSelect.Obj.append("<option" + selected + " value='" + thisOption.id + "'>" + thisOption.value + "</option>");
                                 break;
-                            case dropdownType.complex:
+                            case constants.dropdownType.complex:
                                 if (thisOption.id === childSelectSelected[0]) {
                                     childSelect.Obj.val(thisOption.value);
                                 }
                                 choices = choices + ((choices.length > 0) ? "|" : "") + thisOption.value + "|" + thisOption.id;
                                 break;
-                            case dropdownType.multiSelect:
+                            case constants.dropdownType.multiSelect:
                                 $(childSelect.master.candidateControl).append("<option value='" + thisOption.id + "'>" + thisOption.value + "</option>");
                                 newMultiLookupPickerdata += thisOption.id + "|t" + thisOption.value + "|t |t |t";
                                 break;
@@ -333,14 +344,14 @@ define([
                     });
 
                     switch (childSelect.Type) {
-                        case dropdownType.simple:
+                        case constants.dropdownType.simple:
                             childSelect.Obj.trigger("change");
                             // If there is only one option and the selectSingleOption option is true, then select it
                             if (numChildOptions === 1 && opt.selectSingleOption === true) {
                                 $(childSelect.Obj).find("option[value!='0']:first").attr("selected", "selected");
                             }
                             break;
-                        case dropdownType.complex:
+                        case constants.dropdownType.complex:
                             // Set the allowable choices
                             childSelect.Obj.attr("choices", choices);
                             // If there is only one option and the selectSingleOption option is true, then select it
@@ -355,7 +366,7 @@ define([
                                 childSelect.optHid.val("");
                             }
                             break;
-                        case dropdownType.multiSelect:
+                        case constants.dropdownType.multiSelect:
                             // Clear the master
                             childSelect.master.data = "";
                             childSelect.MultiLookupPickerdata.val(newMultiLookupPickerdata);
@@ -399,6 +410,6 @@ define([
 
     } // End cascadeDropdown
 
-    return SPCascadeDropdowns;
+    return $;
 
 });
