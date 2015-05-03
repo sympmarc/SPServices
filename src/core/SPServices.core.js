@@ -1,56 +1,10 @@
-/*
-* SPServices - Work with SharePoint's Web Services using jQuery
-* Version 1.36.0
-* @requires jQuery v1.8 or greater - jQuery 1.10.x+ recommended
-*
-* Copyright (c) 2009-2015 Sympraxis Consulting LLC
-* Examples and docs at:
-* http://spservices.codeplex.com/
-* Licensed under the MIT license:
-* http://www.opensource.org/licenses/mit-license.php
-*/
-/*
-* @description SPServices is a jQuery library which abstracts SharePoint's Web Services and makes them easier to use. It also includes functions which use the various Web Service operations to provide more useful (and cool) capabilities. It works entirely client side and requires no server install.
-* @type jQuery
-* @name SPServices
-* @category Plugins/SPServices
-* @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-! @build SPServices 1.36.0 2015-05-02 07:57:07
-*/
-/*
- * SPServices - Work with SharePoint's Web Services using jQuery
- * Version 2014.01
- * @requires jQuery v1.8 or greater - jQuery 1.10.x recommended
- *
- * Copyright (c) 2009-2013 Sympraxis Consulting LLC
- * Examples and docs at:
- * http://spservices.codeplex.com
- * Licensed under the MIT license:
- * http://www.opensource.org/licenses/mit-license.php
- */
-/*
- * @description Work with SharePoint's Web Services using jQuery
- * @type jQuery
- * @name SPServices
- * @category Plugins/SPServices
- * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
- * @intellisense added by Daniel Yee @Daniel_the_Nerd
- */
-
-intellisense.annotate(jQuery, {
-	'SPServices': function() {
-		/// <signature>
-		///   <summary>This is the core function of the library, which you can use to make Ajax calls to the SharePoint Web Services. Note: As of version 2013.01, all calls return a  jQuery deferred object aka a promise.</summary>
-		/// </signature>
-	}
-});
 !(function (factory) {
     // If AMD is present, register SPServices an an annoymous
     // module that depends on 'jquery'
     if (typeof define === 'function' && define.amd) {
         define(['jquery'], factory);
 
-    // Else, just make SPServices available in jQuery directly
+        // Else, just make SPServices available in jQuery directly
     } else {
         factory(jQuery);
     }
@@ -970,7 +924,7 @@ intellisense.annotate(jQuery, {
                 addToPayload(opt, ["sharedServiceIds", "termSetIds", "lcid", "clientTimeStamps", "clientVersions"]);
                 break;
 
-                // USERS AND GROUPS OPERATIONS
+            // USERS AND GROUPS OPERATIONS
             case "AddGroup":
                 addToPayload(opt, ["groupName", "ownerIdentifier", "ownerType", "defaultUserLoginName", "description"]);
                 break;
@@ -1673,12 +1627,12 @@ intellisense.annotate(jQuery, {
         var relatedListColumnType = relatedColumnsXML[opt.relatedListColumn].attr("Type");
         if (relatedListColumnType === "Lookup") {
             camlQuery += "<Eq><FieldRef Name='" + opt.relatedListColumn +
-            (opt.matchOnId ? "' LookupId='True'/><Value Type='Integer'>" : "'/><Value Type='Text'>") +
-            escapeColumnValue(columnSelectSelected[0]) + "</Value></Eq>";
+                (opt.matchOnId ? "' LookupId='True'/><Value Type='Integer'>" : "'/><Value Type='Text'>") +
+                escapeColumnValue(columnSelectSelected[0]) + "</Value></Eq>";
         } else {
             camlQuery += "<Eq><FieldRef Name='" +
-            (opt.matchOnId ? "ID' /><Value Type='Counter'>" : opt.relatedListColumn + "'/><Value Type='Text'>") +
-            escapeColumnValue(columnSelectSelected[0]) + "</Value></Eq>";
+                (opt.matchOnId ? "ID' /><Value Type='Counter'>" : opt.relatedListColumn + "'/><Value Type='Text'>") +
+                escapeColumnValue(columnSelectSelected[0]) + "</Value></Eq>";
         }
 
         if (opt.CAMLQuery.length > 0) {
@@ -2008,22 +1962,22 @@ intellisense.annotate(jQuery, {
         // DisplayPatterns are a bit unique, so let's handle them differently
         if (opt.node.nodeName === "DisplayPattern") {
             outString += "<tr><td width='100px' style='font-weight:bold;'>" + opt.node.nodeName +
-            "</td><td><textarea readonly='readonly' rows='5' cols='50'>" + opt.node.xml + "</textarea></td></tr>";
+                "</td><td><textarea readonly='readonly' rows='5' cols='50'>" + opt.node.xml + "</textarea></td></tr>";
             // A node which has no children
         } else if (!opt.node.hasChildNodes()) {
             outString += "<tr><td width='100px' style='font-weight:bold;'>" + opt.node.nodeName +
-            "</td><td>" + ((opt.node.nodeValue !== null) ? checkLink(opt.node.nodeValue) : "&nbsp;") + "</td></tr>";
+                "</td><td>" + ((opt.node.nodeValue !== null) ? checkLink(opt.node.nodeValue) : "&nbsp;") + "</td></tr>";
             if (opt.node.attributes) {
                 outString += "<tr><td colspan='99'>" + showAttrs(opt.node) + "</td></tr>";
             }
             // A CDATA_SECTION node
         } else if (opt.node.hasChildNodes() && opt.node.firstChild.nodeType === NODE_CDATA_SECTION) {
             outString += "<tr><td width='100px' style='font-weight:bold;'>" + opt.node.nodeName +
-            "</td><td><textarea readonly='readonly' rows='5' cols='50'>" + opt.node.parentNode.text + "</textarea></td></tr>";
+                "</td><td><textarea readonly='readonly' rows='5' cols='50'>" + opt.node.parentNode.text + "</textarea></td></tr>";
             // A TEXT node
         } else if (opt.node.hasChildNodes() && opt.node.firstChild.nodeType === NODE_TEXT) {
             outString += "<tr><td width='100px' style='font-weight:bold;'>" + opt.node.nodeName +
-            "</td><td>" + checkLink(opt.node.firstChild.nodeValue) + "</td></tr>";
+                "</td><td>" + checkLink(opt.node.firstChild.nodeValue) + "</td></tr>";
             // Handle child nodes
         } else {
             outString += "<tr><td width='100px' style='font-weight:bold;' colspan='99'>" + opt.node.nodeName + "</td></tr>";
@@ -2492,7 +2446,7 @@ intellisense.annotate(jQuery, {
             // specified in the options (opt.redirectUrl)
             var thisRedirectUrl = (typeof queryStringVals.RedirectURL === "string") ? queryStringVals.RedirectURL : opt.redirectUrl;
             location.href = thisRedirectUrl + "?" + opt.qsParamName + "=" + lastID +
-            ((typeof queryStringVals.RealSource === "string") ? ("&Source=" + queryStringVals.RealSource) : "");
+                ((typeof queryStringVals.RealSource === "string") ? ("&Source=" + queryStringVals.RealSource) : "");
         }
     }; // End $.fn.SPServices.SPRedirectWithID
 
@@ -3614,7 +3568,7 @@ intellisense.annotate(jQuery, {
     //   contents - The element which contains the current value
     //   currentValue - The current value if it is set
     //   checkNames - The Check Names image (in case you'd like to click it at some point)
-    //   checkNamesPhrase - you can pass your local phrase here to check names, like in russian it would be - Проверить имена
+    //   checkNamesPhrase - you can pass your local phrase here to check names, like in russian it would be - ????????? ?????
     $.fn.SPServices.SPFindPeoplePicker = function (options) {
 
         var opt = $.extend({}, {
@@ -3753,8 +3707,8 @@ intellisense.annotate(jQuery, {
 
 // Paul T., 2015.05.02: Commented out since is not currently used
         // var colStaticName = $().SPServices.SPGetStaticFromDisplay({
-            // listName: $().SPServices.SPListNameFromUrl(),
-            // columnDisplayName: opt.displayName
+        // listName: $().SPServices.SPListNameFromUrl(),
+        // columnDisplayName: opt.displayName
         // });
 
         // Simple, where the select's title attribute is colName (DisplayName)
@@ -3777,7 +3731,7 @@ intellisense.annotate(jQuery, {
             // Multi-select: This will find the multi-select column control on a Russian site (and perhaps others) where the Title looks like '????????? ????????: Column Name'
         } else if ((columnObj.Obj = $("select[ID$='SelectCandidate'][Title$=': " + opt.displayName + "']")).length === 1) {
             columnObj.Type = dropdownType.multiSelect;
-            // Multi-select: This will find the multi-select column control on a German site (and perhaps others) where the Title looks like 'Mögliche Werte für &quot;Column name&quot;.'
+            // Multi-select: This will find the multi-select column control on a German site (and perhaps others) where the Title looks like 'M�gliche Werte f�r &quot;Column name&quot;.'
         } else if ((columnObj.Obj = $("select[ID$='SelectCandidate'][Title$='\"" + opt.displayName + "\".']")).length === 1) {
             columnObj.Type = dropdownType.multiSelect;
             // Multi-select: This will find the multi-select column control on a Italian site (and perhaps others) where the Title looks like "Valori possibili Column name"
@@ -3872,12 +3826,12 @@ intellisense.annotate(jQuery, {
                     // URL as hyperlink
                     case "Hyperlink":
                         outString = "<a href='" + columnValue.substring(0, columnValue.search(",")) + "'>" +
-                        columnValue.substring(columnValue.search(",") + 1) + "</a>";
+                            columnValue.substring(columnValue.search(",") + 1) + "</a>";
                         break;
                     // URL as image
                     case "Image":
                         outString = "<img alt='" + columnValue.substring(columnValue.search(",") + 1) +
-                        "' src='" + columnValue.substring(0, columnValue.search(",")) + "'/>";
+                            "' src='" + columnValue.substring(0, columnValue.search(",")) + "'/>";
                         break;
                     // Just in case
                     default:
@@ -3890,8 +3844,8 @@ intellisense.annotate(jQuery, {
                 var userMultiValues = columnValue.split(spDelim);
                 for (i = 0; i < userMultiValues.length; i = i + 2) {
                     outArray.push("<a href='/_layouts/userdisp.aspx?ID=" + userMultiValues[i] +
-                    "&Source=" + escapeUrl(location.href) + "'>" +
-                    userMultiValues[i + 1] + "</a>");
+                        "&Source=" + escapeUrl(location.href) + "'>" +
+                        userMultiValues[i + 1] + "</a>");
                 }
                 outString = outArray.join(", ");
                 break;
@@ -3918,22 +3872,22 @@ intellisense.annotate(jQuery, {
                         dispUrl = listXML.attr("BaseType") === "1" ? listXML.attr("RootFolder") + SLASH + "Forms/DispForm.aspx" :
                         listXML.attr("RootFolder") + SLASH + "DispForm.aspx";
                         outString = "<a href='" + dispUrl +
-                        "?ID=" + columnValue.substring(0, columnValue.search(spDelim)) + "&RootFolder=*&Source=" + escapeUrl(location.href) + "'>" +
-                        columnValue.substring(columnValue.search(spDelim) + 2) + "</a>";
+                            "?ID=" + columnValue.substring(0, columnValue.search(spDelim)) + "&RootFolder=*&Source=" + escapeUrl(location.href) + "'>" +
+                            columnValue.substring(columnValue.search(spDelim) + 2) + "</a>";
                         break;
                     case "FileDirRef":
                         // Get the display form URL for the lookup source list
                         dispUrl = SLASH + columnValue.substring(columnValue.search(spDelim) + 2);
                         outString = "<a href='" + dispUrl + "'>" +
-                        columnValue.substring(columnValue.search(spDelim) + 2) + "</a>";
+                            columnValue.substring(columnValue.search(spDelim) + 2) + "</a>";
                         break;
                     // Any other lookup column
                     default:
                         // Get the display form URL for the lookup source list
                         dispUrl = getListFormUrl(columnXML.attr("List"), "DisplayForm");
                         outString = "<a href='" + opt.relatedWebURL + SLASH + dispUrl +
-                        "?ID=" + columnValue.substring(0, columnValue.search(spDelim)) + "&RootFolder=*&Source=" + escapeUrl(location.href) + "'>" +
-                        columnValue.substring(columnValue.search(spDelim) + 2) + "</a>";
+                            "?ID=" + columnValue.substring(0, columnValue.search(spDelim)) + "&RootFolder=*&Source=" + escapeUrl(location.href) + "'>" +
+                            columnValue.substring(columnValue.search(spDelim) + 2) + "</a>";
                         break;
                 }
                 break;
@@ -3946,8 +3900,8 @@ intellisense.annotate(jQuery, {
                     var lookupMultiValues = columnValue.split(spDelim);
                     for (i = 0; i < lookupMultiValues.length / 2; i++) {
                         outArray.push("<a href='" + webUrl + SLASH + dispUrl +
-                        "?ID=" + lookupMultiValues[i * 2] + "&RootFolder=*&Source=" + escapeUrl(location.href) + "'>" +
-                        lookupMultiValues[(i * 2) + 1] + "</a>");
+                            "?ID=" + lookupMultiValues[i * 2] + "&RootFolder=*&Source=" + escapeUrl(location.href) + "'>" +
+                            lookupMultiValues[(i * 2) + 1] + "</a>");
                     }
                 }
                 outString = outArray.join(", ");
@@ -3978,7 +3932,7 @@ intellisense.annotate(jQuery, {
         var out = "<table class='ms-vb' width='100%'>";
         for (i = 0; i < node.attributes.length; i++) {
             out += "<tr><td width='10px' style='font-weight:bold;'>" + i + "</td><td width='100px'>" +
-            node.attributes.item(i).nodeName + "</td><td>" + checkLink(node.attributes.item(i).nodeValue) + "</td></tr>";
+                node.attributes.item(i).nodeName + "</td><td>" + checkLink(node.attributes.item(i).nodeValue) + "</td></tr>";
         }
         out += "</table>";
         return out;
@@ -4164,10 +4118,10 @@ intellisense.annotate(jQuery, {
 
 // Paul T., 2015.05.01: Commented out since its not currently used.
     // var escaped_one_to_xml_special_map = {
-        // '&amp;': '&',
-        // '&quot;': '"',
-        // '&lt;': '<',
-        // '&gt;': '>'
+    // '&amp;': '&',
+    // '&quot;': '"',
+    // '&lt;': '<',
+    // '&gt;': '>'
     // };
 
     function encodeXml(string) {
@@ -4178,10 +4132,10 @@ intellisense.annotate(jQuery, {
 
 // Paul T., 2015-05-02: Commented out since its not currently used.
     // function decodeXml(string) {
-        // return string.replace(/(&quot;|&lt;|&gt;|&amp;)/g,
-            // function (str, item) {
-                // return escaped_one_to_xml_special_map[item];
-            // });
+    // return string.replace(/(&quot;|&lt;|&gt;|&amp;)/g,
+    // function (str, item) {
+    // return escaped_one_to_xml_special_map[item];
+    // });
     // }
 
     /* Taken from http://dracoblue.net/dev/encodedecode-special-xml-characters-in-javascript/155/ */
@@ -4212,18 +4166,18 @@ intellisense.annotate(jQuery, {
     }
 
     // James Padolsey's Regex Selector for jQuery http://james.padolsey.com/javascript/regex-selector-for-jquery/
-/*    $.expr[':'].regex = function (elem, index, match) {
-        var matchParams = match[3].split(','),
-            validLabels = /^(data|css):/,
-            attr = {
-                method: matchParams[0].match(validLabels) ?
-                    matchParams[0].split(':')[0] : 'attr',
-                property: matchParams.shift().replace(validLabels, '')
-            },
-            regexFlags = 'ig',
-            regex = new RegExp(matchParams.join('').replace(/^\s+|\s+$/g, ''), regexFlags);
-        return regex.test($(elem)[attr.method](attr.property));
-    };
-*/
+    /*    $.expr[':'].regex = function (elem, index, match) {
+     var matchParams = match[3].split(','),
+     validLabels = /^(data|css):/,
+     attr = {
+     method: matchParams[0].match(validLabels) ?
+     matchParams[0].split(':')[0] : 'attr',
+     property: matchParams.shift().replace(validLabels, '')
+     },
+     regexFlags = 'ig',
+     regex = new RegExp(matchParams.join('').replace(/^\s+|\s+$/g, ''), regexFlags);
+     return regex.test($(elem)[attr.method](attr.property));
+     };
+     */
 
 }));

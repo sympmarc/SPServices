@@ -1,5 +1,5 @@
 !(function (factory) {
-    // If AMD is present, register SPServices an an annoymous
+    // If AMD is present, register SPServices an an anonymous
     // module that depends on 'jquery'
     if (typeof define === 'function' && define.amd) {
         define(['jquery'], factory);
