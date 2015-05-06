@@ -4458,19 +4458,21 @@
     //  -->
     // as the "anchor" to find it. Necessary because SharePoint doesn't give all field types ids or specific classes.
     function findFormField(columnName) {
-        var thisFormBody;
-        // There's no easy way to find one of these columns; we'll look for the comment with the columnName
-        var searchText = RegExp("FieldName=\"" + columnName.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") + "\"", "gi");
-        // Loop through all of the ms-formbody table cells
-        $("td.ms-formbody, td.ms-formbodysurvey").each(function () {
-            // Check for the right comment
-            if (searchText.test($(this).html())) {
-                thisFormBody = $(this);
-                // Found it, so we're done
-                return false;
-            }
-        });
-        return thisFormBody;
+        var $formBody = $("td.ms-formbody, td.ms-formbodysurvey"),
+            // Borrowed from MDN.
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+            escapeRegExp = function (v){
+                return v.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+            },
+            columnName = escapeRegExp(v),
+            rcommentValidation = new RegExp("(?:Field|FieldInternal)Name=\"" + columnName + "\"", "i"),
+            $columnNode = $formBody.contents().filter(function () {
+                return this.nodeType === 8 && rcommentValidation.test(this.nodeValue);
+            })
+
+        ;
+        
+        return $columnNode.parent("td");
     } // End of function findFormField
 
     // The SiteData operations have the same names as other Web Service operations. To make them easy to call and unique, I'm using
