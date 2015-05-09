@@ -40,7 +40,7 @@ This will start a job that watches the sources files as they are saved and runs 
 
 ### Deploy to a SharePoint Folder
 
-For development, just copy the entire `src` folder to a SharePoint folder and click on the `dev.aspx` file. SPServices will be loaded using AMD (require.js).
+For development, just copy the entire `src` and `build` folders (after running `grunt`) to a SharePoint Document Library folder and click on the `src/dev.aspx` file. SPServices will be loaded using AMD (require.js). The page will display multiple ways to load SPServices (via requireJS, jQuery built library or jQuery built library minimized).
 
 A build target has been created to facilitate this task - called `deploy`. In order to use it, you must first set the `deployLocation` in the `me.build.json` file that is automatically created at the root of this project when grunt is run.  The deploy location could be a locally mapped drive to the desired SharePoint folder or a network path. Example for an O365 tennat:
 
