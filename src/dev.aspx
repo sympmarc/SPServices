@@ -30,10 +30,37 @@
     <!--[if lt IE 9]>
         <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+
     <script type="text/javascript">
-        document.write(
-            '<script src="/' + '/cdnjs.cloudflare.com/ajax/libs/require.js/2.1.17/require.min.js?_@BUILD"></' + 'script>'
-        );
+
+        window.SPSERVICES = {
+            mode: "dev" // others: built, builtmin
+        };
+
+        if (location.search && location.search.indexOf("mode=builtmin") > -1) {
+            window.SPSERVICES.mode = "builtmin";
+            document.write(
+                '<script src="/' + '/ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></' + 'script>'
+            );
+            document.write(
+                '<script src=".' + './build/jquery.SPServices.min.js?_@BUILD"></' + 'script>'
+            );
+
+        } else if (location.search && location.search.indexOf("mode=built") > -1) {
+            window.SPSERVICES.mode = "built";
+            document.write(
+                '<script src="/' + '/ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></' + 'script>'
+            );
+            document.write(
+                '<script src=".' + './build/jquery.SPServices.js?_@BUILD"></' + 'script>'
+            );
+
+        } else {
+            document.write(
+                '<script src="/' + '/cdnjs.cloudflare.com/ajax/libs/require.js/2.1.17/require.min.js?_@BUILD"></' + 'script>'
+            );
+        }
+
         document.write(
             '<link rel="stylesheet" href="/' +
             '/ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.css?_@BUILD">'
@@ -52,25 +79,47 @@
 <asp:Content ContentPlaceHolderId="PlaceHolderNavSpacer" runat="server"></asp:Content>
 <asp:Content ContentPlaceHolderId="PlaceHolderMain" runat="server">
 
-    <div id="spservices_dev_cntr"></div>
+    <div id="spservices_dev_cntr">
+        <div>
+            <span>Mode: </span>
+            <a href="dev.aspx" title="Loads requireJS modules">Development</a> |
+            <a href="dev.aspx?mode=built" title="Loads the built jQuery library">Built jQuery Library</a> |
+            <a href="dev.aspx?mode=builtmin"  title="Loads the built jQuery library minified">Built jQuery Library (minified)</a>
+            <hr/>
+        </div>
+    </div>
     <script type="text/javascript">
 
         (function(window, document){
 
-            var app = requirejs.config({
-                    context: "SPServices",
-                    baseUrl: "./",
-                    urlArgs: '@BUILD',
-                    paths: {
-                        jquery      : '//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min',
-                        'jquery-ui' : '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min'
-                    },
-                    shim: {}
+            var done = function($){
+                $("#spservices_dev_cntr").append(
+                    "<div>jQuery: v." + jQuery.fn.jquery + " Loaded!</div>" +
+                    "<div>SPServices Loaded!</div>" +
+                    "<div>v." + $.fn.SPServices.Version() + ", Build: @BUILD</div>" +
+                    "<div>Open the browser console to debug/test</div><hr/>"
+                );
+            };
+
+            if (window.SPSERVICES.mode === "dev") {
+                var app = requirejs.config({
+                        context: "SPServices",
+                        baseUrl: "./",
+                        urlArgs: '@BUILD',
+                        paths: {
+                            jquery : '//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min'
+                        },
+                        shim: {}
+                    });
+
+                app(["require", "jquery", "SPServices"], function(require, $){
+                    done($);
                 });
 
-            app(["require", "jquery", "SPServices"], function(require, $){
-                $("#spservices_dev_cntr").append("<div>SPServices Loaded!</div>")
-            });
+            } else {
+                done(jQuery);
+            }
+
 
         }(window, document));
 

@@ -6,9 +6,12 @@ module.exports = function(grunt) {
     "use strict";
 
     var
-    path    = require("path"),
-    fs      = require("fs"),
-    banner  = "/*\n" +
+    path        = require("path"),
+    fs          = require("fs"),
+    buildDate   = grunt.template.today('yyyy-mm-dd'),
+    buildYear   = grunt.template.today('yyyy'),
+    buildId     = (new Date()).getTime(),
+    banner      = "/*\n" +
         "* <%= pkg.name %> - <%= pkg.description_short %>\n" +
         "* Version <%= pkg.version %>\n" +
         "* @requires <%= pkg.requires %>\n" +
@@ -25,7 +28,7 @@ module.exports = function(grunt) {
         "* @name <%= pkg.name %>\n" +
         "* @category Plugins/<%= pkg.name %>\n" +
         "* @author <%= pkg.authors %>\n" +
-        "! @build <%= pkg.name %> <%= pkg.version %> <%= grunt.template.today('yyyy-mm-dd hh:MM:ss') %>\n" +
+        "* @build <%= pkg.name %> <%= pkg.version %> <%= grunt.template.today('yyyy-mm-dd hh:MM:ss') %>\n" +
         "*/\n";
 
     // If we don't yet have a user's build file, create it.
@@ -148,21 +151,37 @@ module.exports = function(grunt) {
                 ]
             },
             // DEPLOY:
-            //      Copies the files from /src/* to the folder defined by
-            //      the user's build options (me.build.json) attribute 'deployLocation'
+            // Copies the files from /src/* and build/* to the folder defined by
+            // the user's build options (me.build.json) attribute 'deployLocation'
+            // deploy only copies files that have changed since last time.
             deploy: {
                 options : {
                     processContent: function(fileContent, filePath){
                         return replaceBuildVariables(fileContent, filePath);
                     }
                 },
-                cwd:    'src/',
                 src:    [
-                    '**/*'
+                    "src/**/*",
+                    "build/**/*.js"
                 ],
                 dest:   "<%= userBuildOpt.deployLocation %>",
                 expand: true,
                 filter: onlyNew(['copy', 'deploy'], "me.deploy.timestamp.txt")
+            },
+
+            // DEPLOY ALWAYS
+            // These file are always deployed.
+            deployAlways: {
+                options : {
+                    processContent: function(fileContent, filePath){
+                        return replaceBuildVariables(fileContent, filePath);
+                    }
+                },
+                src:    [
+                    "src/dev.aspx"
+                ],
+                dest:   "<%= userBuildOpt.deployLocation %>",
+                expand: true
             }
         },
 
@@ -175,8 +194,8 @@ module.exports = function(grunt) {
                 options: {
                     banner: banner
                 },
-                src: "src/jquery.SPServices.js",
-                dest: "build/jquery.SPServices.js"
+                src:    "build/<%= pkg.filename %>.js",
+                dest:   "build/<%= pkg.filename %>.js"
             }
         },
 
@@ -185,8 +204,8 @@ module.exports = function(grunt) {
                 banner: banner
             },
             build: {
-                src: "src/<%= pkg.filename %>.js",
-                dest: "build/<%= pkg.filename %>.min.js"
+                src:    "build/<%= pkg.filename %>.js",
+                dest:   "build/<%= pkg.filename %>.min.js"
             }
         },
 
@@ -221,6 +240,72 @@ module.exports = function(grunt) {
                 files : ['src/**/*'],
                 tasks : ['jshint:src']
             }
+        },
+
+        requirejs: {
+
+            // See requireJS builder documentation (r.js) of more on how to set this up
+            // http://requirejs.org/docs/optimization.html#options
+            // https://github.com/jrburke/r.js/blob/master/build/example.build.js
+            compile: {
+                options: {
+                    baseUrl: ".",
+                    paths: {
+                        jquery: 'http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min'
+                    },
+                    exclude: ["jquery"],
+                    optimize: "none",
+                    wrap: {
+                        // AMD loader code
+                        start: ';(function(factory){\n' +
+                                '    if ( typeof define === "function" && define.amd ) {\n' +
+                                    '        define(["jquery"], factory );\n' +
+                                '    } else {\n' +
+                                    '        factory(jQuery);' +
+                                '    }' +
+                            '}(function($) {\n   var jquery = jQuery;\n',
+                        end: '}));'
+                    },
+                    done: function(done, output) {
+
+                        // Let's check to ensure that no one modules was built/included more than once.
+                        var duplicates = require('rjs-build-analysis').duplicates(output);
+
+                        if (Object.keys(duplicates).length > 0) {
+                            grunt.log.subhead('Duplicates found in requirejs build:');
+                            for (var key in duplicates) {
+                                grunt.log.error(duplicates[key] + ": " + key);
+                            }
+                            return done(new Error('r.js built duplicate modules, please check the excludes option.'));
+                        } else {
+                            grunt.log.success("No duplicates found!");
+                        }
+
+                        done();
+                    },
+                    onModuleBundleComplete: function (data) {
+
+                        var amdclean = require('amdclean');
+
+                        // Make a copy of the requireJS optimized file
+                        // Uncomment this if you would like to get a single requirejs file
+                        // fs.writeFileSync(
+                            // data.path + ".compiled.js",
+                            // fs.readFileSync(outputFile)
+                        // );
+
+                        fs.writeFileSync(data.path, amdclean.clean({
+                            'filePath': data.path,
+                            'ignoreModules': ["jquery"],
+                            transformAMDChecks: false
+                        }));
+
+                    },
+                    name: "src/SPServices",
+                    out: "build/jquery.SPServices.js"
+                }
+            }
+
         }
 
     });
@@ -232,9 +317,16 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-zip');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-requirejs');
 
     // Default task(s).
-    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'zip']);
+    grunt.registerTask('default', [
+        'jshint',
+        'requirejs:compile',
+        'concat',
+        'uglify',
+        'zip'
+    ]);
 
     grunt.registerTask('deploy', function(){
 
@@ -246,7 +338,8 @@ module.exports = function(grunt) {
 
         grunt.task.run([
             "default",
-            "copy:deploy"
+            "copy:deploy",
+            "copy:deployAlways"
         ]);
 
     });
