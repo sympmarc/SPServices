@@ -180,6 +180,7 @@ define([
         });
     }; // End of function modalBox;
 
+
     return utils;
 
 });

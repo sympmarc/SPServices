@@ -5,7 +5,7 @@ define([
     "../utils/getDropdownSelected",
     //---------------------------
     // We don't need local variables for these dependencies
-    // because they are added to the jQuery namaspace.
+    // because they are added to the jQuery namespace.
     '../core/SPServices.core'
 ], function (
     $,

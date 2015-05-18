@@ -13,8 +13,10 @@ define([], function(){
             simple:         "S",
             complex:        "C",
             multiSelect:    "M"
-        }
-    };
+        },
+        SLASH: "/"
+
+};
     return constants;
 
 });
