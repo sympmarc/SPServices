@@ -47,7 +47,7 @@ A build target has been created to facilitate this task - called `deploy`. In or
     //YourTenantNameHere.sharepoint.com@SSL/DavWWWRoot/sites/dev/Shared Documents/SPServices-dev
 
 
->   Note: When using a network path, you may receive an error on first attempt to `deploy`. This is likely because Windows is unable to authenticate with the SharePoint server. To resolve the issued, use the network path in Windows Explorer to access it directly and enter the appropriate credentials if prompted.
+>   Note: When using a network path, you may receive an error on first attempt to `deploy`. This is likely because Windows is unable to authenticate with the SharePoint server. To resolve the issue, use the network path in Windows Explorer to access it directly and enter the appropriate credentials if prompted.
 
 To deploy using grunt, run:
 
