@@ -15,7 +15,7 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-05-27 04:44:53
+* @build SPServices 2.0.0 2015-05-27 04:47:51
 */
 ;(function() {
 var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src_SPServices;
@@ -283,7 +283,38 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
           }
           out += '</table>';
           return out;
-        }  // End of function showAttrs
+        },
+        // End of function showAttrs
+        // Add the option values to the utils.SOAPEnvelope.payload for the operation
+        //  opt = options for the call
+        //  paramArray = an array of option names to add to the payload
+        //      "paramName" if the parameter name and the option name match
+        //      ["paramName", "optionName"] if the parameter name and the option name are different (this handles early "wrappings" with inconsistent naming)
+        //      {name: "paramName", sendNull: false} indicates the element is marked as "add to payload only if non-null"
+        addToPayload: function (opt, paramArray) {
+          var i;
+          for (i = 0; i < paramArray.length; i++) {
+            // the parameter name and the option name match
+            if (typeof paramArray[i] === 'string') {
+              utils.SOAPEnvelope.payload += utils.wrapNode(paramArray[i], opt[paramArray[i]]);  // the parameter name and the option name are different
+            } else if ($.isArray(paramArray[i]) && paramArray[i].length === 2) {
+              utils.SOAPEnvelope.payload += utils.wrapNode(paramArray[i][0], opt[paramArray[i][1]]);  // the element not a string or an array and is marked as "add to payload only if non-null"
+            } else if (typeof paramArray[i] === 'object' && paramArray[i].sendNull !== undefined) {
+              utils.SOAPEnvelope.payload += opt[paramArray[i].name] === undefined || opt[paramArray[i].name].length === 0 ? '' : utils.wrapNode(paramArray[i].name, opt[paramArray[i].name]);  // something isn't right, so report it
+            } else {
+              utils.errBox(opt.operation, 'paramArray[' + i + ']: ' + paramArray[i], 'Invalid paramArray element passed to addToPayload()');
+            }
+          }
+        },
+        // End of function addToPayload
+        // The SiteData operations have the same names as other Web Service operations. To make them easy to call and unique, I'm using
+        // the SiteData prefix on their names. This function replaces that name with the right name in the utils.SOAPEnvelope.
+        siteDataFixSOAPEnvelope: function (SOAPEnvelope, siteDataOperation) {
+          var siteDataOp = siteDataOperation.substring(8);
+          SOAPEnvelope.opheader = SOAPEnvelope.opheader.replace(siteDataOperation, siteDataOp);
+          SOAPEnvelope.opfooter = SOAPEnvelope.opfooter.replace(siteDataOperation, siteDataOp);
+          return SOAPEnvelope;
+        }  // End of function siteDataFixSOAPEnvelope
       },
       //end: utils
       //-----------[ PRIVATE METHODS BELOW ]---------------------
@@ -1396,27 +1427,27 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
       case 'Mode':
         break;
       case 'Login':
-        addToPayload(opt, [
+        utils.utils.addToPayload(opt, [
           'username',
           'password'
         ]);
         break;
       // COPY OPERATIONS
       case 'CopyIntoItems':
-        addToPayload(opt, ['SourceUrl']);
+        utils.utils.addToPayload(opt, ['SourceUrl']);
         utils.utils.SOAPEnvelope.payload += '<DestinationUrls>';
         for (i = 0; i < opt.DestinationUrls.length; i++) {
           utils.utils.SOAPEnvelope.payload += utils.wrapNode('string', opt.DestinationUrls[i]);
         }
         utils.utils.SOAPEnvelope.payload += '</DestinationUrls>';
-        addToPayload(opt, [
+        utils.utils.addToPayload(opt, [
           'Fields',
           'Stream',
           'Results'
         ]);
         break;
       case 'CopyIntoItemsLocal':
-        addToPayload(opt, ['SourceUrl']);
+        utils.utils.addToPayload(opt, ['SourceUrl']);
         utils.utils.SOAPEnvelope.payload += '<DestinationUrls>';
         for (i = 0; i < opt.DestinationUrls.length; i++) {
           utils.utils.SOAPEnvelope.payload += utils.wrapNode('string', opt.DestinationUrls[i]);
@@ -1424,7 +1455,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         utils.utils.SOAPEnvelope.payload += '</DestinationUrls>';
         break;
       case 'GetItem':
-        addToPayload(opt, [
+        utils.utils.addToPayload(opt, [
           'Url',
           'Fields',
           'Stream'
@@ -1432,17 +1463,17 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         break;
       // FORM OPERATIONS
       case 'GetForm':
-        addToPayload(opt, [
+        utils.utils.addToPayload(opt, [
           'listName',
           'formUrl'
         ]);
         break;
       case 'GetFormCollection':
-        addToPayload(opt, ['listName']);
+        utils.utils.addToPayload(opt, ['listName']);
         break;
       // LIST OPERATIONS
       case 'AddAttachment':
-        addToPayload(opt, [
+        utils.utils.addToPayload(opt, [
           'listName',
           'listItemID',
           'fileName',
@@ -1450,20 +1481,20 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'AddDiscussionBoardItem':
-        addToPayload(opt, [
+        utils.utils.addToPayload(opt, [
           'listName',
           'message'
         ]);
         break;
       case 'AddList':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'description',
           'templateID'
         ]);
         break;
       case 'AddListFromFeature':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'description',
           'featureID',
@@ -1471,28 +1502,28 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'ApplyContentTypeToList':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'webUrl',
           'contentTypeId',
           'listName'
         ]);
         break;
       case 'CheckInFile':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'pageUrl',
           'comment',
           'CheckinType'
         ]);
         break;
       case 'CheckOutFile':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'pageUrl',
           'checkoutToLocal',
           'lastmodified'
         ]);
         break;
       case 'CreateContentType':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'displayName',
           'parentType',
@@ -1502,30 +1533,30 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'DeleteAttachment':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'listItemID',
           'url'
         ]);
         break;
       case 'DeleteContentType':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'contentTypeId'
         ]);
         break;
       case 'DeleteContentTypeXmlDocument':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'contentTypeId',
           'documentUri'
         ]);
         break;
       case 'DeleteList':
-        addToPayload(opt, ['listName']);
+        utils.addToPayload(opt, ['listName']);
         break;
       case 'GetAttachmentCollection':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           [
             'listItemID',
@@ -1534,10 +1565,10 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'GetList':
-        addToPayload(opt, ['listName']);
+        utils.addToPayload(opt, ['listName']);
         break;
       case 'GetListAndView':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'viewName'
         ]);
@@ -1545,16 +1576,16 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
       case 'GetListCollection':
         break;
       case 'GetListContentType':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'contentTypeId'
         ]);
         break;
       case 'GetListContentTypes':
-        addToPayload(opt, ['listName']);
+        utils.addToPayload(opt, ['listName']);
         break;
       case 'GetListItems':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'viewName',
           [
@@ -1576,7 +1607,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'GetListItemChanges':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'viewFields',
           'since',
@@ -1584,7 +1615,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'GetListItemChangesSinceToken':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'viewName',
           [
@@ -1614,17 +1645,17 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'GetVersionCollection':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'strlistID',
           'strlistItemID',
           'strFieldName'
         ]);
         break;
       case 'UndoCheckOut':
-        addToPayload(opt, ['pageUrl']);
+        utils.addToPayload(opt, ['pageUrl']);
         break;
       case 'UpdateContentType':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'contentTypeId',
           'contentTypeProperties',
@@ -1635,20 +1666,20 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'UpdateContentTypesXmlDocument':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'newDocument'
         ]);
         break;
       case 'UpdateContentTypeXmlDocument':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'contentTypeId',
           'newDocument'
         ]);
         break;
       case 'UpdateList':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'listProperties',
           'newFields',
@@ -1658,9 +1689,9 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'UpdateListItems':
-        addToPayload(opt, ['listName']);
+        utils.addToPayload(opt, ['listName']);
         if (typeof opt.updates !== 'undefined' && opt.updates.length > 0) {
-          addToPayload(opt, ['updates']);
+          utils.addToPayload(opt, ['updates']);
         } else {
           utils.utils.SOAPEnvelope.payload += '<updates><Batch OnError=\'Continue\'><Method ID=\'1\' Cmd=\'' + opt.batchCmd + '\'>';
           for (i = 0; i < opt.valuepairs.length; i++) {
@@ -1674,7 +1705,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         break;
       // MEETINGS OPERATIONS
       case 'AddMeeting':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'organizerEmail',
           'uid',
           'sequence',
@@ -1687,7 +1718,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'CreateWorkspace':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'title',
           'templateName',
           'lcid',
@@ -1695,7 +1726,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'RemoveMeeting':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'recurrenceId',
           'uid',
           'sequence',
@@ -1704,29 +1735,29 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'SetWorkspaceTitle':
-        addToPayload(opt, ['title']);
+        utils.addToPayload(opt, ['title']);
         break;
       // OFFICIALFILE OPERATIONS
       case 'GetRecordRouting':
-        addToPayload(opt, ['recordRouting']);
+        utils.addToPayload(opt, ['recordRouting']);
         break;
       case 'GetRecordRoutingCollection':
         break;
       case 'GetServerInfo':
         break;
       case 'SubmitFile':
-        addToPayload(opt, ['fileToSubmit'], ['properties'], ['recordRouting'], ['sourceUrl'], ['userName']);
+        utils.addToPayload(opt, ['fileToSubmit'], ['properties'], ['recordRouting'], ['sourceUrl'], ['userName']);
         break;
       // PEOPLE OPERATIONS
       case 'ResolvePrincipals':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'principalKeys',
           'principalType',
           'addToUserInfoList'
         ]);
         break;
       case 'SearchPrincipals':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'searchText',
           'maxResults',
           'principalType'
@@ -1734,7 +1765,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         break;
       // PERMISSION OPERATIONS
       case 'AddPermission':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'objectName',
           'objectType',
           'permissionIdentifier',
@@ -1743,20 +1774,20 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'AddPermissionCollection':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'objectName',
           'objectType',
           'permissionsInfoXml'
         ]);
         break;
       case 'GetPermissionCollection':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'objectName',
           'objectType'
         ]);
         break;
       case 'RemovePermission':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'objectName',
           'objectType',
           'permissionIdentifier',
@@ -1764,14 +1795,14 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'RemovePermissionCollection':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'objectName',
           'objectType',
           'memberIdsXml'
         ]);
         break;
       case 'UpdatePermission':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'objectName',
           'objectType',
           'permissionIdentifier',
@@ -1811,7 +1842,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         break;
       // SHAREPOINTDIAGNOSTICS OPERATIONS
       case 'SendClientScriptErrorReport':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'message',
           'file',
           'line',
@@ -1823,39 +1854,39 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         break;
       // SITEDATA OPERATIONS
       case 'EnumerateFolder':
-        addToPayload(opt, ['strFolderUrl']);
+        utils.addToPayload(opt, ['strFolderUrl']);
         break;
       case 'GetAttachments':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'strListName',
           'strItemId'
         ]);
         break;
       case 'SiteDataGetList':
-        addToPayload(opt, ['strListName']);
+        utils.addToPayload(opt, ['strListName']);
         // Because this operation has a name which duplicates the Lists WS, need to handle
-        utils.SOAPEnvelope = siteDataFixSOAPEnvelope(utils.SOAPEnvelope, opt.operation);
+        utils.SOAPEnvelope = utils.siteDataFixSOAPEnvelope(utils.SOAPEnvelope, opt.operation);
         break;
       case 'SiteDataGetListCollection':
         // Because this operation has a name which duplicates the Lists WS, need to handle
-        utils.SOAPEnvelope = siteDataFixSOAPEnvelope(utils.SOAPEnvelope, opt.operation);
+        utils.SOAPEnvelope = utils.siteDataFixSOAPEnvelope(utils.SOAPEnvelope, opt.operation);
         break;
       case 'SiteDataGetSite':
         // Because this operation has a name which duplicates the Lists WS, need to handle
-        utils.SOAPEnvelope = siteDataFixSOAPEnvelope(utils.SOAPEnvelope, opt.operation);
+        utils.SOAPEnvelope = utils.siteDataFixSOAPEnvelope(utils.SOAPEnvelope, opt.operation);
         break;
       case 'SiteDataGetSiteUrl':
-        addToPayload(opt, ['Url']);
+        utils.addToPayload(opt, ['Url']);
         // Because this operation has a name which duplicates the Lists WS, need to handle
-        utils.SOAPEnvelope = siteDataFixSOAPEnvelope(utils.SOAPEnvelope, opt.operation);
+        utils.SOAPEnvelope = utils.siteDataFixSOAPEnvelope(utils.SOAPEnvelope, opt.operation);
         break;
       case 'SiteDataGetWeb':
         // Because this operation has a name which duplicates the Lists WS, need to handle
-        utils.SOAPEnvelope = siteDataFixSOAPEnvelope(utils.SOAPEnvelope, opt.operation);
+        utils.SOAPEnvelope = utils.siteDataFixSOAPEnvelope(utils.SOAPEnvelope, opt.operation);
         break;
       // SITES OPERATIONS
       case 'CreateWeb':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'url',
           'title',
           'description',
@@ -1875,20 +1906,20 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'DeleteWeb':
-        addToPayload(opt, ['url']);
+        utils.addToPayload(opt, ['url']);
         break;
       case 'GetSite':
-        addToPayload(opt, ['SiteUrl']);
+        utils.addToPayload(opt, ['SiteUrl']);
         break;
       case 'GetSiteTemplates':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'LCID',
           'TemplateList'
         ]);
         break;
       // SOCIALDATASERVICE OPERATIONS
       case 'AddComment':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'url',
           'comment',
           'isHighPriority',
@@ -1896,7 +1927,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'AddTag':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'url',
           'termID',
           'title',
@@ -1904,7 +1935,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'AddTagByKeyword':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'url',
           'keyword',
           'title',
@@ -1912,77 +1943,77 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'CountCommentsOfUser':
-        addToPayload(opt, ['userAccountName']);
+        utils.addToPayload(opt, ['userAccountName']);
         break;
       case 'CountCommentsOfUserOnUrl':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'userAccountName',
           'url'
         ]);
         break;
       case 'CountCommentsOnUrl':
-        addToPayload(opt, ['url']);
+        utils.addToPayload(opt, ['url']);
         break;
       case 'CountRatingsOnUrl':
-        addToPayload(opt, ['url']);
+        utils.addToPayload(opt, ['url']);
         break;
       case 'CountTagsOfUser':
-        addToPayload(opt, ['userAccountName']);
+        utils.addToPayload(opt, ['userAccountName']);
         break;
       case 'DeleteComment':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'url',
           'lastModifiedTime'
         ]);
         break;
       case 'DeleteRating':
-        addToPayload(opt, ['url']);
+        utils.addToPayload(opt, ['url']);
         break;
       case 'DeleteTag':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'url',
           'termID'
         ]);
         break;
       case 'DeleteTagByKeyword':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'url',
           'keyword'
         ]);
         break;
       case 'DeleteTags':
-        addToPayload(opt, ['url']);
+        utils.addToPayload(opt, ['url']);
         break;
       case 'GetAllTagTerms':
-        addToPayload(opt, ['maximumItemsToReturn']);
+        utils.addToPayload(opt, ['maximumItemsToReturn']);
         break;
       case 'GetAllTagTermsForUrlFolder':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'urlFolder',
           'maximumItemsToReturn'
         ]);
         break;
       case 'GetAllTagUrls':
-        addToPayload(opt, ['termID']);
+        utils.addToPayload(opt, ['termID']);
         break;
       case 'GetAllTagUrlsByKeyword':
-        addToPayload(opt, ['keyword']);
+        utils.addToPayload(opt, ['keyword']);
         break;
       case 'GetCommentsOfUser':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'userAccountName',
           'maximumItemsToReturn',
           'startIndex'
         ]);
         break;
       case 'GetCommentsOfUserOnUrl':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'userAccountName',
           'url'
         ]);
         break;
       case 'GetCommentsOnUrl':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'url',
           'maximumItemsToReturn',
           'startIndex'
@@ -1992,71 +2023,71 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         }
         break;
       case 'GetRatingAverageOnUrl':
-        addToPayload(opt, ['url']);
+        utils.addToPayload(opt, ['url']);
         break;
       case 'GetRatingOfUserOnUrl':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'userAccountName',
           'url'
         ]);
         break;
       case 'GetRatingOnUrl':
-        addToPayload(opt, ['url']);
+        utils.addToPayload(opt, ['url']);
         break;
       case 'GetRatingsOfUser':
-        addToPayload(opt, ['userAccountName']);
+        utils.addToPayload(opt, ['userAccountName']);
         break;
       case 'GetRatingsOnUrl':
-        addToPayload(opt, ['url']);
+        utils.addToPayload(opt, ['url']);
         break;
       case 'GetSocialDataForFullReplication':
-        addToPayload(opt, ['userAccountName']);
+        utils.addToPayload(opt, ['userAccountName']);
         break;
       case 'GetTags':
-        addToPayload(opt, ['url']);
+        utils.addToPayload(opt, ['url']);
         break;
       case 'GetTagsOfUser':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'userAccountName',
           'maximumItemsToReturn',
           'startIndex'
         ]);
         break;
       case 'GetTagTerms':
-        addToPayload(opt, ['maximumItemsToReturn']);
+        utils.addToPayload(opt, ['maximumItemsToReturn']);
         break;
       case 'GetTagTermsOfUser':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'userAccountName',
           'maximumItemsToReturn'
         ]);
         break;
       case 'GetTagTermsOnUrl':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'url',
           'maximumItemsToReturn'
         ]);
         break;
       case 'GetTagUrls':
-        addToPayload(opt, ['termID']);
+        utils.addToPayload(opt, ['termID']);
         break;
       case 'GetTagUrlsByKeyword':
-        addToPayload(opt, ['keyword']);
+        utils.addToPayload(opt, ['keyword']);
         break;
       case 'GetTagUrlsOfUser':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'termID',
           'userAccountName'
         ]);
         break;
       case 'GetTagUrlsOfUserByKeyword':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'keyword',
           'userAccountName'
         ]);
         break;
       case 'SetRating':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'url',
           'rating',
           'title',
@@ -2064,7 +2095,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'UpdateComment':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'url',
           'lastModifiedTime',
           'comment',
@@ -2073,7 +2104,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         break;
       // SPELLCHECK OPERATIONS
       case 'SpellCheck':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'chunksToSpell',
           'declaredLanguage',
           'useLad'
@@ -2081,7 +2112,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         break;
       // TAXONOMY OPERATIONS
       case 'AddTerms':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'sharedServiceId',
           'termSetId',
           'lcid',
@@ -2089,7 +2120,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'GetChildTermsInTerm':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'sspId',
           'lcid',
           'termId',
@@ -2097,20 +2128,20 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'GetChildTermsInTermSet':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'sspId',
           'lcid',
           'termSetId'
         ]);
         break;
       case 'GetKeywordTermsByGuids':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'termIds',
           'lcid'
         ]);
         break;
       case 'GetTermsByLabel':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'label',
           'lcid',
           'matchOption',
@@ -2120,7 +2151,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'GetTermSets':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'sharedServiceIds',
           'termSetIds',
           'lcid',
@@ -2130,7 +2161,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         break;
       // USERS AND GROUPS OPERATIONS
       case 'AddGroup':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'groupName',
           'ownerIdentifier',
           'ownerType',
@@ -2139,39 +2170,39 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'AddGroupToRole':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'groupName',
           'roleName'
         ]);
         break;
       case 'AddRole':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'roleName',
           'description',
           'permissionMask'
         ]);
         break;
       case 'AddRoleDef':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'roleName',
           'description',
           'permissionMask'
         ]);
         break;
       case 'AddUserCollectionToGroup':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'groupName',
           'usersInfoXml'
         ]);
         break;
       case 'AddUserCollectionToRole':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'roleName',
           'usersInfoXml'
         ]);
         break;
       case 'AddUserToGroup':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'groupName',
           'userName',
           'userLoginName',
@@ -2180,7 +2211,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'AddUserToRole':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'roleName',
           'userName',
           'userLoginName',
@@ -2191,105 +2222,105 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
       case 'GetAllUserCollectionFromWeb':
         break;
       case 'GetGroupCollection':
-        addToPayload(opt, ['groupNamesXml']);
+        utils.addToPayload(opt, ['groupNamesXml']);
         break;
       case 'GetGroupCollectionFromRole':
-        addToPayload(opt, ['roleName']);
+        utils.addToPayload(opt, ['roleName']);
         break;
       case 'GetGroupCollectionFromSite':
         break;
       case 'GetGroupCollectionFromUser':
-        addToPayload(opt, ['userLoginName']);
+        utils.addToPayload(opt, ['userLoginName']);
         break;
       case 'GetGroupCollectionFromWeb':
         break;
       case 'GetGroupInfo':
-        addToPayload(opt, ['groupName']);
+        utils.addToPayload(opt, ['groupName']);
         break;
       case 'GetRoleCollection':
-        addToPayload(opt, ['roleNamesXml']);
+        utils.addToPayload(opt, ['roleNamesXml']);
         break;
       case 'GetRoleCollectionFromGroup':
-        addToPayload(opt, ['groupName']);
+        utils.addToPayload(opt, ['groupName']);
         break;
       case 'GetRoleCollectionFromUser':
-        addToPayload(opt, ['userLoginName']);
+        utils.addToPayload(opt, ['userLoginName']);
         break;
       case 'GetRoleCollectionFromWeb':
         break;
       case 'GetRoleInfo':
-        addToPayload(opt, ['roleName']);
+        utils.addToPayload(opt, ['roleName']);
         break;
       case 'GetRolesAndPermissionsForCurrentUser':
         break;
       case 'GetRolesAndPermissionsForSite':
         break;
       case 'GetUserCollection':
-        addToPayload(opt, ['userLoginNamesXml']);
+        utils.addToPayload(opt, ['userLoginNamesXml']);
         break;
       case 'GetUserCollectionFromGroup':
-        addToPayload(opt, ['groupName']);
+        utils.addToPayload(opt, ['groupName']);
         break;
       case 'GetUserCollectionFromRole':
-        addToPayload(opt, ['roleName']);
+        utils.addToPayload(opt, ['roleName']);
         break;
       case 'GetUserCollectionFromSite':
         break;
       case 'GetUserCollectionFromWeb':
         break;
       case 'GetUserInfo':
-        addToPayload(opt, ['userLoginName']);
+        utils.addToPayload(opt, ['userLoginName']);
         break;
       case 'GetUserLoginFromEmail':
-        addToPayload(opt, ['emailXml']);
+        utils.addToPayload(opt, ['emailXml']);
         break;
       case 'RemoveGroup':
-        addToPayload(opt, ['groupName']);
+        utils.addToPayload(opt, ['groupName']);
         break;
       case 'RemoveGroupFromRole':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'roleName',
           'groupName'
         ]);
         break;
       case 'RemoveRole':
-        addToPayload(opt, ['roleName']);
+        utils.addToPayload(opt, ['roleName']);
         break;
       case 'RemoveUserCollectionFromGroup':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'groupName',
           'userLoginNamesXml'
         ]);
         break;
       case 'RemoveUserCollectionFromRole':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'roleName',
           'userLoginNamesXml'
         ]);
         break;
       case 'RemoveUserCollectionFromSite':
-        addToPayload(opt, ['userLoginNamesXml']);
+        utils.addToPayload(opt, ['userLoginNamesXml']);
         break;
       case 'RemoveUserFromGroup':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'groupName',
           'userLoginName'
         ]);
         break;
       case 'RemoveUserFromRole':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'roleName',
           'userLoginName'
         ]);
         break;
       case 'RemoveUserFromSite':
-        addToPayload(opt, ['userLoginName']);
+        utils.addToPayload(opt, ['userLoginName']);
         break;
       case 'RemoveUserFromWeb':
-        addToPayload(opt, ['userLoginName']);
+        utils.addToPayload(opt, ['userLoginName']);
         break;
       case 'UpdateGroupInfo':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'oldGroupName',
           'groupName',
           'ownerIdentifier',
@@ -2298,7 +2329,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'UpdateRoleDefInfo':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'oldRoleName',
           'roleName',
           'description',
@@ -2306,7 +2337,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'UpdateRoleInfo':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'oldRoleName',
           'roleName',
           'description',
@@ -2314,7 +2345,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'UpdateUserInfo':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'userLoginName',
           'userName',
           'userEmail',
@@ -2323,7 +2354,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         break;
       // USERPROFILESERVICE OPERATIONS
       case 'AddColleague':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'accountName',
           'colleagueAccountName',
           'group',
@@ -2332,7 +2363,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'AddLink':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'accountName',
           'name',
           'url',
@@ -2341,7 +2372,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'AddMembership':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'accountName',
           'membershipInfo',
           'group',
@@ -2349,60 +2380,60 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'AddPinnedLink':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'accountName',
           'name',
           'url'
         ]);
         break;
       case 'CreateMemberGroup':
-        addToPayload(opt, ['membershipInfo']);
+        utils.addToPayload(opt, ['membershipInfo']);
         break;
       case 'CreateUserProfileByAccountName':
-        addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, ['accountName']);
         break;
       case 'GetCommonColleagues':
-        addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, ['accountName']);
         break;
       case 'GetCommonManager':
-        addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, ['accountName']);
         break;
       case 'GetCommonMemberships':
-        addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, ['accountName']);
         break;
       case 'GetInCommon':
-        addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, ['accountName']);
         break;
       case 'GetPropertyChoiceList':
-        addToPayload(opt, ['propertyName']);
+        utils.addToPayload(opt, ['propertyName']);
         break;
       case 'GetUserColleagues':
-        addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, ['accountName']);
         break;
       case 'GetUserLinks':
-        addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, ['accountName']);
         break;
       case 'GetUserMemberships':
-        addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, ['accountName']);
         break;
       case 'GetUserPinnedLinks':
-        addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, ['accountName']);
         break;
       case 'GetUserProfileByGuid':
-        addToPayload(opt, ['guid']);
+        utils.addToPayload(opt, ['guid']);
         break;
       case 'GetUserProfileByIndex':
-        addToPayload(opt, ['index']);
+        utils.addToPayload(opt, ['index']);
         break;
       case 'GetUserProfileByName':
         // Note that this operation is inconsistent with the others, using AccountName rather than accountName
         if (typeof opt.accountName !== 'undefined' && opt.accountName.length > 0) {
-          addToPayload(opt, [[
+          utils.addToPayload(opt, [[
               'AccountName',
               'accountName'
             ]]);
         } else {
-          addToPayload(opt, ['AccountName']);
+          utils.addToPayload(opt, ['AccountName']);
         }
         break;
       case 'GetUserProfileCount':
@@ -2410,69 +2441,69 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
       case 'GetUserProfileSchema':
         break;
       case 'GetUserPropertyByAccountName':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'accountName',
           'propertyName'
         ]);
         break;
       case 'ModifyUserPropertyByAccountName':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'accountName',
           'newData'
         ]);
         break;
       case 'RemoveAllColleagues':
-        addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, ['accountName']);
         break;
       case 'RemoveAllLinks':
-        addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, ['accountName']);
         break;
       case 'RemoveAllMemberships':
-        addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, ['accountName']);
         break;
       case 'RemoveAllPinnedLinks':
-        addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, ['accountName']);
         break;
       case 'RemoveColleague':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'accountName',
           'colleagueAccountName'
         ]);
         break;
       case 'RemoveLink':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'accountName',
           'id'
         ]);
         break;
       case 'RemoveMembership':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'accountName',
           'sourceInternal',
           'sourceReference'
         ]);
         break;
       case 'RemovePinnedLink':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'accountName',
           'id'
         ]);
         break;
       case 'UpdateColleaguePrivacy':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'accountName',
           'colleagueAccountName',
           'newPrivacy'
         ]);
         break;
       case 'UpdateLink':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'accountName',
           'data'
         ]);
         break;
       case 'UpdateMembershipPrivacy':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'accountName',
           'sourceInternal',
           'sourceReference',
@@ -2480,33 +2511,33 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'UpdatePinnedLink ':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'accountName',
           'data'
         ]);
         break;
       // VERSIONS OPERATIONS
       case 'DeleteAllVersions':
-        addToPayload(opt, ['fileName']);
+        utils.addToPayload(opt, ['fileName']);
         break;
       case 'DeleteVersion':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'fileName',
           'fileVersion'
         ]);
         break;
       case 'GetVersions':
-        addToPayload(opt, ['fileName']);
+        utils.addToPayload(opt, ['fileName']);
         break;
       case 'RestoreVersion':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'fileName',
           'fileVersion'
         ]);
         break;
       // VIEW OPERATIONS
       case 'AddView':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'viewName',
           'viewFields',
@@ -2518,28 +2549,28 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'DeleteView':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'viewName'
         ]);
         break;
       case 'GetView':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'viewName'
         ]);
         break;
       case 'GetViewCollection':
-        addToPayload(opt, ['listName']);
+        utils.addToPayload(opt, ['listName']);
         break;
       case 'GetViewHtml':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'viewName'
         ]);
         break;
       case 'UpdateView':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'viewName',
           'viewProperties',
@@ -2551,7 +2582,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'UpdateViewHtml':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'viewName',
           'viewProperties',
@@ -2570,14 +2601,14 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         break;
       // WEBPARTPAGES OPERATIONS
       case 'AddWebPart':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'pageUrl',
           'webPartXml',
           'storage'
         ]);
         break;
       case 'AddWebPartToZone':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'pageUrl',
           'webPartXml',
           'storage',
@@ -2586,14 +2617,14 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'DeleteWebPart':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'pageUrl',
           'storageKey',
           'storage'
         ]);
         break;
       case 'GetWebPart2':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'pageUrl',
           'storageKey',
           'storage',
@@ -2601,26 +2632,26 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'GetWebPartPage':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'documentName',
           'behavior'
         ]);
         break;
       case 'GetWebPartProperties':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'pageUrl',
           'storage'
         ]);
         break;
       case 'GetWebPartProperties2':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'pageUrl',
           'storage',
           'behavior'
         ]);
         break;
       case 'SaveWebPart2':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'pageUrl',
           'storageKey',
           'webPartXml',
@@ -2630,7 +2661,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         break;
       // WEBS OPERATIONS
       case 'Webs.CreateContentType':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'displayName',
           'parentType',
           'newFields',
@@ -2638,23 +2669,23 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'GetColumns':
-        addToPayload(opt, ['webUrl']);
+        utils.addToPayload(opt, ['webUrl']);
         break;
       case 'GetContentType':
-        addToPayload(opt, ['contentTypeId']);
+        utils.addToPayload(opt, ['contentTypeId']);
         break;
       case 'GetContentTypes':
         break;
       case 'GetCustomizedPageStatus':
-        addToPayload(opt, ['fileUrl']);
+        utils.addToPayload(opt, ['fileUrl']);
         break;
       case 'GetListTemplates':
         break;
       case 'GetObjectIdFromUrl':
-        addToPayload(opt, ['objectUrl']);
+        utils.addToPayload(opt, ['objectUrl']);
         break;
       case 'GetWeb':
-        addToPayload(opt, [[
+        utils.addToPayload(opt, [[
             'webUrl',
             'webURL'
           ]]);
@@ -2664,14 +2695,14 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
       case 'GetAllSubWebCollection':
         break;
       case 'UpdateColumns':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'newFields',
           'updateFields',
           'deleteFields'
         ]);
         break;
       case 'Webs.UpdateContentType':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'contentTypeId',
           'contentTypeProperties',
           'newFields',
@@ -2680,14 +2711,14 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'WebUrlFromPageUrl':
-        addToPayload(opt, [[
+        utils.addToPayload(opt, [[
             'pageUrl',
             'pageURL'
           ]]);
         break;
       // WORKFLOW OPERATIONS
       case 'AlterToDo':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'item',
           'todoId',
           'todoListId',
@@ -2695,7 +2726,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'ClaimReleaseTask':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'item',
           'taskId',
           'listId',
@@ -2703,23 +2734,23 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
         ]);
         break;
       case 'GetTemplatesForItem':
-        addToPayload(opt, ['item']);
+        utils.addToPayload(opt, ['item']);
         break;
       case 'GetToDosForItem':
-        addToPayload(opt, ['item']);
+        utils.addToPayload(opt, ['item']);
         break;
       case 'GetWorkflowDataForItem':
-        addToPayload(opt, ['item']);
+        utils.addToPayload(opt, ['item']);
         break;
       case 'GetWorkflowTaskData':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'item',
           'listId',
           'taskId'
         ]);
         break;
       case 'StartWorkflow':
-        addToPayload(opt, [
+        utils.addToPayload(opt, [
           'item',
           'templateId',
           'workflowParameters'
@@ -2846,39 +2877,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
       async: true,
       // Allow the user to force async
       completefunc: null  // Function to call on completion
-    };
-    // End $.fn.SPServices.defaults
-    ////// PRIVATE FUNCTIONS ////////
-    // Add the option values to the utils.SOAPEnvelope.payload for the operation
-    //  opt = options for the call
-    //  paramArray = an array of option names to add to the payload
-    //      "paramName" if the parameter name and the option name match
-    //      ["paramName", "optionName"] if the parameter name and the option name are different (this handles early "wrappings" with inconsistent naming)
-    //      {name: "paramName", sendNull: false} indicates the element is marked as "add to payload only if non-null"
-    function addToPayload(opt, paramArray) {
-      var i;
-      for (i = 0; i < paramArray.length; i++) {
-        // the parameter name and the option name match
-        if (typeof paramArray[i] === 'string') {
-          utils.SOAPEnvelope.payload += utils.wrapNode(paramArray[i], opt[paramArray[i]]);  // the parameter name and the option name are different
-        } else if ($.isArray(paramArray[i]) && paramArray[i].length === 2) {
-          utils.SOAPEnvelope.payload += utils.wrapNode(paramArray[i][0], opt[paramArray[i][1]]);  // the element not a string or an array and is marked as "add to payload only if non-null"
-        } else if (typeof paramArray[i] === 'object' && paramArray[i].sendNull !== undefined) {
-          utils.SOAPEnvelope.payload += opt[paramArray[i].name] === undefined || opt[paramArray[i].name].length === 0 ? '' : utils.wrapNode(paramArray[i].name, opt[paramArray[i].name]);  // something isn't right, so report it
-        } else {
-          utils.errBox(opt.operation, 'paramArray[' + i + ']: ' + paramArray[i], 'Invalid paramArray element passed to addToPayload()');
-        }
-      }
-    }
-    // End of function addToPayload
-    // The SiteData operations have the same names as other Web Service operations. To make them easy to call and unique, I'm using
-    // the SiteData prefix on their names. This function replaces that name with the right name in the utils.SOAPEnvelope.
-    function siteDataFixSOAPEnvelope(SOAPEnvelope, siteDataOperation) {
-      var siteDataOp = siteDataOperation.substring(8);
-      SOAPEnvelope.opheader = SOAPEnvelope.opheader.replace(siteDataOperation, siteDataOp);
-      SOAPEnvelope.opfooter = SOAPEnvelope.opfooter.replace(siteDataOperation, siteDataOp);
-      return SOAPEnvelope;
-    }  // End of function siteDataFixSOAPEnvelope
+    };  // End $.fn.SPServices.defaults
   }(jquery, src_utils_SPServicesutils, src_utils_constants);
   src_SPServices = function ($) {
     return $;

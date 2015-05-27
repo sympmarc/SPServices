@@ -207,8 +207,44 @@ define([
             }
             out += "</table>";
             return out;
-        } // End of function showAttrs
+        }, // End of function showAttrs
 
+        // Add the option values to the utils.SOAPEnvelope.payload for the operation
+        //  opt = options for the call
+        //  paramArray = an array of option names to add to the payload
+        //      "paramName" if the parameter name and the option name match
+        //      ["paramName", "optionName"] if the parameter name and the option name are different (this handles early "wrappings" with inconsistent naming)
+        //      {name: "paramName", sendNull: false} indicates the element is marked as "add to payload only if non-null"
+        addToPayload: function(opt, paramArray) {
+
+            var i;
+
+            for (i = 0; i < paramArray.length; i++) {
+                // the parameter name and the option name match
+                if (typeof paramArray[i] === "string") {
+                    utils.SOAPEnvelope.payload += utils.wrapNode(paramArray[i], opt[paramArray[i]]);
+                    // the parameter name and the option name are different
+                } else if ($.isArray(paramArray[i]) && paramArray[i].length === 2) {
+                    utils.SOAPEnvelope.payload += utils.wrapNode(paramArray[i][0], opt[paramArray[i][1]]);
+                    // the element not a string or an array and is marked as "add to payload only if non-null"
+                } else if ((typeof paramArray[i] === "object") && (paramArray[i].sendNull !== undefined)) {
+                    utils.SOAPEnvelope.payload += ((opt[paramArray[i].name] === undefined) || (opt[paramArray[i].name].length === 0)) ? "" : utils.wrapNode(paramArray[i].name, opt[paramArray[i].name]);
+                    // something isn't right, so report it
+                } else {
+                    utils.errBox(opt.operation, "paramArray[" + i + "]: " + paramArray[i], "Invalid paramArray element passed to addToPayload()");
+                }
+            }
+        }, // End of function addToPayload
+
+
+        // The SiteData operations have the same names as other Web Service operations. To make them easy to call and unique, I'm using
+        // the SiteData prefix on their names. This function replaces that name with the right name in the utils.SOAPEnvelope.
+        siteDataFixSOAPEnvelope: function(SOAPEnvelope, siteDataOperation) {
+            var siteDataOp = siteDataOperation.substring(8);
+            SOAPEnvelope.opheader = SOAPEnvelope.opheader.replace(siteDataOperation, siteDataOp);
+            SOAPEnvelope.opfooter = SOAPEnvelope.opfooter.replace(siteDataOperation, siteDataOp);
+            return SOAPEnvelope;
+        } // End of function siteDataFixSOAPEnvelope
 
 
     }, //end: utils
