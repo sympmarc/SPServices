@@ -13,6 +13,30 @@ define([
 
     var utils = /** @lends spservices.utils */{
 
+        // Get the current context (as much as we can) on startup
+        // See: http://johnliu.net/blog/2012/2/3/sharepoint-javascript-current-page-context-info.html
+        SPServicesContext: function () {
+
+            // The SharePoint variables only give us a relative path. to match the result from WebUrlFromPageUrl, we need to add the protocol, host, and (if present) port.
+            var siteRoot = location.protocol + "//" + location.host; // + (location.port !== "" ? location.port : "");
+
+            // SharePoint 2010 gives us a context variable
+            if (typeof _spPageContextInfo !== "undefined") {
+                this.thisSite = siteRoot + _spPageContextInfo.webServerRelativeUrl;
+                this.thisList = _spPageContextInfo.pageListId;
+                this.thisUserId = _spPageContextInfo.userId;
+                // In SharePoint 2007, we know the UserID only
+            } else {
+                this.thisSite = (typeof L_Menu_BaseUrl !== "undefined") ? siteRoot + L_Menu_BaseUrl : "";
+                this.thisList = "";
+                this.thisUserId = (typeof _spUserId !== "undefined") ? _spUserId : undefined;
+            }
+
+        }, // End of function SPServicesContext
+
+        // Global variables
+        currentContext: new utils.SPServicesContext(), // Variable to hold the current context as we figure it out
+
         /**
          * Wrap an XML node (n) around a value (v)
          *
