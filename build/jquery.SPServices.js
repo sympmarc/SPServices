@@ -15,7 +15,7 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 1.36.0 2015-05-24 07:29:43
+* @build SPServices 1.36.0 2015-05-27 11:35:38
 */
 ;(function() {
 var src_utils_constants, src_utils_SPServicesutils, src_utils_genContainerId, src_core_SPServicescore, src_SPServices;
@@ -34,15 +34,19 @@ var src_utils_constants, src_utils_SPServicesutils, src_utils_genContainerId, sr
      * @namespace constants
      */
     var constants = {
+      // Version info
+      VERSION: '2.00.00',
+      // TODO: Update version
+      // Simple strings
       spDelim: ';#',
+      SLASH: '/',
       TXTColumnNotFound: 'Column not found on page',
       // Dropdown Types
       dropdownType: {
         simple: 'S',
         complex: 'C',
         multiSelect: 'M'
-      },
-      SLASH: '/'
+      }
     };
     return constants;
   }();
@@ -215,9 +219,6 @@ var src_utils_constants, src_utils_SPServicesutils, src_utils_genContainerId, sr
     return genContainerId;
   }(jquery);
   src_core_SPServicescore = function ($, utils, constants, genContainerId) {
-    // Version info
-    var VERSION = '2014.02';
-    // TODO: Update version
     // String constants
     //   General
     var SCHEMASharePoint = 'http://schemas.microsoft.com/sharepoint';
@@ -4356,7 +4357,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_utils_genContainerId, sr
     // End $.fn.SPServices.SPFindMMSPicker
     // Return the current version of SPServices as a string
     $.fn.SPServices.Version = function () {
-      return VERSION;
+      return constants.VERSION;
     };
     // End $.fn.SPServices.Version
     // Find a dropdown (or multi-select) in the DOM. Returns the dropdown object and its type:

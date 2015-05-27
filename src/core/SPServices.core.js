@@ -20,10 +20,6 @@ define([
 
     "use strict";
 
-    // Version info
-    var VERSION = "2014.02"; // TODO: Update version
-
-
     // String constants
     //   General
     var SCHEMASharePoint = "http://schemas.microsoft.com/sharepoint";
@@ -3103,7 +3099,7 @@ define([
     // Return the current version of SPServices as a string
     $.fn.SPServices.Version = function () {
 
-        return VERSION;
+        return constants.VERSION;
 
     }; // End $.fn.SPServices.Version
 
