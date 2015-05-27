@@ -2,7 +2,7 @@
   "name": "SPServices",
   "filename": "jquery.SPServices",
   "sp_version": "2015.01",
-  "version": "2.00.00",
+  "version": "2.0.0",
   "description_short": "Work with SharePoint's Web Services using jQuery",
   "description_long": "SPServices is a jQuery library which abstracts SharePoint's Web Services and makes them easier to use. It also includes functions which use the various Web Service operations to provide more useful (and cool) capabilities. It works entirely client side and requires no server install.",
   "homepage": "http://spservices.codeplex.com/",
