@@ -146,8 +146,44 @@ define([
                 "<b>Message</b><br/>" + msg + "<br/><br/>" +
                 "<span onmouseover='this.style.cursor=\"hand\";' onmouseout='this.style.cursor=\"inherit\";' style='width=100%;text-align:right;'>Click to continue</span></div>";
             modalBox(errMsg);
-        } // End of function errBox
+        }, // End of function errBox
 
+
+        // Finds the td which contains a form field in default forms using the comment which contains:
+        //  <!--  FieldName="Title"
+        //      FieldInternalName="Title"
+        //      FieldType="SPFieldText"
+        //  -->
+        // as the "anchor" to find it. Necessary because SharePoint doesn't give all field types ids or specific classes.
+        findFormField: function(columnName) {
+            var thisFormBody;
+            // There's no easy way to find one of these columns; we'll look for the comment with the columnName
+            var searchText = RegExp("FieldName=\"" + columnName.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") + "\"", "gi");
+            // Loop through all of the ms-formbody table cells
+            $("td.ms-formbody, td.ms-formbodysurvey").each(function () {
+                // Check for the right comment
+                if (searchText.test($(this).html())) {
+                    thisFormBody = $(this);
+                    // Found it, so we're done
+                    return false;
+                }
+            });
+            return thisFormBody;
+        }, // End of function findFormField
+
+        // Show a single attribute of a node, enclosed in a table
+        //   node               The XML node
+        //   opt                The current set of options
+        showAttrs: function(node) {
+            var i;
+            var out = "<table class='ms-vb' width='100%'>";
+            for (i = 0; i < node.attributes.length; i++) {
+                out += "<tr><td width='10px' style='font-weight:bold;'>" + i + "</td><td width='100px'>" +
+                    node.attributes.item(i).nodeName + "</td><td>" + utils.checkLink(node.attributes.item(i).nodeValue) + "</td></tr>";
+            }
+            out += "</table>";
+            return out;
+        } // End of function showAttrs
 
 
 
