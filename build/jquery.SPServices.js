@@ -15,7 +15,7 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-05-28 10:17:45
+* @build SPServices 2.0.0 2015-05-28 06:21:11
 */
 ;(function() {
 var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src_SPServices;
@@ -35,7 +35,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
      */
     var constants = {
       // Version info
-      VERSION: '@VERSION',
+      VERSION: '2.0.0',
       // TODO: Update version
       // Simple strings
       spDelim: ';#',
