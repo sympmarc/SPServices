@@ -1,4 +1,4 @@
-SPServices [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
+SPServices [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/) [![bitHound Score](https://www.bithound.io/github/sympmarc/SPServices/badges/score.svg)](https://www.bithound.io/github/sympmarc/SPServices)
 ==========
 
 SPServices is a jQuery library which abstracts SharePoint's Web Services and makes them easier to use. It also includes functions which use the various Web Service operations to provide more useful (and cool) capabilities. It works entirely client side and requires no server install.
