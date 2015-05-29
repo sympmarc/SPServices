@@ -42,7 +42,9 @@
     "**/extjs/resources/**",
     "**/extjs/src/**",
     "**/extjs/welcome/**",
-    "bower_components/**"
+    "bower_components/**",
+    "**/build/**",
+    "**/dist/**"
   ],
   "test": [
     "**/test/**",
@@ -50,10 +52,10 @@
     "**/spec/**",
     "**/specs/**"
   ],
-       "build": [
-          "**/build/**"
-        ],
-             "dist": [
-                "**/dist/**"
-              ]
+  "build": [
+
+  ],
+  "dist": [
+
+  ]
 }
