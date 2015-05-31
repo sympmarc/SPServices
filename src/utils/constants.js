@@ -8,7 +8,7 @@ define([], function(){
     var constants = {
 
         // Version info
-        VERSION: "2.0.0", // TODO: Update version
+        VERSION: "@VERSION", // update it in package.json... build takes care of the rest
 
         // Simple strings
         spDelim:            ";#",
