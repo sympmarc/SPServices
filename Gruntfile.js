@@ -182,6 +182,16 @@ module.exports = function(grunt) {
                 ],
                 dest:   "<%= userBuildOpt.deployLocation %>",
                 expand: true
+            },
+
+            processBuildVariables: {
+                options : {
+                    processContent: function(fileContent, filePath){
+                        return replaceBuildVariables(fileContent, filePath);
+                    }
+                },
+                src:    "build/<%= pkg.filename %>.js",
+                dest:   "build/<%= pkg.filename %>.js"
             }
         },
 
@@ -324,6 +334,7 @@ module.exports = function(grunt) {
         'jshint',
         'requirejs:compile',
         'concat',
+        'copy:processBuildVariables',
         'uglify',
         'zip'
     ]);
