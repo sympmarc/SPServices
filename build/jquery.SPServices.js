@@ -15,7 +15,7 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-05-28 06:21:11
+* @build SPServices 2.0.0 2015-05-31 07:19:06
 */
 ;(function() {
 var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src_SPServices;
@@ -36,7 +36,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
     var constants = {
       // Version info
       VERSION: '2.0.0',
-      // TODO: Update version
+      // update it in package.json... build takes care of the rest
       // Simple strings
       spDelim: ';#',
       SLASH: '/',
@@ -2803,7 +2803,6 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
       } else {
         // Call the completefunc if there is one
         if ($.isFunction(opt.completefunc)) {
-          //                opt.completefunc(cachedPromise, null);
           cachedPromise.done(function (data, status, jqXHR) {
             opt.completefunc(jqXHR, status);
           });

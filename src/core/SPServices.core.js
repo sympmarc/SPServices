@@ -1271,11 +1271,9 @@ define([
 
             // Call the completefunc if there is one
             if ($.isFunction(opt.completefunc)) {
-//                opt.completefunc(cachedPromise, null);
                 cachedPromise.done(function(data, status, jqXHR){
                     opt.completefunc(jqXHR, status);
                 });
-
             }
             // Return the cached promise
             return cachedPromise;
