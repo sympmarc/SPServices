@@ -3,6 +3,7 @@
 ### Core
 
 | Function Name | Short Description | Introduced | Certification |
+| ------------- | ----------------- | ---------- | ------------- |
 | **[$().SPServices](/wikipage?title=$().SPServices&referringTitle=Documentation)** | This is the core function of the library, which you can use to make Ajax calls to the SharePoint Web Services. **Note**: As of version 2013.01, all calls return a [jQuery deferred object](http://api.jquery.com/category/deferred-object/) aka a promise. | [0.2.3](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=31744) | See individual Web Services |
 | **[$().SPServices.defaults](/wikipage?title=$().SPServices.defaults&referringTitle=Documentation)** | With this defaults function, you can set the defaults for the remainder of the page life. This can be useful if you'd like to make many calls into the library for a single list or site. | [0.2.4](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=31793) | NA |
 | **[$().SPServices.Version](http://spservices.codeplex.com/wikipage?title=$().SPServices.Version&referringTitle=Documentation)** | Returns the current version of SPServices as a string, e.g., "0.7.2" | [0.7.2](http://spservices.codeplex.com/releases/view/81401) | NA |
