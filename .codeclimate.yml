@@ -5,6 +5,5 @@ languages:
   PHP: true
   Python: true
 exclude_paths:
-  dist/*.*
-  build/*.*
-# - "foo/bar.rb"
+  - "dist/*"
+  - "build/*#"
