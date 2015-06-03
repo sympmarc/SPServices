@@ -1,3 +1,6 @@
+---
+title: SPServices
+---
 **<span style="color: #ff0000;">Please read the documentation (starting with the <span style="color: #000080;">[General Instructions](http://spservices.codeplex.com/documentation#general-instructions)</span> at the bottom of this page) before asking questions. I'm happy to help out, but it's so much nicer when folks read the documentation.</span>**
 
 ### Core
