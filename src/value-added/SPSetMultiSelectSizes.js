@@ -1,8 +1,7 @@
 define([
     'jquery',
-    "../utils/SPServices.utils",
+    "../core/SPServices.utils.js",
     "../utils/constants",
-    "../utils/genContainerId",
    //---------------------------
     // We don't need local variables for these dependencies
     // because they are added to the jQuery namespace.
@@ -10,8 +9,7 @@ define([
 ], function (
     $,
     utils,
-    constants,
-    genContainerId
+    constants
 ) {
     // The SPSetMultiSelectSizes function sets the sizes of the multi-select boxes for a column on a form automagically
     // based on the values they contain. The function takes into account the fontSize, fontFamily, fontWeight, etc., in its algorithm.
@@ -42,7 +40,7 @@ define([
 
         // Create a temporary clone of the select to use to determine the appropriate width settings.
         // We'll append it to the end of the enclosing span.
-        var cloneId = genContainerId("SPSetMultiSelectSizes", opt.multiSelectColumn, opt.listName);
+        var cloneId = utils.genContainerId("SPSetMultiSelectSizes", opt.multiSelectColumn, opt.listName);
         var cloneObj = $("<select id='" + cloneId + "' ></select>").appendTo(thisMultiSelect.container);
         cloneObj.css({
             "width": "auto", // We want the clone to resize its width based on the contents

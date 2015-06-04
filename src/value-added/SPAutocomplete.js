@@ -1,19 +1,13 @@
 define([
     'jquery',
-    '../utils/SPServices.utils',
-    "../utils/constants",
-    "../utils/getDropdownSelected",
-    "../utils/genContainerId",
+    '../core/SPServices.utils.js',
     //---------------------------
     // We don't need local variables for these dependencies
     // because they are added to the jQuery namespace.
     '../core/SPServices.core'
 ], function (
     $,
-    utils,
-    constants,
-    getDropdownSelected,
-    genContainerId
+    utils
 ) {
     // Provide suggested values from a list for in input column based on characters typed
     $.fn.SPServices.SPAutocomplete = function (options) {
@@ -58,7 +52,7 @@ define([
         columnObj.wrap("<div>");
 
         // Create a div to contain the matching values and add it to the DOM
-        var containerId = genContainerId("SPAutocomplete", opt.columnName, opt.listName);
+        var containerId = utils.genContainerId("SPAutocomplete", opt.columnName, opt.listName);
         columnObj.after("<div><ul id='" + containerId + "' style='width:" + columnObjWidth + ";display:none;padding:2px;border:1px solid #2A1FAA;background-color:#FFF;position:absolute;z-index:40;margin:0'></div>");
 
         // Set the width to match the width of the input control

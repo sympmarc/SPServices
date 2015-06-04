@@ -1,9 +1,7 @@
 define([
     'jquery',
-    '../utils/SPServices.utils',
+    '../core/SPServices.utils.js',
     "../utils/constants",
-    "../utils/getDropdownSelected",
-    "../utils/genContainerId",
     //---------------------------
     // We don't need local variables for these dependencies
     // because they are added to the jQuery namespace.
@@ -11,9 +9,7 @@ define([
 ], function (
     $,
     utils,
-    constants,
-    getDropdownSelected,
-    genContainerId
+    constants
 ) {
     // function to convert complex dropdowns to simple dropdowns
     $.fn.SPServices.SPComplexToSimpleDropdown = function (options) {
@@ -46,7 +42,7 @@ define([
         var complexSelectSelectedId = columnSelect.optHid.val();
 
         // Build up the simple dropdown, giving it an easy to select id
-        var simpleSelectId = genContainerId("SPComplexToSimpleDropdown", columnSelect.Obj.attr("title"), opt.listName);
+        var simpleSelectId = utils.genContainerId("SPComplexToSimpleDropdown", columnSelect.Obj.attr("title"), opt.listName);
 
         var simpleSelect = "<select id='" + simpleSelectId + "' title='" + opt.columnName + "'>";
         for (var i = 0; i < choices.length; i = i + 2) {

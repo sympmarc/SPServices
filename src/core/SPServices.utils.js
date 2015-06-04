@@ -5,7 +5,7 @@
  */
 define([
     "jquery",
-    "./constants"
+    "./../utils/constants"
 ], function(
     $,
     constants
@@ -244,7 +244,92 @@ define([
             SOAPEnvelope.opheader = SOAPEnvelope.opheader.replace(siteDataOperation, siteDataOp);
             SOAPEnvelope.opfooter = SOAPEnvelope.opfooter.replace(siteDataOperation, siteDataOp);
             return SOAPEnvelope;
-        } // End of function siteDataFixSOAPEnvelope
+        }, // End of function siteDataFixSOAPEnvelope
+
+
+        /**
+         * Get the URL for a specified form for a list
+         *
+         * @param {Object} l
+         * @param {Object} f
+         */
+        getListFormUrl: function(l, f) {
+
+            var u;
+            $().SPServices({
+                operation: "GetFormCollection",
+                async: false,
+                listName: l,
+                completefunc: function (xData) {
+                    u = $(xData.responseXML).find("Form[Type='" + f + "']").attr("Url");
+                }
+            });
+            return u;
+
+        }, // End of function getListFormUrl
+
+        /**
+         * Returns the selected value(s) for a dropdown in an array. Expects a dropdown
+         * object as returned by the DropdownCtl function.
+         * If matchOnId is true, returns the ids rather than the text values for the
+         * selection options(s).
+         *
+         * @param {Object} columnSelect
+         * @param {Object} matchOnId
+         */
+        getDropdownSelected: function (columnSelect, matchOnId) {
+
+            var columnSelectSelected = [];
+
+            switch (columnSelect.Type) {
+                case constants.dropdownType.simple:
+                    if (matchOnId) {
+                        columnSelectSelected.push(columnSelect.Obj.find("option:selected").val() || []);
+                    } else {
+                        columnSelectSelected.push(columnSelect.Obj.find("option:selected").text() || []);
+                    }
+                    break;
+                case constants.dropdownType.complex:
+                    if (matchOnId) {
+                        columnSelectSelected.push(columnSelect.optHid.val() || []);
+                    } else {
+                        columnSelectSelected.push(columnSelect.Obj.val() || []);
+                    }
+                    break;
+                case constants.dropdownType.multiSelect:
+                    $(columnSelect.master.resultControl).find("option").each(function () {
+                        if (matchOnId) {
+                            columnSelectSelected.push($(this).val());
+                        } else {
+                            columnSelectSelected.push($(this).html());
+                        }
+                    });
+                    break;
+                default:
+                    break;
+            }
+            return columnSelectSelected;
+
+        }, // End of function getDropdownSelected
+
+
+        /**
+         * Generate a unique id for a containing div using the function name and the column display name.
+         *
+         * @param {Object} funcname
+         * @param {Object} columnName
+         * @param {Object} listName
+         */
+        genContainerId: function(funcname, columnName, listName) {
+            var l = listName !== undefined ? listName : $().SPServices.SPListNameFromUrl();
+            return funcname + "_" + $().SPServices.SPGetStaticFromDisplay({
+                    listName: l,
+                    columnDisplayName: columnName
+                });
+        } // End of function genContainerId
+
+
+
 
 
     }, //end: utils

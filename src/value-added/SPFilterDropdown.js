@@ -1,8 +1,7 @@
 define([
     'jquery',
-    '../utils/SPServices.utils',
+    '../core/SPServices.utils.js',
     "../utils/constants",
-    "../utils/getDropdownSelected",
     //---------------------------
     // We don't need local variables for these dependencies
     // because they are added to the jQuery namespace.
@@ -10,8 +9,7 @@ define([
 ], function (
     $,
     utils,
-    constants,
-    getDropdownSelected
+    constants
 ) {
 
     /* jshint undef: true */
@@ -52,7 +50,7 @@ define([
         }
 
         // Get the current column selection(s)
-        columnSelectSelected = getDropdownSelected(columnSelect, true);
+        columnSelectSelected = utils.getDropdownSelected(columnSelect, true);
 
         // Get the relationshipList items which match the current selection
         var sortColumn = (opt.relationshipListSortColumn.length > 0) ? opt.relationshipListSortColumn : opt.relationshipListColumn;

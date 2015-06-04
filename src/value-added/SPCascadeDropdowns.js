@@ -1,17 +1,14 @@
 define([
     'jquery',
-    '../utils/SPServices.utils',
-    "../utils/constants",
-    "../utils/getDropdownSelected",
-    //---------------------------
+    '../core/SPServices.utils.js',
+    "../utils/constants", //---------------------------
     // We don't need local variables for these dependencies
     // because they are added to the jQuery namespace.
     '../core/SPServices.core'
 ], function (
     $,
     utils,
-    constants,
-    getDropdownSelected
+    constants
 ) {
     // Function to set up cascading dropdowns on a SharePoint form
     // (Newform.aspx, EditForm.aspx, or any other customized form.)
@@ -176,7 +173,7 @@ define([
             var childColumnRequired = this.childColumnRequired;
 
             // Get the parent column selection(s)
-            parentSelectSelected = getDropdownSelected(parentSelect, opt.matchOnId);
+            parentSelectSelected = utils.getDropdownSelected(parentSelect, opt.matchOnId);
 
             // If the selection hasn't changed, then there's nothing to do right now.  This is useful to reduce
             // the number of Web Service calls when the parentSelect.Type = constants.dropdownType.complex or constants.dropdownType.multiSelect, as there are multiple propertychanges
@@ -189,7 +186,7 @@ define([
             parentSelect.Obj.data("SPCascadeDropdown_Selected_" + childColumnStatic, allParentSelections);
 
             // Get the current child column selection(s)
-            childSelectSelected = getDropdownSelected(childSelect, true);
+            childSelectSelected = utils.getDropdownSelected(childSelect, true);
 
             // When the parent column's selected option changes, get the matching items from the relationship list
             // Get the list items which match the current selection

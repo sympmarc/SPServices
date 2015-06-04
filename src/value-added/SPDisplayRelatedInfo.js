@@ -1,10 +1,7 @@
 define([
     'jquery',
-    '../utils/SPServices.utils',
+    '../core/SPServices.utils.js',
     "../utils/constants",
-    "../utils/genContainerId",
-    "../utils/getDropdownSelected",
-    "../utils/getListFormUrl",
     //---------------------------
     // We don't need local variables for these dependencies
     // because they are added to the jQuery namespace.
@@ -12,10 +9,7 @@ define([
 ], function (
     $,
     utils,
-    constants,
-    genContainerId,
-    getDropdownSelected,
-    getListFormUrl
+    constants
 ) {
     // Function to display related information when an option is selected on a form.
     $.fn.SPServices.SPDisplayRelatedInfo = function (options) {
@@ -54,7 +48,7 @@ define([
         }
 
         // Generate a unique id for the container
-        divId = genContainerId("SPDisplayRelatedInfo", opt.columnName, opt.listName);
+        divId = utils.genContainerId("SPDisplayRelatedInfo", opt.columnName, opt.listName);
 
         // Get information about the related list and its columns
         $().SPServices({
@@ -121,7 +115,7 @@ define([
         });
 
         // Get the current column selection(s)
-        columnSelectSelected = getDropdownSelected(columnSelect, opt.matchOnId);
+        columnSelectSelected = utils.getDropdownSelected(columnSelect, opt.matchOnId);
         if (columnSelect.Type === constants.dropdownType.complex && opt.numChars > 0 && columnSelectSelected[0].length < opt.numChars) {
             return;
         }
@@ -335,7 +329,7 @@ define([
                     // Any other lookup column
                     default:
                         // Get the display form URL for the lookup source list
-                        dispUrl = getListFormUrl(columnXML.attr("List"), "DisplayForm");
+                        dispUrl = utils.getListFormUrl(columnXML.attr("List"), "DisplayForm");
                         outString = "<a href='" + opt.relatedWebURL + constants.SLASH + dispUrl +
                             "?ID=" + columnValue.substring(0, columnValue.search(constants.spDelim)) + "&RootFolder=*&Source=" + utils.escapeUrl(location.href) + "'>" +
                             columnValue.substring(columnValue.search(constants.spDelim) + 2) + "</a>";
@@ -344,7 +338,7 @@ define([
                 break;
             case "LookupMulti":
                 // Get the display form URL for the lookup source list
-                dispUrl = getListFormUrl(columnXML.attr("List"), "DisplayForm");
+                dispUrl = utils.getListFormUrl(columnXML.attr("List"), "DisplayForm");
                 // Show all the values as links to the items, separated by commas
                 outString = "";
                 if (columnValue.length > 0) {

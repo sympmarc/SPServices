@@ -3,7 +3,7 @@
  */
 define([
     "jquery",
-    "../utils/SPServices.utils",
+    "SPServices.utils.js",
     "../utils/constants",
 
 ], function (

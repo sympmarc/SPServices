@@ -1,8 +1,7 @@
 define([
     'jquery',
-    '../utils/SPServices.utils',
+    '../core/SPServices.utils.js',
     "../utils/constants",
-    "../utils/getListFormUrl",
 
     //---------------------------
     // We don't need local variables for these dependencies
@@ -11,8 +10,7 @@ define([
 ], function (
     $,
     utils,
-    constants,
-    getListFormUrl
+    constants
 ) {
 
 
@@ -69,7 +67,7 @@ define([
                         }
                     });
                     // Get the NewItem form for the Lookup column's list
-                    newUrl = getListFormUrl($(this).attr("List"), "NewForm");
+                    newUrl = utils.getListFormUrl($(this).attr("List"), "NewForm");
                     // Stop looking;we're done
                     return false;
                 });
