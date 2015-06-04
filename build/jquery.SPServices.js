@@ -15,10 +15,10 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-06-04 09:46:52
+* @build SPServices 2.0.0 2015-06-04 09:53:36
 */
 ;(function() {
-var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src_SPServices;
+var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, src_SPServices;
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
@@ -108,7 +108,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
     };
     return constants;
   }();
-  src_utils_SPServicesutils = function ($, constants) {
+  src_core_SPServicesutilsjs = function ($, constants) {
     var utils = /** @lends spservices.utils */
       {
         // Get the current context (as much as we can) on startup
@@ -394,7 +394,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
       //end: utils
       //-----------[ PRIVATE METHODS BELOW ]---------------------
       // These should all be defined against a local variable so
-      // that we get a smaller minified files
+      // that we get smaller minified files
       /**
        * Call this function to pop up a branded modal msgBox
        * @private
@@ -2952,7 +2952,7 @@ var src_utils_constants, src_utils_SPServicesutils, src_core_SPServicescore, src
       // Allow the user to force async
       completefunc: null  // Function to call on completion
     };  // End $.fn.SPServices.defaults
-  }(jquery, src_utils_SPServicesutils, src_utils_constants);
+  }(jquery, src_core_SPServicesutilsjs, src_utils_constants);
   src_SPServices = function ($) {
     return $;
   }(jquery);

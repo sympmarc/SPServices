@@ -336,7 +336,7 @@ define([
 
     //-----------[ PRIVATE METHODS BELOW ]---------------------
     // These should all be defined against a local variable so
-    // that we get a smaller minified files
+    // that we get smaller minified files
 
     /**
      * Call this function to pop up a branded modal msgBox

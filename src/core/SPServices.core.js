@@ -1,9 +1,9 @@
 /**
- * Original SPservices modules... Will be broken down into individual modules.
+ * Original SPServices modules... Will be broken down into individual modules.
  */
 define([
     "jquery",
-    "SPServices.utils.js",
+    "../core/SPServices.utils.js",
     "../utils/constants",
 
 ], function (
