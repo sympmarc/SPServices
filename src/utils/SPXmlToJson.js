@@ -63,11 +63,10 @@ define([
 
         var result = {
             "Text": result["Default"],
+            "Counter": result["Integer"],
             "datetime": result["DateTime"],// For calculated columns, stored as datetime;#value
 
-
             /* Generic [Reusable] Functions */
-
             "Default": function () {
                 return v;
             },
@@ -119,6 +118,17 @@ define([
                     }
                     return thisUserMultiObject;
                 }
+            },
+            "Lookup": function() {
+                if (v.length === 0) {
+                    return null;
+                } else {
+                    var thisLookup = v.split(constants.spDelim);
+                    return {
+                        lookupId: thisLookup[0],
+                        lookupValue: thisLookup[1]
+                    };
+                }
             }
 
         };
@@ -144,10 +154,10 @@ define([
             case "UserMulti":
                 colValue = userMultiToJsonObject(v);
                 break;
-*/
             case "Lookup":
                 colValue = lookupToJsonObject(v);
                 break;
+*/
             case "LookupMulti":
                 colValue = lookupMultiToJsonObject(v);
                 break;
@@ -156,12 +166,15 @@ define([
             case "Recurrence":
                 colValue = booleanToJsonObject(v);
                 break;
+/*
             case "Integer":
                 colValue = intToJsonObject(v);
                 break;
+
             case "Counter":
                 colValue = intToJsonObject(v);
                 break;
+ */
             case "MultiChoice":
                 colValue = choiceMultiToJsonObject(v);
                 break;
@@ -191,11 +204,11 @@ define([
         }
         return colValue;
     }
-
+/*
     function intToJsonObject(s) {
         return parseInt(s, 10);
     }
-
+*/
     function floatToJsonObject(s) {
         return parseFloat(s);
     }

@@ -15,7 +15,7 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-06-21 05:56:02
+* @build SPServices 2.0.0 2015-06-21 06:01:04
 */
 ;(function() {
 var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, src_SPServices;
