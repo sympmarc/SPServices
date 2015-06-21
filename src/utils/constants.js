@@ -56,14 +56,14 @@ define([], function(){
             "File",
             "Attachments",
             "User",
-//        "Recurrence", // NEW
+            "Recurrence", // Recurring event indicator (boolean) [0 | 1]
 //        "CrossProjectLink", // NEW
             "ModStat",
             "ContentTypeId",
 //        "PageSeparator", // NEW
 //        "ThreadIndex", // NEW
             "WorkflowStatus", // NEW
-//      "AllDayEvent", // NEW
+            "AllDayEvent", // All day event indicator (boolean) [0 | 1]
 //      "WorkflowEventType", // NEW
 //        "Geolocation", // NEW
 //        "OutcomeChoice", // NEW

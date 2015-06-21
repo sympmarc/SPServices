@@ -6,11 +6,9 @@ define([
     // We don't need local variables for these dependencies
     // because they are added to the jQuery namespace.
     '../core/SPServices.core'
-], function (
-    $,
-    utils,
-    constants
-) {
+], function ($,
+             utils,
+             constants) {
 
 
     // This function converts an XML node set to JSON
@@ -63,7 +61,75 @@ define([
 
         var colValue;
 
+        var result = {
+            "Text": result["Default"],
+            "datetime": result["DateTime"],// For calculated columns, stored as datetime;#value
+
+
+            /* Generic [Reusable] Functions */
+
+            "Default": function () {
+                return v;
+            },
+            "Integer": function () {
+                parseInt(v, 10);
+            },
+            "Boolean": function () {
+                return v !== "0";
+            },
+            "DateTime": function () {
+                var dt = v.split("T")[0] !== v ? v.split("T") : v.split(" ");
+                var d = dt[0].split("-");
+                var t = dt[1].split(":");
+                var t3 = t[2].split("Z");
+                return new Date(d[0], (d[1] - 1), d[2], t[0], t[1], t3[0]);
+            },
+            "User": function () {
+                if (v.length === 0) {
+                    return null;
+                } else {
+                    var thisUser = new utils.SplitIndex(v);
+                    var thisUserExpanded = thisUser.value.split(",#");
+                    if (thisUserExpanded.length === 1) {
+                        return {
+                            userId: thisUser.id,
+                            userName: thisUser.value
+                        };
+                    } else {
+                        return {
+                            userId: thisUser.id,
+                            userName: thisUserExpanded[0].replace(/(,,)/g, ","),
+                            loginName: thisUserExpanded[1].replace(/(,,)/g, ","),
+                            email: thisUserExpanded[2].replace(/(,,)/g, ","),
+                            sipAddress: thisUserExpanded[3].replace(/(,,)/g, ","),
+                            title: thisUserExpanded[4].replace(/(,,)/g, ",")
+                        };
+                    }
+                }
+            },
+            "UserMulti": function() {
+                if (v.length === 0) {
+                    return null;
+                } else {
+                    var thisUserMultiObject = [];
+                    var thisUserMulti = v.split(constants.spDelim);
+                    for (var i = 0; i < thisUserMulti.length; i = i + 2) {
+                        var thisUser = userToJsonObject(thisUserMulti[i] + constants.spDelim + thisUserMulti[i + 1]);
+                        thisUserMultiObject.push(thisUser);
+                    }
+                    return thisUserMultiObject;
+                }
+            }
+
+        };
+
+        if (result !== undefined) {
+            return result;
+        }
+
+
         switch (objectType) {
+/*
             case "Text":
                 colValue = v;
                 break;
@@ -78,6 +144,7 @@ define([
             case "UserMulti":
                 colValue = userMultiToJsonObject(v);
                 break;
+*/
             case "Lookup":
                 colValue = lookupToJsonObject(v);
                 break;
@@ -85,6 +152,8 @@ define([
                 colValue = lookupMultiToJsonObject(v);
                 break;
             case "Boolean":
+            case "AllDayEvent":
+            case "Recurrence":
                 colValue = booleanToJsonObject(v);
                 break;
             case "Integer":
@@ -134,7 +203,7 @@ define([
     function booleanToJsonObject(s) {
         return s !== "0";
     }
-
+/*
     function dateToJsonObject(s) {
 
         var dt = s.split("T")[0] !== s ? s.split("T") : s.split(" ");
@@ -143,7 +212,7 @@ define([
         var t3 = t[2].split("Z");
         return new Date(d[0], (d[1] - 1), d[2], t[0], t[1], t3[0]);
     }
-
+*/
     function userToJsonObject(s) {
         if (s.length === 0) {
             return null;
@@ -167,7 +236,7 @@ define([
             }
         }
     }
-
+/*
     function userMultiToJsonObject(s) {
         if (s.length === 0) {
             return null;
@@ -181,7 +250,7 @@ define([
             return thisUserMultiObject;
         }
     }
-
+*/
     function lookupToJsonObject(s) {
         if (s.length === 0) {
             return null;
@@ -280,4 +349,5 @@ define([
 
     return $;
 
-});
+})
+;

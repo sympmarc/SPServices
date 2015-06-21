@@ -4,8 +4,7 @@
 define([
     "jquery",
     "../core/SPServices.utils.js",
-    "../utils/constants",
-
+    "../utils/constants"
 ], function (
     $,
     utils,
@@ -20,30 +19,32 @@ define([
     var promisesCache = {};
 
     //   Web Service names
-    var ALERTS = "Alerts";
-    var AUTHENTICATION = "Authentication";
-    var COPY = "Copy";
-    var FORMS = "Forms";
-    var LISTS = "Lists";
-    var MEETINGS = "Meetings";
-    var OFFICIALFILE = "OfficialFile";
-    var PEOPLE = "People";
-    var PERMISSIONS = "Permissions";
-    var PUBLISHEDLINKSSERVICE = "PublishedLinksService";
-    var SEARCH = "Search";
-    var SHAREPOINTDIAGNOSTICS = "SharePointDiagnostics";
-    var SITEDATA = "SiteData";
-    var SITES = "Sites";
-    var SOCIALDATASERVICE = "SocialDataService";
-    var SPELLCHECK = "SpellCheck";
-    var TAXONOMYSERVICE = "TaxonomyClientService";
-    var USERGROUP = "usergroup";
-    var USERPROFILESERVICE = "UserProfileService";
-    var VERSIONS = "Versions";
-    var VIEWS = "Views";
-    var WEBPARTPAGES = "WebPartPages";
-    var WEBS = "Webs";
-    var WORKFLOW = "Workflow";
+    var webServices = {
+        ALERTS: "Alerts",
+        AUTHENTICATION: "Authentication",
+        COPY: "Copy",
+        FORMS: "Forms",
+        LISTS: "Lists",
+        MEETINGS: "Meetings",
+        OFFICIALFILE: "OfficialFile",
+        PEOPLE: "People",
+        PERMISSIONS: "Permissions",
+        PUBLISHEDLINKSSERVICE: "PublishedLinksService",
+        SEARCH: "Search",
+        SHAREPOINTDIAGNOSTICS: "SharePointDiagnostics",
+        SITEDATA: "SiteData",
+        SITES: "Sites",
+        SOCIALDATASERVICE: "SocialDataService",
+        SPELLCHECK: "SpellCheck",
+        TAXONOMYSERVICE: "TaxonomyClientService",
+        USERGROUP: "usergroup",
+        USERPROFILESERVICE: "UserProfileService",
+        VERSIONS: "Versions",
+        VIEWS: "Views",
+        WEBPARTPAGES: "WebPartPages",
+        WEBS: "Webs",
+        WORKFLOW: "Workflow"
+    };
 
     var encodeOptionList = ["listName", "description"]; // Used to encode options which may contain special characters
 
@@ -52,269 +53,270 @@ define([
     //  WSops.OpName = [WebService, needs_SOAPAction];
     //      OpName              The name of the Web Service operation -> These names are unique
     //      WebService          The name of the WebService this operation belongs to
-    //      needs_SOAPAction    Boolean indicating whether the operatio needs to have the SOAPAction passed in the setRequestHeaderfunction.
+    //      needs_SOAPAction    Boolean indicating whether the operation needs to have the SOAPAction passed in the setRequestHeaderfunction.
     //                          true if the operation does a write, else false
 
-    var WSops = [];
+    var WSops = {
+        GetAlerts: [webServices.ALERTS, false]
+    };
 
-    WSops.GetAlerts = [ALERTS, false];
-    WSops.DeleteAlerts = [ALERTS, true];
+    WSops.DeleteAlerts = [webServices.ALERTS, true];
 
-    WSops.Mode = [AUTHENTICATION, false];
-    WSops.Login = [AUTHENTICATION, false];
+    WSops.Mode = [webServices.AUTHENTICATION, false];
+    WSops.Login = [webServices.AUTHENTICATION, false];
 
-    WSops.CopyIntoItems = [COPY, true];
-    WSops.CopyIntoItemsLocal = [COPY, true];
-    WSops.GetItem = [COPY, false];
+    WSops.CopyIntoItems = [webServices.COPY, true];
+    WSops.CopyIntoItemsLocal = [webServices.COPY, true];
+    WSops.GetItem = [webServices.COPY, false];
 
-    WSops.GetForm = [FORMS, false];
-    WSops.GetFormCollection = [FORMS, false];
+    WSops.GetForm = [webServices.FORMS, false];
+    WSops.GetFormCollection = [webServices.FORMS, false];
 
-    WSops.AddAttachment = [LISTS, true];
-    WSops.AddDiscussionBoardItem = [LISTS, true];
-    WSops.AddList = [LISTS, true];
-    WSops.AddListFromFeature = [LISTS, true];
-    WSops.ApplyContentTypeToList = [LISTS, true];
-    WSops.CheckInFile = [LISTS, true];
-    WSops.CheckOutFile = [LISTS, true];
-    WSops.CreateContentType = [LISTS, true];
-    WSops.DeleteAttachment = [LISTS, true];
-    WSops.DeleteContentType = [LISTS, true];
-    WSops.DeleteContentTypeXmlDocument = [LISTS, true];
-    WSops.DeleteList = [LISTS, true];
-    WSops.GetAttachmentCollection = [LISTS, false];
-    WSops.GetList = [LISTS, false];
-    WSops.GetListAndView = [LISTS, false];
-    WSops.GetListCollection = [LISTS, false];
-    WSops.GetListContentType = [LISTS, false];
-    WSops.GetListContentTypes = [LISTS, false];
-    WSops.GetListItemChanges = [LISTS, false];
-    WSops.GetListItemChangesSinceToken = [LISTS, false];
-    WSops.GetListItems = [LISTS, false];
-    WSops.GetVersionCollection = [LISTS, false];
-    WSops.UndoCheckOut = [LISTS, true];
-    WSops.UpdateContentType = [LISTS, true];
-    WSops.UpdateContentTypesXmlDocument = [LISTS, true];
-    WSops.UpdateContentTypeXmlDocument = [LISTS, true];
-    WSops.UpdateList = [LISTS, true];
-    WSops.UpdateListItems = [LISTS, true];
+    WSops.AddAttachment = [webServices.LISTS, true];
+    WSops.AddDiscussionBoardItem = [webServices.LISTS, true];
+    WSops.AddList = [webServices.LISTS, true];
+    WSops.AddListFromFeature = [webServices.LISTS, true];
+    WSops.ApplyContentTypeToList = [webServices.LISTS, true];
+    WSops.CheckInFile = [webServices.LISTS, true];
+    WSops.CheckOutFile = [webServices.LISTS, true];
+    WSops.CreateContentType = [webServices.LISTS, true];
+    WSops.DeleteAttachment = [webServices.LISTS, true];
+    WSops.DeleteContentType = [webServices.LISTS, true];
+    WSops.DeleteContentTypeXmlDocument = [webServices.LISTS, true];
+    WSops.DeleteList = [webServices.LISTS, true];
+    WSops.GetAttachmentCollection = [webServices.LISTS, false];
+    WSops.GetList = [webServices.LISTS, false];
+    WSops.GetListAndView = [webServices.LISTS, false];
+    WSops.GetListCollection = [webServices.LISTS, false];
+    WSops.GetListContentType = [webServices.LISTS, false];
+    WSops.GetListContentTypes = [webServices.LISTS, false];
+    WSops.GetListItemChanges = [webServices.LISTS, false];
+    WSops.GetListItemChangesSinceToken = [webServices.LISTS, false];
+    WSops.GetListItems = [webServices.LISTS, false];
+    WSops.GetVersionCollection = [webServices.LISTS, false];
+    WSops.UndoCheckOut = [webServices.LISTS, true];
+    WSops.UpdateContentType = [webServices.LISTS, true];
+    WSops.UpdateContentTypesXmlDocument = [webServices.LISTS, true];
+    WSops.UpdateContentTypeXmlDocument = [webServices.LISTS, true];
+    WSops.UpdateList = [webServices.LISTS, true];
+    WSops.UpdateListItems = [webServices.LISTS, true];
 
-    WSops.AddMeeting = [MEETINGS, true];
-    WSops.CreateWorkspace = [MEETINGS, true];
-    WSops.RemoveMeeting = [MEETINGS, true];
-    WSops.SetWorkSpaceTitle = [MEETINGS, true];
+    WSops.AddMeeting = [webServices.MEETINGS, true];
+    WSops.CreateWorkspace = [webServices.MEETINGS, true];
+    WSops.RemoveMeeting = [webServices.MEETINGS, true];
+    WSops.SetWorkSpaceTitle = [webServices.MEETINGS, true];
 
-    WSops.GetRecordRouting = [OFFICIALFILE, false];
-    WSops.GetRecordRoutingCollection = [OFFICIALFILE, false];
-    WSops.GetServerInfo = [OFFICIALFILE, false];
-    WSops.SubmitFile = [OFFICIALFILE, true];
+    WSops.GetRecordRouting = [webServices.OFFICIALFILE, false];
+    WSops.GetRecordRoutingCollection = [webServices.OFFICIALFILE, false];
+    WSops.GetServerInfo = [webServices.OFFICIALFILE, false];
+    WSops.SubmitFile = [webServices.OFFICIALFILE, true];
 
-    WSops.ResolvePrincipals = [PEOPLE, true];
-    WSops.SearchPrincipals = [PEOPLE, false];
+    WSops.ResolvePrincipals = [webServices.PEOPLE, true];
+    WSops.SearchPrincipals = [webServices.PEOPLE, false];
 
-    WSops.AddPermission = [PERMISSIONS, true];
-    WSops.AddPermissionCollection = [PERMISSIONS, true];
-    WSops.GetPermissionCollection = [PERMISSIONS, true];
-    WSops.RemovePermission = [PERMISSIONS, true];
-    WSops.RemovePermissionCollection = [PERMISSIONS, true];
-    WSops.UpdatePermission = [PERMISSIONS, true];
+    WSops.AddPermission = [webServices.PERMISSIONS, true];
+    WSops.AddPermissionCollection = [webServices.PERMISSIONS, true];
+    WSops.GetPermissionCollection = [webServices.PERMISSIONS, true];
+    WSops.RemovePermission = [webServices.PERMISSIONS, true];
+    WSops.RemovePermissionCollection = [webServices.PERMISSIONS, true];
+    WSops.UpdatePermission = [webServices.PERMISSIONS, true];
 
-    WSops.GetLinks = [PUBLISHEDLINKSSERVICE, true];
+    WSops.GetLinks = [webServices.PUBLISHEDLINKSSERVICE, true];
 
-    WSops.GetPortalSearchInfo = [SEARCH, false];
-    WSops.GetQuerySuggestions = [SEARCH, false];
-    WSops.GetSearchMetadata = [SEARCH, false];
-    WSops.Query = [SEARCH, false];
-    WSops.QueryEx = [SEARCH, false];
-    WSops.Registration = [SEARCH, false];
-    WSops.Status = [SEARCH, false];
+    WSops.GetPortalSearchInfo = [webServices.SEARCH, false];
+    WSops.GetQuerySuggestions = [webServices.SEARCH, false];
+    WSops.GetSearchMetadata = [webServices.SEARCH, false];
+    WSops.Query = [webServices.SEARCH, false];
+    WSops.QueryEx = [webServices.SEARCH, false];
+    WSops.Registration = [webServices.SEARCH, false];
+    WSops.Status = [webServices.SEARCH, false];
 
-    WSops.SendClientScriptErrorReport = [SHAREPOINTDIAGNOSTICS, true];
+    WSops.SendClientScriptErrorReport = [webServices.SHAREPOINTDIAGNOSTICS, true];
 
-    WSops.GetAttachments = [SITEDATA, false];
-    WSops.EnumerateFolder = [SITEDATA, false];
-    WSops.SiteDataGetList = [SITEDATA, false];
-    WSops.SiteDataGetListCollection = [SITEDATA, false];
-    WSops.SiteDataGetSite = [SITEDATA, false];
-    WSops.SiteDataGetSiteUrl = [SITEDATA, false];
-    WSops.SiteDataGetWeb = [SITEDATA, false];
+    WSops.GetAttachments = [webServices.SITEDATA, false];
+    WSops.EnumerateFolder = [webServices.SITEDATA, false];
+    WSops.SiteDataGetList = [webServices.SITEDATA, false];
+    WSops.SiteDataGetListCollection = [webServices.SITEDATA, false];
+    WSops.SiteDataGetSite = [webServices.SITEDATA, false];
+    WSops.SiteDataGetSiteUrl = [webServices.SITEDATA, false];
+    WSops.SiteDataGetWeb = [webServices.SITEDATA, false];
 
-    WSops.CreateWeb = [SITES, true];
-    WSops.DeleteWeb = [SITES, true];
-    WSops.GetSite = [SITES, false];
-    WSops.GetSiteTemplates = [SITES, false];
+    WSops.CreateWeb = [webServices.SITES, true];
+    WSops.DeleteWeb = [webServices.SITES, true];
+    WSops.GetSite = [webServices.SITES, false];
+    WSops.GetSiteTemplates = [webServices.SITES, false];
 
-    WSops.AddComment = [SOCIALDATASERVICE, true];
-    WSops.AddTag = [SOCIALDATASERVICE, true];
-    WSops.AddTagByKeyword = [SOCIALDATASERVICE, true];
-    WSops.CountCommentsOfUser = [SOCIALDATASERVICE, false];
-    WSops.CountCommentsOfUserOnUrl = [SOCIALDATASERVICE, false];
-    WSops.CountCommentsOnUrl = [SOCIALDATASERVICE, false];
-    WSops.CountRatingsOnUrl = [SOCIALDATASERVICE, false];
-    WSops.CountTagsOfUser = [SOCIALDATASERVICE, false];
-    WSops.DeleteComment = [SOCIALDATASERVICE, true];
-    WSops.DeleteRating = [SOCIALDATASERVICE, true];
-    WSops.DeleteTag = [SOCIALDATASERVICE, true];
-    WSops.DeleteTagByKeyword = [SOCIALDATASERVICE, true];
-    WSops.DeleteTags = [SOCIALDATASERVICE, true];
-    WSops.GetAllTagTerms = [SOCIALDATASERVICE, false];
-    WSops.GetAllTagTermsForUrlFolder = [SOCIALDATASERVICE, false];
-    WSops.GetAllTagUrls = [SOCIALDATASERVICE, false];
-    WSops.GetAllTagUrlsByKeyword = [SOCIALDATASERVICE, false];
-    WSops.GetCommentsOfUser = [SOCIALDATASERVICE, false];
-    WSops.GetCommentsOfUserOnUrl = [SOCIALDATASERVICE, false];
-    WSops.GetCommentsOnUrl = [SOCIALDATASERVICE, false];
-    WSops.GetRatingAverageOnUrl = [SOCIALDATASERVICE, false];
-    WSops.GetRatingOfUserOnUrl = [SOCIALDATASERVICE, false];
-    WSops.GetRatingOnUrl = [SOCIALDATASERVICE, false];
-    WSops.GetRatingsOfUser = [SOCIALDATASERVICE, false];
-    WSops.GetRatingsOnUrl = [SOCIALDATASERVICE, false];
-    WSops.GetSocialDataForFullReplication = [SOCIALDATASERVICE, false];
-    WSops.GetTags = [SOCIALDATASERVICE, true];
-    WSops.GetTagsOfUser = [SOCIALDATASERVICE, true];
-    WSops.GetTagTerms = [SOCIALDATASERVICE, true];
-    WSops.GetTagTermsOfUser = [SOCIALDATASERVICE, true];
-    WSops.GetTagTermsOnUrl = [SOCIALDATASERVICE, true];
-    WSops.GetTagUrlsOfUser = [SOCIALDATASERVICE, true];
-    WSops.GetTagUrlsOfUserByKeyword = [SOCIALDATASERVICE, true];
-    WSops.GetTagUrls = [SOCIALDATASERVICE, true];
-    WSops.GetTagUrlsByKeyword = [SOCIALDATASERVICE, true];
-    WSops.SetRating = [SOCIALDATASERVICE, true];
-    WSops.UpdateComment = [SOCIALDATASERVICE, true];
+    WSops.AddComment = [webServices.SOCIALDATASERVICE, true];
+    WSops.AddTag = [webServices.SOCIALDATASERVICE, true];
+    WSops.AddTagByKeyword = [webServices.SOCIALDATASERVICE, true];
+    WSops.CountCommentsOfUser = [webServices.SOCIALDATASERVICE, false];
+    WSops.CountCommentsOfUserOnUrl = [webServices.SOCIALDATASERVICE, false];
+    WSops.CountCommentsOnUrl = [webServices.SOCIALDATASERVICE, false];
+    WSops.CountRatingsOnUrl = [webServices.SOCIALDATASERVICE, false];
+    WSops.CountTagsOfUser = [webServices.SOCIALDATASERVICE, false];
+    WSops.DeleteComment = [webServices.SOCIALDATASERVICE, true];
+    WSops.DeleteRating = [webServices.SOCIALDATASERVICE, true];
+    WSops.DeleteTag = [webServices.SOCIALDATASERVICE, true];
+    WSops.DeleteTagByKeyword = [webServices.SOCIALDATASERVICE, true];
+    WSops.DeleteTags = [webServices.SOCIALDATASERVICE, true];
+    WSops.GetAllTagTerms = [webServices.SOCIALDATASERVICE, false];
+    WSops.GetAllTagTermsForUrlFolder = [webServices.SOCIALDATASERVICE, false];
+    WSops.GetAllTagUrls = [webServices.SOCIALDATASERVICE, false];
+    WSops.GetAllTagUrlsByKeyword = [webServices.SOCIALDATASERVICE, false];
+    WSops.GetCommentsOfUser = [webServices.SOCIALDATASERVICE, false];
+    WSops.GetCommentsOfUserOnUrl = [webServices.SOCIALDATASERVICE, false];
+    WSops.GetCommentsOnUrl = [webServices.SOCIALDATASERVICE, false];
+    WSops.GetRatingAverageOnUrl = [webServices.SOCIALDATASERVICE, false];
+    WSops.GetRatingOfUserOnUrl = [webServices.SOCIALDATASERVICE, false];
+    WSops.GetRatingOnUrl = [webServices.SOCIALDATASERVICE, false];
+    WSops.GetRatingsOfUser = [webServices.SOCIALDATASERVICE, false];
+    WSops.GetRatingsOnUrl = [webServices.SOCIALDATASERVICE, false];
+    WSops.GetSocialDataForFullReplication = [webServices.SOCIALDATASERVICE, false];
+    WSops.GetTags = [webServices.SOCIALDATASERVICE, true];
+    WSops.GetTagsOfUser = [webServices.SOCIALDATASERVICE, true];
+    WSops.GetTagTerms = [webServices.SOCIALDATASERVICE, true];
+    WSops.GetTagTermsOfUser = [webServices.SOCIALDATASERVICE, true];
+    WSops.GetTagTermsOnUrl = [webServices.SOCIALDATASERVICE, true];
+    WSops.GetTagUrlsOfUser = [webServices.SOCIALDATASERVICE, true];
+    WSops.GetTagUrlsOfUserByKeyword = [webServices.SOCIALDATASERVICE, true];
+    WSops.GetTagUrls = [webServices.SOCIALDATASERVICE, true];
+    WSops.GetTagUrlsByKeyword = [webServices.SOCIALDATASERVICE, true];
+    WSops.SetRating = [webServices.SOCIALDATASERVICE, true];
+    WSops.UpdateComment = [webServices.SOCIALDATASERVICE, true];
 
-    WSops.SpellCheck = [SPELLCHECK, false];
+    WSops.SpellCheck = [webServices.SPELLCHECK, false];
 
     // Taxonomy Service Calls
     // Updated 2011.01.27 by Thomas McMillan
-    WSops.AddTerms = [TAXONOMYSERVICE, true];
-    WSops.GetChildTermsInTerm = [TAXONOMYSERVICE, false];
-    WSops.GetChildTermsInTermSet = [TAXONOMYSERVICE, false];
-    WSops.GetKeywordTermsByGuids = [TAXONOMYSERVICE, false];
-    WSops.GetTermsByLabel = [TAXONOMYSERVICE, false];
-    WSops.GetTermSets = [TAXONOMYSERVICE, false];
+    WSops.AddTerms = [webServices.TAXONOMYSERVICE, true];
+    WSops.GetChildTermsInTerm = [webServices.TAXONOMYSERVICE, false];
+    WSops.GetChildTermsInTermSet = [webServices.TAXONOMYSERVICE, false];
+    WSops.GetKeywordTermsByGuids = [webServices.TAXONOMYSERVICE, false];
+    WSops.GetTermsByLabel = [webServices.TAXONOMYSERVICE, false];
+    WSops.GetTermSets = [webServices.TAXONOMYSERVICE, false];
 
-    WSops.AddGroup = [USERGROUP, true];
-    WSops.AddGroupToRole = [USERGROUP, true];
-    WSops.AddRole = [USERGROUP, true];
-    WSops.AddRoleDef = [USERGROUP, true];
-    WSops.AddUserCollectionToGroup = [USERGROUP, true];
-    WSops.AddUserCollectionToRole = [USERGROUP, true];
-    WSops.AddUserToGroup = [USERGROUP, true];
-    WSops.AddUserToRole = [USERGROUP, true];
-    WSops.GetAllUserCollectionFromWeb = [USERGROUP, false];
-    WSops.GetGroupCollection = [USERGROUP, false];
-    WSops.GetGroupCollectionFromRole = [USERGROUP, false];
-    WSops.GetGroupCollectionFromSite = [USERGROUP, false];
-    WSops.GetGroupCollectionFromUser = [USERGROUP, false];
-    WSops.GetGroupCollectionFromWeb = [USERGROUP, false];
-    WSops.GetGroupInfo = [USERGROUP, false];
-    WSops.GetRoleCollection = [USERGROUP, false];
-    WSops.GetRoleCollectionFromGroup = [USERGROUP, false];
-    WSops.GetRoleCollectionFromUser = [USERGROUP, false];
-    WSops.GetRoleCollectionFromWeb = [USERGROUP, false];
-    WSops.GetRoleInfo = [USERGROUP, false];
-    WSops.GetRolesAndPermissionsForCurrentUser = [USERGROUP, false];
-    WSops.GetRolesAndPermissionsForSite = [USERGROUP, false];
-    WSops.GetUserCollection = [USERGROUP, false];
-    WSops.GetUserCollectionFromGroup = [USERGROUP, false];
-    WSops.GetUserCollectionFromRole = [USERGROUP, false];
-    WSops.GetUserCollectionFromSite = [USERGROUP, false];
-    WSops.GetUserCollectionFromWeb = [USERGROUP, false];
-    WSops.GetUserInfo = [USERGROUP, false];
-    WSops.GetUserLoginFromEmail = [USERGROUP, false];
-    WSops.RemoveGroup = [USERGROUP, true];
-    WSops.RemoveGroupFromRole = [USERGROUP, true];
-    WSops.RemoveRole = [USERGROUP, true];
-    WSops.RemoveUserCollectionFromGroup = [USERGROUP, true];
-    WSops.RemoveUserCollectionFromRole = [USERGROUP, true];
-    WSops.RemoveUserCollectionFromSite = [USERGROUP, true];
-    WSops.RemoveUserFromGroup = [USERGROUP, true];
-    WSops.RemoveUserFromRole = [USERGROUP, true];
-    WSops.RemoveUserFromSite = [USERGROUP, true];
-    WSops.RemoveUserFromWeb = [USERGROUP, true];
-    WSops.UpdateGroupInfo = [USERGROUP, true];
-    WSops.UpdateRoleDefInfo = [USERGROUP, true];
-    WSops.UpdateRoleInfo = [USERGROUP, true];
-    WSops.UpdateUserInfo = [USERGROUP, true];
+    WSops.AddGroup = [webServices.USERGROUP, true];
+    WSops.AddGroupToRole = [webServices.USERGROUP, true];
+    WSops.AddRole = [webServices.USERGROUP, true];
+    WSops.AddRoleDef = [webServices.USERGROUP, true];
+    WSops.AddUserCollectionToGroup = [webServices.USERGROUP, true];
+    WSops.AddUserCollectionToRole = [webServices.USERGROUP, true];
+    WSops.AddUserToGroup = [webServices.USERGROUP, true];
+    WSops.AddUserToRole = [webServices.USERGROUP, true];
+    WSops.GetAllUserCollectionFromWeb = [webServices.USERGROUP, false];
+    WSops.GetGroupCollection = [webServices.USERGROUP, false];
+    WSops.GetGroupCollectionFromRole = [webServices.USERGROUP, false];
+    WSops.GetGroupCollectionFromSite = [webServices.USERGROUP, false];
+    WSops.GetGroupCollectionFromUser = [webServices.USERGROUP, false];
+    WSops.GetGroupCollectionFromWeb = [webServices.USERGROUP, false];
+    WSops.GetGroupInfo = [webServices.USERGROUP, false];
+    WSops.GetRoleCollection = [webServices.USERGROUP, false];
+    WSops.GetRoleCollectionFromGroup = [webServices.USERGROUP, false];
+    WSops.GetRoleCollectionFromUser = [webServices.USERGROUP, false];
+    WSops.GetRoleCollectionFromWeb = [webServices.USERGROUP, false];
+    WSops.GetRoleInfo = [webServices.USERGROUP, false];
+    WSops.GetRolesAndPermissionsForCurrentUser = [webServices.USERGROUP, false];
+    WSops.GetRolesAndPermissionsForSite = [webServices.USERGROUP, false];
+    WSops.GetUserCollection = [webServices.USERGROUP, false];
+    WSops.GetUserCollectionFromGroup = [webServices.USERGROUP, false];
+    WSops.GetUserCollectionFromRole = [webServices.USERGROUP, false];
+    WSops.GetUserCollectionFromSite = [webServices.USERGROUP, false];
+    WSops.GetUserCollectionFromWeb = [webServices.USERGROUP, false];
+    WSops.GetUserInfo = [webServices.USERGROUP, false];
+    WSops.GetUserLoginFromEmail = [webServices.USERGROUP, false];
+    WSops.RemoveGroup = [webServices.USERGROUP, true];
+    WSops.RemoveGroupFromRole = [webServices.USERGROUP, true];
+    WSops.RemoveRole = [webServices.USERGROUP, true];
+    WSops.RemoveUserCollectionFromGroup = [webServices.USERGROUP, true];
+    WSops.RemoveUserCollectionFromRole = [webServices.USERGROUP, true];
+    WSops.RemoveUserCollectionFromSite = [webServices.USERGROUP, true];
+    WSops.RemoveUserFromGroup = [webServices.USERGROUP, true];
+    WSops.RemoveUserFromRole = [webServices.USERGROUP, true];
+    WSops.RemoveUserFromSite = [webServices.USERGROUP, true];
+    WSops.RemoveUserFromWeb = [webServices.USERGROUP, true];
+    WSops.UpdateGroupInfo = [webServices.USERGROUP, true];
+    WSops.UpdateRoleDefInfo = [webServices.USERGROUP, true];
+    WSops.UpdateRoleInfo = [webServices.USERGROUP, true];
+    WSops.UpdateUserInfo = [webServices.USERGROUP, true];
 
-    WSops.AddColleague = [USERPROFILESERVICE, true];
-    WSops.AddLink = [USERPROFILESERVICE, true];
-    WSops.AddMembership = [USERPROFILESERVICE, true];
-    WSops.AddPinnedLink = [USERPROFILESERVICE, true];
-    WSops.CreateMemberGroup = [USERPROFILESERVICE, true];
-    WSops.CreateUserProfileByAccountName = [USERPROFILESERVICE, true];
-    WSops.GetCommonColleagues = [USERPROFILESERVICE, false];
-    WSops.GetCommonManager = [USERPROFILESERVICE, false];
-    WSops.GetCommonMemberships = [USERPROFILESERVICE, false];
-    WSops.GetInCommon = [USERPROFILESERVICE, false];
-    WSops.GetPropertyChoiceList = [USERPROFILESERVICE, false];
-    WSops.GetUserColleagues = [USERPROFILESERVICE, false];
-    WSops.GetUserLinks = [USERPROFILESERVICE, false];
-    WSops.GetUserMemberships = [USERPROFILESERVICE, false];
-    WSops.GetUserPinnedLinks = [USERPROFILESERVICE, false];
-    WSops.GetUserProfileByGuid = [USERPROFILESERVICE, false];
-    WSops.GetUserProfileByIndex = [USERPROFILESERVICE, false];
-    WSops.GetUserProfileByName = [USERPROFILESERVICE, false];
-    WSops.GetUserProfileCount = [USERPROFILESERVICE, false];
-    WSops.GetUserProfileSchema = [USERPROFILESERVICE, false];
-    WSops.GetUserPropertyByAccountName = [USERPROFILESERVICE, false];
-    WSops.ModifyUserPropertyByAccountName = [USERPROFILESERVICE, true];
-    WSops.RemoveAllColleagues = [USERPROFILESERVICE, true];
-    WSops.RemoveAllLinks = [USERPROFILESERVICE, true];
-    WSops.RemoveAllMemberships = [USERPROFILESERVICE, true];
-    WSops.RemoveAllPinnedLinks = [USERPROFILESERVICE, true];
-    WSops.RemoveColleague = [USERPROFILESERVICE, true];
-    WSops.RemoveLink = [USERPROFILESERVICE, true];
-    WSops.RemoveMembership = [USERPROFILESERVICE, true];
-    WSops.RemovePinnedLink = [USERPROFILESERVICE, true];
-    WSops.UpdateColleaguePrivacy = [USERPROFILESERVICE, true];
-    WSops.UpdateLink = [USERPROFILESERVICE, true];
-    WSops.UpdateMembershipPrivacy = [USERPROFILESERVICE, true];
-    WSops.UpdatePinnedLink = [USERPROFILESERVICE, true];
+    WSops.AddColleague = [webServices.USERPROFILESERVICE, true];
+    WSops.AddLink = [webServices.USERPROFILESERVICE, true];
+    WSops.AddMembership = [webServices.USERPROFILESERVICE, true];
+    WSops.AddPinnedLink = [webServices.USERPROFILESERVICE, true];
+    WSops.CreateMemberGroup = [webServices.USERPROFILESERVICE, true];
+    WSops.CreateUserProfileByAccountName = [webServices.USERPROFILESERVICE, true];
+    WSops.GetCommonColleagues = [webServices.USERPROFILESERVICE, false];
+    WSops.GetCommonManager = [webServices.USERPROFILESERVICE, false];
+    WSops.GetCommonMemberships = [webServices.USERPROFILESERVICE, false];
+    WSops.GetInCommon = [webServices.USERPROFILESERVICE, false];
+    WSops.GetPropertyChoiceList = [webServices.USERPROFILESERVICE, false];
+    WSops.GetUserColleagues = [webServices.USERPROFILESERVICE, false];
+    WSops.GetUserLinks = [webServices.USERPROFILESERVICE, false];
+    WSops.GetUserMemberships = [webServices.USERPROFILESERVICE, false];
+    WSops.GetUserPinnedLinks = [webServices.USERPROFILESERVICE, false];
+    WSops.GetUserProfileByGuid = [webServices.USERPROFILESERVICE, false];
+    WSops.GetUserProfileByIndex = [webServices.USERPROFILESERVICE, false];
+    WSops.GetUserProfileByName = [webServices.USERPROFILESERVICE, false];
+    WSops.GetUserProfileCount = [webServices.USERPROFILESERVICE, false];
+    WSops.GetUserProfileSchema = [webServices.USERPROFILESERVICE, false];
+    WSops.GetUserPropertyByAccountName = [webServices.USERPROFILESERVICE, false];
+    WSops.ModifyUserPropertyByAccountName = [webServices.USERPROFILESERVICE, true];
+    WSops.RemoveAllColleagues = [webServices.USERPROFILESERVICE, true];
+    WSops.RemoveAllLinks = [webServices.USERPROFILESERVICE, true];
+    WSops.RemoveAllMemberships = [webServices.USERPROFILESERVICE, true];
+    WSops.RemoveAllPinnedLinks = [webServices.USERPROFILESERVICE, true];
+    WSops.RemoveColleague = [webServices.USERPROFILESERVICE, true];
+    WSops.RemoveLink = [webServices.USERPROFILESERVICE, true];
+    WSops.RemoveMembership = [webServices.USERPROFILESERVICE, true];
+    WSops.RemovePinnedLink = [webServices.USERPROFILESERVICE, true];
+    WSops.UpdateColleaguePrivacy = [webServices.USERPROFILESERVICE, true];
+    WSops.UpdateLink = [webServices.USERPROFILESERVICE, true];
+    WSops.UpdateMembershipPrivacy = [webServices.USERPROFILESERVICE, true];
+    WSops.UpdatePinnedLink = [webServices.USERPROFILESERVICE, true];
 
-    WSops.DeleteAllVersions = [VERSIONS, true];
-    WSops.DeleteVersion = [VERSIONS, true];
-    WSops.GetVersions = [VERSIONS, false];
-    WSops.RestoreVersion = [VERSIONS, true];
+    WSops.DeleteAllVersions = [webServices.VERSIONS, true];
+    WSops.DeleteVersion = [webServices.VERSIONS, true];
+    WSops.GetVersions = [webServices.VERSIONS, false];
+    WSops.RestoreVersion = [webServices.VERSIONS, true];
 
-    WSops.AddView = [VIEWS, true];
-    WSops.DeleteView = [VIEWS, true];
-    WSops.GetView = [VIEWS, false];
-    WSops.GetViewHtml = [VIEWS, false];
-    WSops.GetViewCollection = [VIEWS, false];
-    WSops.UpdateView = [VIEWS, true];
-    WSops.UpdateViewHtml = [VIEWS, true];
+    WSops.AddView = [webServices.VIEWS, true];
+    WSops.DeleteView = [webServices.VIEWS, true];
+    WSops.GetView = [webServices.VIEWS, false];
+    WSops.GetViewHtml = [webServices.VIEWS, false];
+    WSops.GetViewCollection = [webServices.VIEWS, false];
+    WSops.UpdateView = [webServices.VIEWS, true];
+    WSops.UpdateViewHtml = [webServices.VIEWS, true];
 
-    WSops.AddWebPart = [WEBPARTPAGES, true];
-    WSops.AddWebPartToZone = [WEBPARTPAGES, true];
-    WSops.DeleteWebPart = [WEBPARTPAGES, true];
-    WSops.GetWebPart2 = [WEBPARTPAGES, false];
-    WSops.GetWebPartPage = [WEBPARTPAGES, false];
-    WSops.GetWebPartProperties = [WEBPARTPAGES, false];
-    WSops.GetWebPartProperties2 = [WEBPARTPAGES, false];
-    WSops.SaveWebPart2 = [WEBPARTPAGES, true];
+    WSops.AddWebPart = [webServices.WEBPARTPAGES, true];
+    WSops.AddWebPartToZone = [webServices.WEBPARTPAGES, true];
+    WSops.DeleteWebPart = [webServices.WEBPARTPAGES, true];
+    WSops.GetWebPart2 = [webServices.WEBPARTPAGES, false];
+    WSops.GetWebPartPage = [webServices.WEBPARTPAGES, false];
+    WSops.GetWebPartProperties = [webServices.WEBPARTPAGES, false];
+    WSops.GetWebPartProperties2 = [webServices.WEBPARTPAGES, false];
+    WSops.SaveWebPart2 = [webServices.WEBPARTPAGES, true];
 
-    WSops.CreateContentType = [WEBS, true];
-    WSops.GetColumns = [WEBS, false];
-    WSops.GetContentType = [WEBS, false];
-    WSops.GetContentTypes = [WEBS, false];
-    WSops.GetCustomizedPageStatus = [WEBS, false];
-    WSops.GetListTemplates = [WEBS, false];
-    WSops.GetObjectIdFromUrl = [WEBS, false]; // 2010
-    WSops.GetWeb = [WEBS, false];
-    WSops.GetWebCollection = [WEBS, false];
-    WSops.GetAllSubWebCollection = [WEBS, false];
-    WSops.UpdateColumns = [WEBS, true];
-    WSops.UpdateContentType = [WEBS, true];
-    WSops.WebUrlFromPageUrl = [WEBS, false];
+    WSops.CreateContentType = [webServices.WEBS, true];
+    WSops.GetColumns = [webServices.WEBS, false];
+    WSops.GetContentType = [webServices.WEBS, false];
+    WSops.GetContentTypes = [webServices.WEBS, false];
+    WSops.GetCustomizedPageStatus = [webServices.WEBS, false];
+    WSops.GetListTemplates = [webServices.WEBS, false];
+    WSops.GetObjectIdFromUrl = [webServices.WEBS, false]; // 2010
+    WSops.GetWeb = [webServices.WEBS, false];
+    WSops.GetWebCollection = [webServices.WEBS, false];
+    WSops.GetAllSubWebCollection = [webServices.WEBS, false];
+    WSops.UpdateColumns = [webServices.WEBS, true];
+    WSops.UpdateContentType = [webServices.WEBS, true];
+    WSops.WebUrlFromPageUrl = [webServices.WEBS, false];
 
-    WSops.AlterToDo = [WORKFLOW, true];
-    WSops.ClaimReleaseTask = [WORKFLOW, true];
-    WSops.GetTemplatesForItem = [WORKFLOW, false];
-    WSops.GetToDosForItem = [WORKFLOW, false];
-    WSops.GetWorkflowDataForItem = [WORKFLOW, false];
-    WSops.GetWorkflowTaskData = [WORKFLOW, false];
-    WSops.StartWorkflow = [WORKFLOW, true];
+    WSops.AlterToDo = [webServices.WORKFLOW, true];
+    WSops.ClaimReleaseTask = [webServices.WORKFLOW, true];
+    WSops.GetTemplatesForItem = [webServices.WORKFLOW, false];
+    WSops.GetToDosForItem = [webServices.WORKFLOW, false];
+    WSops.GetWorkflowDataForItem = [webServices.WORKFLOW, false];
+    WSops.GetWorkflowTaskData = [webServices.WORKFLOW, false];
+    WSops.StartWorkflow = [webServices.WORKFLOW, true];
 
     var SOAPAction;
 
@@ -332,61 +334,61 @@ define([
         }
 
         // Put together operation header and SOAPAction for the SOAP call based on which Web Service we're calling
-        utils.utils.SOAPEnvelope.opheader = "<" + opt.operation + " ";
+        utils.SOAPEnvelope.opheader = "<" + opt.operation + " ";
         switch (WSops[opt.operation][0]) {
-            case ALERTS:
+            case webServices.ALERTS:
                 utils.utils.SOAPEnvelope.opheader += "xmlns='" + constants.SCHEMASharePoint + "/soap/2002/1/alerts/' >";
                 SOAPAction = constants.SCHEMASharePoint + "/soap/2002/1/alerts/";
                 break;
-            case MEETINGS:
+            case webServices.MEETINGS:
                 utils.utils.SOAPEnvelope.opheader += "xmlns='" + constants.SCHEMASharePoint + "/soap/meetings/' >";
                 SOAPAction = constants.SCHEMASharePoint + "/soap/meetings/";
                 break;
-            case OFFICIALFILE:
+            case webServices.OFFICIALFILE:
                 utils.utils.SOAPEnvelope.opheader += "xmlns='" + constants.SCHEMASharePoint + "/soap/recordsrepository/' >";
                 SOAPAction = constants.SCHEMASharePoint + "/soap/recordsrepository/";
                 break;
-            case PERMISSIONS:
+            case webServices.PERMISSIONS:
                 utils.utils.SOAPEnvelope.opheader += "xmlns='" + constants.SCHEMASharePoint + "/soap/directory/' >";
                 SOAPAction = constants.SCHEMASharePoint + "/soap/directory/";
                 break;
-            case PUBLISHEDLINKSSERVICE:
+            case webServices.PUBLISHEDLINKSSERVICE:
                 utils.utils.SOAPEnvelope.opheader += "xmlns='http://microsoft.com/webservices/SharePointPortalServer/PublishedLinksService/' >";
                 SOAPAction = "http://microsoft.com/webservices/SharePointPortalServer/PublishedLinksService/";
                 break;
-            case SEARCH:
+            case webServices.SEARCH:
                 utils.utils.SOAPEnvelope.opheader += "xmlns='urn:Microsoft.Search' >";
                 SOAPAction = "urn:Microsoft.Search/";
                 break;
-            case SHAREPOINTDIAGNOSTICS:
+            case webServices.SHAREPOINTDIAGNOSTICS:
                 utils.utils.SOAPEnvelope.opheader += "xmlns='" + constants.SCHEMASharePoint + "/diagnostics/' >";
                 SOAPAction = "http://schemas.microsoft.com/sharepoint/diagnostics/";
                 break;
-            case SOCIALDATASERVICE:
+            case webServices.SOCIALDATASERVICE:
                 utils.utils.SOAPEnvelope.opheader += "xmlns='http://microsoft.com/webservices/SharePointPortalServer/SocialDataService' >";
                 SOAPAction = "http://microsoft.com/webservices/SharePointPortalServer/SocialDataService/";
                 break;
-            case SPELLCHECK:
+            case webServices.SPELLCHECK:
                 utils.utils.SOAPEnvelope.opheader += "xmlns='http://schemas.microsoft.com/sharepoint/publishing/spelling/' >";
                 SOAPAction = "http://schemas.microsoft.com/sharepoint/publishing/spelling/SpellCheck";
                 break;
-            case TAXONOMYSERVICE:
+            case webServices.TAXONOMYSERVICE:
                 utils.utils.SOAPEnvelope.opheader += "xmlns='" + constants.SCHEMASharePoint + "/taxonomy/soap/' >";
                 SOAPAction = constants.SCHEMASharePoint + "/taxonomy/soap/";
                 break;
-            case USERGROUP:
+            case webServices.USERGROUP:
                 utils.utils.SOAPEnvelope.opheader += "xmlns='" + constants.SCHEMASharePoint + "/soap/directory/' >";
                 SOAPAction = constants.SCHEMASharePoint + "/soap/directory/";
                 break;
-            case USERPROFILESERVICE:
+            case webServices.USERPROFILESERVICE:
                 utils.utils.SOAPEnvelope.opheader += "xmlns='http://microsoft.com/webservices/SharePointPortalServer/UserProfileService' >";
                 SOAPAction = "http://microsoft.com/webservices/SharePointPortalServer/UserProfileService/";
                 break;
-            case WEBPARTPAGES:
+            case webServices.WEBPARTPAGES:
                 utils.utils.SOAPEnvelope.opheader += "xmlns='http://microsoft.com/sharepoint/webpartpages' >";
                 SOAPAction = "http://microsoft.com/sharepoint/webpartpages/";
                 break;
-            case WORKFLOW:
+            case webServices.WORKFLOW:
                 utils.utils.SOAPEnvelope.opheader += "xmlns='" + constants.SCHEMASharePoint + "/soap/workflow/' >";
                 SOAPAction = constants.SCHEMASharePoint + "/soap/workflow/";
                 break;
