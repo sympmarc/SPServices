@@ -296,7 +296,7 @@ define([
     WSops.GetWebPartProperties2 = [webServices.WEBPARTPAGES, false];
     WSops.SaveWebPart2 = [webServices.WEBPARTPAGES, true];
 
-    WSops.CreateContentType = [webServices.WEBS, true];
+    WSops.WebsCreateContentType = [webServices.WEBS, true];
     WSops.GetColumns = [webServices.WEBS, false];
     WSops.GetContentType = [webServices.WEBS, false];
     WSops.GetContentTypes = [webServices.WEBS, false];
@@ -307,7 +307,7 @@ define([
     WSops.GetWebCollection = [webServices.WEBS, false];
     WSops.GetAllSubWebCollection = [webServices.WEBS, false];
     WSops.UpdateColumns = [webServices.WEBS, true];
-    WSops.UpdateContentType = [webServices.WEBS, true];
+    WSops.WebsUpdateContentType = [webServices.WEBS, true];
     WSops.WebUrlFromPageUrl = [webServices.WEBS, false];
 
     WSops.AlterToDo = [webServices.WORKFLOW, true];
@@ -1155,7 +1155,7 @@ define([
                 break;
 
             // WEBS OPERATIONS
-            case "Webs.CreateContentType":
+            case "WebsCreateContentType":
                 utils.addToPayload(opt, ["displayName", "parentType", "newFields", "contentTypeProperties"]);
                 break;
             case "GetColumns":
@@ -1186,7 +1186,7 @@ define([
             case "UpdateColumns":
                 utils.addToPayload(opt, ["newFields", "updateFields", "deleteFields"]);
                 break;
-            case "Webs.UpdateContentType":
+            case "WebsUpdateContentType":
                 utils.addToPayload(opt, ["contentTypeId", "contentTypeProperties", "newFields", "updateFields", "deleteFields"]);
                 break;
             case "WebUrlFromPageUrl":
