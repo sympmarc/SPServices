@@ -15,6 +15,8 @@ define([
 
     "use strict";
 
+    var SOAPAction;
+
     // Caching
     var promisesCache = {};
 
@@ -318,7 +320,6 @@ define([
     WSops.GetWorkflowTaskData = [webServices.WORKFLOW, false];
     WSops.StartWorkflow = [webServices.WORKFLOW, true];
 
-    var SOAPAction;
 
     // Main function, which calls SharePoint's Web Services directly.
     $.fn.SPServices = function (options) {

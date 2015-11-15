@@ -262,6 +262,12 @@ define([
         var outArray = [];
         var webUrl = opt.relatedWebURL.length > 0 ? opt.relatedWebURL : $().SPServices.SPGetCurrentSite();
 
+
+
+
+
+
+
         switch (columnXML.attr("Type")) {
             case "Text":
                 outString = columnValue;

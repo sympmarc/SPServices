@@ -60,8 +60,6 @@ define([
 
     function attrToJson(v, objectType) {
 
-        var colValue;
-
         var result = {
 
             /* Generic [Reusable] Functions */
@@ -74,28 +72,33 @@ define([
             "Lookup": lookupToJsonObject(v),
             "lookupMulti": lookupMultiToJsonObject(v),
             "MultiChoice": choiceMultiToJsonObject(v),
+            "Calculated": calcToJsonObject(v),
+            "Attachments": attachmentsToJsonObject(v),
+            "URL": urlToJsonObject(v),
+            "JSON":jsonToJsonObject(v), // Special case for text JSON stored in text columns
 
             /* These objectTypes reuse above functions */
-            "Text": result.Default,
-            "Counter": result.Integer,
-            "datetime": result.DateTime,    // For calculated columns, stored as datetime;#value
-            "AllDayEvent": result.Boolean,
-            "Recurrence": result.Boolean,
-            "Currency": result.Number,
-            "float": result.Number, // For calculated columns, stored as float;#value
+            "Text": result.Default(v),
+            "Counter": result.Integer(v),
+            "datetime": result.DateTime(v),    // For calculated columns, stored as datetime;#value
+            "AllDayEvent": result.Boolean(v),
+            "Recurrence": result.Boolean(v),
+            "Currency": result.Number(v),
+            "float": result.Number(v), // For calculated columns, stored as float;#value
+            "RelatedItems": result.JSON(v),
 
             "Default": v
         };
 
         if (result[objectType] !== undefined) {
-            return result;
+            return result.objectType(v);
         } else {
             return v;
         }
 
-
-        switch (objectType) {
 /*
+        switch (objectType) {
+
             case "Text":
                 colValue = v;
                 break;
@@ -139,7 +142,6 @@ define([
             case "float": // For calculated columns, stored as float;#value
                 colValue = floatToJsonObject(v);
                 break;
- */
             case "Calculated":
                 colValue = calcToJsonObject(v);
                 break;
@@ -160,6 +162,7 @@ define([
                 break;
         }
         return colValue;
+ */
     }
 
     function intToJsonObject(s) {

@@ -1,10 +1,18 @@
-define([], function(){
+define([
+
+], function(){
 
     /**
      * Maintains a set of constants for SPServices.
      *
      * @namespace constants
      */
+
+    var SPServices = window.SPServices || {};
+    SPServices.WebServices = SPServices.WebService || {};
+    SPServices.SOAP = SPServices.SOAP || {};
+    SPServices.SOAP.Action = "";
+
     var constants = {
 
         // Version info

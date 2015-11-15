@@ -15,7 +15,7 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-06-21 06:20:40
+* @build SPServices 2.0.0 2015-11-15 02:43:51
 */
 ;(function() {
 var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, src_SPServices;
@@ -33,6 +33,10 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
      *
      * @namespace constants
      */
+    var SPServices = window.SPServices || {};
+    SPServices.WebServices = SPServices.WebService || {};
+    SPServices.SOAP = SPServices.SOAP || {};
+    SPServices.SOAP.Action = '';
     var constants = {
       // Version info
       VERSION: '2.0.0',
@@ -423,6 +427,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
     return utils;
   }(jquery, src_utils_constants);
   src_core_SPServicescore = function ($, utils, constants) {
+    var SOAPAction;
     // Caching
     var promisesCache = {};
     //   Web Service names
@@ -1400,7 +1405,6 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
       webServices.WORKFLOW,
       true
     ];
-    var SOAPAction;
     // Main function, which calls SharePoint's Web Services directly.
     $.fn.SPServices = function (options) {
       // If there are no options passed in, use the defaults.  Extend replaces each default with the passed option.

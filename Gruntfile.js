@@ -278,7 +278,7 @@ module.exports = function(grunt) {
                     },
                     done: function(done, output) {
 
-                        // Let's check to ensure that no one modules was built/included more than once.
+                        // Let's check to ensure that no one module was built/included more than once.
                         var duplicates = require('rjs-build-analysis').duplicates(output);
 
                         if (Object.keys(duplicates).length > 0) {
