@@ -16,13 +16,6 @@ Until otherwise announced, this is not a fully functional version of SPServices.
 
 For full documentation, please visit http://spservices.codeplex.com/documentation
 
-_*This is a work in progress. It's a port of SPServices from [Codeplex](https://spservices.codeplex.com/) to GitHub, with a rewrite along the way.
-Until otherwise announced, this is not a fully functional version of SPServices. When complete, this version will be:*_
-* SPServices Version 2.0 
-* AMD-enabled using [RequireJS](http://requirejs.org/)
-* Converted from a monolithic file to modules
-* Enabled to take advantage of SharePoint's REST APIs - where available - for internal calls to get list data in the value-added functions
-
 
 Development
 -----------

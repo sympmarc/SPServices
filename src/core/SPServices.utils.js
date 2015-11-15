@@ -182,7 +182,7 @@ define([
         findFormField: function(columnName) {
             var thisFormBody;
             // There's no easy way to find one of these columns; we'll look for the comment with the columnName
-            var searchText = RegExp("FieldName=\"" + columnName.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") + "\"", "gi");
+            var searchText = new RegExp("FieldName=\"" + columnName.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") + "\"", "gi");
             // Loop through all of the ms-formbody table cells
             $("td.ms-formbody, td.ms-formbodysurvey").each(function () {
                 // Check for the right comment
