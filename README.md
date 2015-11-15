@@ -24,7 +24,6 @@ Until otherwise announced, this is not a fully functional version of SPServices.
 * Enabled to take advantage of SharePoint's REST APIs - where available - for internal calls to get list data in the value-added functions
 
 
-
 Development
 -----------
 
