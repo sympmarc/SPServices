@@ -6,8 +6,8 @@ SPServices is a jQuery library which abstracts SharePoint's Web Services and mak
 
 SPServices is primarily hosted on Codeplex, with this repository mirroring most of the downloads there.
 
-_*This is a work in progress. It's a port of SPServices from [Codeplex](https://spservices.codeplex.com/) to GitHub, with a rewrite along the way.
-Until otherwise announced, this is not a fully functional version of SPServices. When complete, this version will be:*_
+##This is a work in progress. It's a port of SPServices from [Codeplex](https://spservices.codeplex.com/) to GitHub, with a rewrite along the way.##
+_*Until otherwise announced, this is not a fully functional version of SPServices. When complete, this version will be:*_
 * SPServices 2.0 
 * AMD-enabled using [RequireJS](http://requirejs.org/)
 * Converted from a monolithic file to modules
