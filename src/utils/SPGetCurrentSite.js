@@ -11,6 +11,9 @@ define([
     utils,
     constants
 ) {
+
+    "use strict";
+
     // Function to determine the current Web's URL.  We need this for successful Ajax calls.
     // The function is also available as a public function.
     $.fn.SPServices.SPGetCurrentSite = function () {
@@ -34,11 +37,11 @@ define([
             dataType: "xml",
             contentType: "text/xml;charset=\"utf-8\"",
             complete: function (xData) {
-                utils.currentContext.thisSite = $(xData.responseXML).find("WebUrlFromPageUrlResult").text();
+                utils.SPServicesContext.thisSite = $(xData.responseXML).find("WebUrlFromPageUrlResult").text();
             }
         });
 
-        return utils.currentContext.thisSite; // Return the URL
+        return utils.SPServicesContext.thisSite; // Return the URL
 
     }; // End $.fn.SPServices.SPGetCurrentSite
 
