@@ -31,6 +31,16 @@
         <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
+
+    <!-- Load QUnit -->
+    <link rel="stylesheet" href="//code.jquery.com/qunit/qunit-1.20.0.css">
+    <script src="//code.jquery.com/qunit/qunit-1.20.0.js"></script>
+    <script type="text/javascript">
+                document.write(
+                '<script src=".' + './tests/tests.js"></' + 'script>'
+            );
+    </script>
+
     <script type="text/javascript">
 
         window.SPSERVICES = {
@@ -88,6 +98,10 @@
             <hr/>
         </div>
     </div>
+
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+
     <script type="text/javascript">
 
         (function(window, document){

@@ -10,6 +10,7 @@ define([
     $,
     constants
 ){
+    "use strict";
 
     var utils = /** @lends spservices.utils */{
 
@@ -20,22 +21,25 @@ define([
             // The SharePoint variables only give us a relative path. to match the result from WebUrlFromPageUrl, we need to add the protocol, host, and (if present) port.
             var siteRoot = location.protocol + "//" + location.host; // + (location.port !== "" ? location.port : "");
 
-            // SharePoint 2010 gives us a context variable
+            var temp = {};
+            // SharePoint 2010+ gives us a context variable
             if (typeof _spPageContextInfo !== "undefined") {
-                this.thisSite = siteRoot + _spPageContextInfo.webServerRelativeUrl;
-                this.thisList = _spPageContextInfo.pageListId;
-                this.thisUserId = _spPageContextInfo.userId;
+                temp.thisSite = siteRoot + _spPageContextInfo.webServerRelativeUrl;
+                temp.thisList = _spPageContextInfo.pageListId;
+                temp.thisUserId = _spPageContextInfo.userId;
                 // In SharePoint 2007, we know the UserID only
             } else {
-                this.thisSite = (typeof L_Menu_BaseUrl !== "undefined") ? siteRoot + L_Menu_BaseUrl : "";
-                this.thisList = "";
-                this.thisUserId = (typeof _spUserId !== "undefined") ? _spUserId : undefined;
+                temp.thisSite = (typeof L_Menu_BaseUrl !== "undefined") ? siteRoot + L_Menu_BaseUrl : "";
+                temp.thisList = "";
+                temp.thisUserId = (typeof _spUserId !== "undefined") ? _spUserId : undefined;
             }
+
+            return temp;
 
         }, // End of function SPServicesContext
 
         // Global variables
-        currentContext: new utils.SPServicesContext(), // Variable to hold the current context as we figure it out
+//        currentContext: new this.SPServicesContext(), // Variable to hold the current context as we figure it out
 
         /**
          * Wrap an XML node (n) around a value (v)
@@ -209,7 +213,7 @@ define([
             return out;
         }, // End of function showAttrs
 
-        // Add the option values to the utils.SOAPEnvelope.payload for the operation
+        // Add the option values to the constants.SOAPEnvelope.payload for the operation
         //  opt = options for the call
         //  paramArray = an array of option names to add to the payload
         //      "paramName" if the parameter name and the option name match
@@ -222,13 +226,13 @@ define([
             for (i = 0; i < paramArray.length; i++) {
                 // the parameter name and the option name match
                 if (typeof paramArray[i] === "string") {
-                    utils.SOAPEnvelope.payload += utils.wrapNode(paramArray[i], opt[paramArray[i]]);
+                    constants.SOAPEnvelope.payload += utils.wrapNode(paramArray[i], opt[paramArray[i]]);
                     // the parameter name and the option name are different
                 } else if ($.isArray(paramArray[i]) && paramArray[i].length === 2) {
-                    utils.SOAPEnvelope.payload += utils.wrapNode(paramArray[i][0], opt[paramArray[i][1]]);
+                    constants.SOAPEnvelope.payload += utils.wrapNode(paramArray[i][0], opt[paramArray[i][1]]);
                     // the element not a string or an array and is marked as "add to payload only if non-null"
                 } else if ((typeof paramArray[i] === "object") && (paramArray[i].sendNull !== undefined)) {
-                    utils.SOAPEnvelope.payload += ((opt[paramArray[i].name] === undefined) || (opt[paramArray[i].name].length === 0)) ? "" : utils.wrapNode(paramArray[i].name, opt[paramArray[i].name]);
+                    constants.SOAPEnvelope.payload += ((opt[paramArray[i].name] === undefined) || (opt[paramArray[i].name].length === 0)) ? "" : utils.wrapNode(paramArray[i].name, opt[paramArray[i].name]);
                     // something isn't right, so report it
                 } else {
                     utils.errBox(opt.operation, "paramArray[" + i + "]: " + paramArray[i], "Invalid paramArray element passed to addToPayload()");
@@ -327,10 +331,6 @@ define([
                     columnDisplayName: columnName
                 });
         } // End of function genContainerId
-
-
-
-
 
     }, //end: utils
 

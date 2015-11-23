@@ -17,7 +17,13 @@
  */
 define([
     "jquery",
-    "./core/SPServices.core"
+    "./utils/constants",
+    "./core/SPServices.core",
+    "./core/SPServices.utils",
+    "./core/Version",
+    "./utils/SPGetCurrentSite",
+    "./utils/SPGetCurrentUser",
+    "./value-added/SPCascadeDropdowns"
 ], function($){
     return $;
 });

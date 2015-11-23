@@ -1,6 +1,6 @@
 define([
     'jquery',
-    '../core/SPServices.utils.js',
+    '../core/SPServices.utils',
    //---------------------------
     // We don't need local variables for these dependencies
     // because they are added to the jQuery namespace.
@@ -9,6 +9,9 @@ define([
     $,
     utils
 ) {
+
+    "use strict";
+
     // Function which returns the account name for the current user in DOMAIN\username format
     $.fn.SPServices.SPGetCurrentUser = function (options) {
 
@@ -20,8 +23,8 @@ define([
         }, options);
 
         // The current user's ID is reliably available in an existing JavaScript variable
-        if (opt.fieldName === "ID" && typeof utils.currentContext.thisUserId !== "undefined") {
-            return utils.currentContext.thisUserId;
+        if (opt.fieldName === "ID" && typeof utils.SPServicesContext().thisUserId !== "undefined") {
+            return utils.SPServicesContext().thisUserId;
         }
 
         var thisField = "";
@@ -46,7 +49,7 @@ define([
 
             // The current user's ID is reliably available in an existing JavaScript variable
             if (opt.fieldNames[i] === "ID") {
-                thisField = utils.currentContext.thisUserId;
+                thisField = utils.SPServicesContext().thisUserId;
             } else {
                 var thisTextValue;
                 if (fieldCount > 1) {

@@ -2,6 +2,8 @@ define([
 
 ], function(){
 
+    "use strict";
+
     /**
      * Maintains a set of constants for SPServices.
      *

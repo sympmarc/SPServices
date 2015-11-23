@@ -162,7 +162,8 @@ module.exports = function(grunt) {
                 },
                 src:    [
                     "src/**/*",
-                    "build/**/*.js"
+                    "build/**/*.js",
+                    "tests/**/*"
                 ],
                 dest:   "<%= userBuildOpt.deployLocation %>",
                 expand: true,

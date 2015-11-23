@@ -10,6 +10,8 @@ define([
     constants
 ) {
 
+    "use strict";
+
     // Return the current version of SPServices as a string
     $.fn.SPServices.Version = function () {
 

@@ -1,6 +1,6 @@
 define([
     'jquery',
-    '../core/SPServices.utils.js',
+    '../core/SPServices.utils',
     "../utils/constants",
    //---------------------------
     // We don't need local variables for these dependencies
@@ -19,8 +19,8 @@ define([
     $.fn.SPServices.SPGetCurrentSite = function () {
 
         // We've already determined the current site...
-        if (utils.currentContext.thisSite.length > 0) {
-            return utils.currentContext.thisSite;
+        if (utils.SPServicesContext().thisSite.length > 0) {
+            return utils.SPServicesContext().thisSite;
         }
 
         // If we still don't know the current site, we call WebUrlFromPageUrlResult.
@@ -37,11 +37,11 @@ define([
             dataType: "xml",
             contentType: "text/xml;charset=\"utf-8\"",
             complete: function (xData) {
-                utils.SPServicesContext.thisSite = $(xData.responseXML).find("WebUrlFromPageUrlResult").text();
+                utils.SPServicesContext().thisSite = $(xData.responseXML).find("WebUrlFromPageUrlResult").text();
             }
         });
 
-        return utils.SPServicesContext.thisSite; // Return the URL
+        return utils.SPServicesContext().thisSite; // Return the URL
 
     }; // End $.fn.SPServices.SPGetCurrentSite
 

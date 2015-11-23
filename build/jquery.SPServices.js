@@ -15,10 +15,10 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-11-15 03:14:36
+* @build SPServices 2.0.0 2015-11-23 02:27:15
 */
 ;(function() {
-var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, src_SPServices;
+var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_value_added_SPCascadeDropdowns, src_SPServices;
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
@@ -114,7 +114,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
     };
     return constants;
   }();
-  src_core_SPServicesutilsjs = function ($, constants) {
+  src_core_SPServicesutils = function ($, constants) {
     var utils = /** @lends spservices.utils */
       {
         // Get the current context (as much as we can) on startup
@@ -123,21 +123,22 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
           // The SharePoint variables only give us a relative path. to match the result from WebUrlFromPageUrl, we need to add the protocol, host, and (if present) port.
           var siteRoot = location.protocol + '//' + location.host;
           // + (location.port !== "" ? location.port : "");
-          // SharePoint 2010 gives us a context variable
+          var temp = {};
+          // SharePoint 2010+ gives us a context variable
           if (typeof _spPageContextInfo !== 'undefined') {
-            this.thisSite = siteRoot + _spPageContextInfo.webServerRelativeUrl;
-            this.thisList = _spPageContextInfo.pageListId;
-            this.thisUserId = _spPageContextInfo.userId;  // In SharePoint 2007, we know the UserID only
+            temp.thisSite = siteRoot + _spPageContextInfo.webServerRelativeUrl;
+            temp.thisList = _spPageContextInfo.pageListId;
+            temp.thisUserId = _spPageContextInfo.userId;  // In SharePoint 2007, we know the UserID only
           } else {
-            this.thisSite = typeof L_Menu_BaseUrl !== 'undefined' ? siteRoot + L_Menu_BaseUrl : '';
-            this.thisList = '';
-            this.thisUserId = typeof _spUserId !== 'undefined' ? _spUserId : undefined;
+            temp.thisSite = typeof L_Menu_BaseUrl !== 'undefined' ? siteRoot + L_Menu_BaseUrl : '';
+            temp.thisList = '';
+            temp.thisUserId = typeof _spUserId !== 'undefined' ? _spUserId : undefined;
           }
+          return temp;
         },
         // End of function SPServicesContext
         // Global variables
-        currentContext: new utils.SPServicesContext(),
-        // Variable to hold the current context as we figure it out
+        //        currentContext: new this.SPServicesContext(), // Variable to hold the current context as we figure it out
         /**
          * Wrap an XML node (n) around a value (v)
          *
@@ -291,7 +292,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
           return out;
         },
         // End of function showAttrs
-        // Add the option values to the utils.SOAPEnvelope.payload for the operation
+        // Add the option values to the constants.SOAPEnvelope.payload for the operation
         //  opt = options for the call
         //  paramArray = an array of option names to add to the payload
         //      "paramName" if the parameter name and the option name match
@@ -302,11 +303,11 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
           for (i = 0; i < paramArray.length; i++) {
             // the parameter name and the option name match
             if (typeof paramArray[i] === 'string') {
-              utils.SOAPEnvelope.payload += utils.wrapNode(paramArray[i], opt[paramArray[i]]);  // the parameter name and the option name are different
+              constants.SOAPEnvelope.payload += utils.wrapNode(paramArray[i], opt[paramArray[i]]);  // the parameter name and the option name are different
             } else if ($.isArray(paramArray[i]) && paramArray[i].length === 2) {
-              utils.SOAPEnvelope.payload += utils.wrapNode(paramArray[i][0], opt[paramArray[i][1]]);  // the element not a string or an array and is marked as "add to payload only if non-null"
+              constants.SOAPEnvelope.payload += utils.wrapNode(paramArray[i][0], opt[paramArray[i][1]]);  // the element not a string or an array and is marked as "add to payload only if non-null"
             } else if (typeof paramArray[i] === 'object' && paramArray[i].sendNull !== undefined) {
-              utils.SOAPEnvelope.payload += opt[paramArray[i].name] === undefined || opt[paramArray[i].name].length === 0 ? '' : utils.wrapNode(paramArray[i].name, opt[paramArray[i].name]);  // something isn't right, so report it
+              constants.SOAPEnvelope.payload += opt[paramArray[i].name] === undefined || opt[paramArray[i].name].length === 0 ? '' : utils.wrapNode(paramArray[i].name, opt[paramArray[i].name]);  // something isn't right, so report it
             } else {
               utils.errBox(opt.operation, 'paramArray[' + i + ']: ' + paramArray[i], 'Invalid paramArray element passed to addToPayload()');
             }
@@ -468,12 +469,11 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
     //      WebService          The name of the WebService this operation belongs to
     //      needs_SOAPAction    Boolean indicating whether the operation needs to have the SOAPAction passed in the setRequestHeaderfunction.
     //                          true if the operation does a write, else false
-    var WSops = {
-      GetAlerts: [
-        webServices.ALERTS,
-        false
-      ]
-    };
+    var WSops = {};
+    WSops.GetAlerts = [
+      webServices.ALERTS,
+      false
+    ];
     WSops.DeleteAlerts = [
       webServices.ALERTS,
       true
@@ -1416,72 +1416,72 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         }
       }
       // Put together operation header and SOAPAction for the SOAP call based on which Web Service we're calling
-      utils.SOAPEnvelope.opheader = '<' + opt.operation + ' ';
+      constants.SOAPEnvelope.opheader = '<' + opt.operation + ' ';
       switch (WSops[opt.operation][0]) {
       case webServices.ALERTS:
-        utils.utils.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/2002/1/alerts/\' >';
+        constants.utils.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/2002/1/alerts/\' >';
         SOAPAction = constants.SCHEMASharePoint + '/soap/2002/1/alerts/';
         break;
       case webServices.MEETINGS:
-        utils.utils.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/meetings/\' >';
+        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/meetings/\' >';
         SOAPAction = constants.SCHEMASharePoint + '/soap/meetings/';
         break;
       case webServices.OFFICIALFILE:
-        utils.utils.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/recordsrepository/\' >';
+        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/recordsrepository/\' >';
         SOAPAction = constants.SCHEMASharePoint + '/soap/recordsrepository/';
         break;
       case webServices.PERMISSIONS:
-        utils.utils.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/directory/\' >';
+        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/directory/\' >';
         SOAPAction = constants.SCHEMASharePoint + '/soap/directory/';
         break;
       case webServices.PUBLISHEDLINKSSERVICE:
-        utils.utils.SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/webservices/SharePointPortalServer/PublishedLinksService/\' >';
+        constants.SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/webservices/SharePointPortalServer/PublishedLinksService/\' >';
         SOAPAction = 'http://microsoft.com/webservices/SharePointPortalServer/PublishedLinksService/';
         break;
       case webServices.SEARCH:
-        utils.utils.SOAPEnvelope.opheader += 'xmlns=\'urn:Microsoft.Search\' >';
+        constants.SOAPEnvelope.opheader += 'xmlns=\'urn:Microsoft.Search\' >';
         SOAPAction = 'urn:Microsoft.Search/';
         break;
       case webServices.SHAREPOINTDIAGNOSTICS:
-        utils.utils.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/diagnostics/\' >';
+        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/diagnostics/\' >';
         SOAPAction = 'http://schemas.microsoft.com/sharepoint/diagnostics/';
         break;
       case webServices.SOCIALDATASERVICE:
-        utils.utils.SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/webservices/SharePointPortalServer/SocialDataService\' >';
+        constants.SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/webservices/SharePointPortalServer/SocialDataService\' >';
         SOAPAction = 'http://microsoft.com/webservices/SharePointPortalServer/SocialDataService/';
         break;
       case webServices.SPELLCHECK:
-        utils.utils.SOAPEnvelope.opheader += 'xmlns=\'http://schemas.microsoft.com/sharepoint/publishing/spelling/\' >';
+        constants.SOAPEnvelope.opheader += 'xmlns=\'http://schemas.microsoft.com/sharepoint/publishing/spelling/\' >';
         SOAPAction = 'http://schemas.microsoft.com/sharepoint/publishing/spelling/SpellCheck';
         break;
       case webServices.TAXONOMYSERVICE:
-        utils.utils.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/taxonomy/soap/\' >';
+        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/taxonomy/soap/\' >';
         SOAPAction = constants.SCHEMASharePoint + '/taxonomy/soap/';
         break;
       case webServices.USERGROUP:
-        utils.utils.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/directory/\' >';
+        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/directory/\' >';
         SOAPAction = constants.SCHEMASharePoint + '/soap/directory/';
         break;
       case webServices.USERPROFILESERVICE:
-        utils.utils.SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/webservices/SharePointPortalServer/UserProfileService\' >';
+        constants.SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/webservices/SharePointPortalServer/UserProfileService\' >';
         SOAPAction = 'http://microsoft.com/webservices/SharePointPortalServer/UserProfileService/';
         break;
       case webServices.WEBPARTPAGES:
-        utils.utils.SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/sharepoint/webpartpages\' >';
+        constants.SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/sharepoint/webpartpages\' >';
         SOAPAction = 'http://microsoft.com/sharepoint/webpartpages/';
         break;
       case webServices.WORKFLOW:
-        utils.utils.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/workflow/\' >';
+        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/workflow/\' >';
         SOAPAction = constants.SCHEMASharePoint + '/soap/workflow/';
         break;
       default:
-        utils.utils.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/\'>';
+        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/\'>';
         SOAPAction = constants.SCHEMASharePoint + '/soap/';
         break;
       }
       // Add the operation to the SOAPAction and opfooter
       SOAPAction += opt.operation;
-      utils.utils.SOAPEnvelope.opfooter = '</' + opt.operation + '>';
+      constants.SOAPEnvelope.opfooter = '</' + opt.operation + '>';
       // Build the URL for the Ajax call based on which operation we're calling
       // If the webURL has been provided, then use it, else use the current site
       var ajaxURL = '_vti_bin/' + WSops[opt.operation][0] + '.asmx';
@@ -1494,52 +1494,52 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         var thisSite = $().SPServices.SPGetCurrentSite();
         ajaxURL = thisSite + (thisSite.charAt(thisSite.length - 1) === constants.SLASH ? ajaxURL : constants.SLASH + ajaxURL);
       }
-      utils.utils.SOAPEnvelope.payload = '';
-      // Each operation requires a different set of values.  This switch statement sets them up in the utils.utils.SOAPEnvelope.payload.
+      constants.SOAPEnvelope.payload = '';
+      // Each operation requires a different set of values.  This switch statement sets them up in the constants.SOAPEnvelope.payload.
       switch (opt.operation) {
       // ALERT OPERATIONS
       case 'GetAlerts':
         break;
       case 'DeleteAlerts':
-        utils.utils.SOAPEnvelope.payload += '<IDs>';
+        constants.SOAPEnvelope.payload += '<IDs>';
         for (i = 0; i < opt.IDs.length; i++) {
-          utils.utils.SOAPEnvelope.payload += utils.wrapNode('string', opt.IDs[i]);
+          constants.SOAPEnvelope.payload += constants.wrapNode('string', opt.IDs[i]);
         }
-        utils.utils.SOAPEnvelope.payload += '</IDs>';
+        constants.SOAPEnvelope.payload += '</IDs>';
         break;
       // AUTHENTICATION OPERATIONS
       case 'Mode':
         break;
       case 'Login':
-        utils.utils.addToPayload(opt, [
+        utils.addToPayload(opt, [
           'username',
           'password'
         ]);
         break;
       // COPY OPERATIONS
       case 'CopyIntoItems':
-        utils.utils.addToPayload(opt, ['SourceUrl']);
-        utils.utils.SOAPEnvelope.payload += '<DestinationUrls>';
+        utils.addToPayload(opt, ['SourceUrl']);
+        constants.SOAPEnvelope.payload += '<DestinationUrls>';
         for (i = 0; i < opt.DestinationUrls.length; i++) {
-          utils.utils.SOAPEnvelope.payload += utils.wrapNode('string', opt.DestinationUrls[i]);
+          constants.SOAPEnvelope.payload += utils.wrapNode('string', opt.DestinationUrls[i]);
         }
-        utils.utils.SOAPEnvelope.payload += '</DestinationUrls>';
-        utils.utils.addToPayload(opt, [
+        constants.SOAPEnvelope.payload += '</DestinationUrls>';
+        utils.addToPayload(opt, [
           'Fields',
           'Stream',
           'Results'
         ]);
         break;
       case 'CopyIntoItemsLocal':
-        utils.utils.addToPayload(opt, ['SourceUrl']);
-        utils.utils.SOAPEnvelope.payload += '<DestinationUrls>';
+        utils.addToPayload(opt, ['SourceUrl']);
+        constants.SOAPEnvelope.payload += '<DestinationUrls>';
         for (i = 0; i < opt.DestinationUrls.length; i++) {
-          utils.utils.SOAPEnvelope.payload += utils.wrapNode('string', opt.DestinationUrls[i]);
+          constants.SOAPEnvelope.payload += utils.wrapNode('string', opt.DestinationUrls[i]);
         }
-        utils.utils.SOAPEnvelope.payload += '</DestinationUrls>';
+        constants.SOAPEnvelope.payload += '</DestinationUrls>';
         break;
       case 'GetItem':
-        utils.utils.addToPayload(opt, [
+        utils.addToPayload(opt, [
           'Url',
           'Fields',
           'Stream'
@@ -1547,17 +1547,17 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         break;
       // FORM OPERATIONS
       case 'GetForm':
-        utils.utils.addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'formUrl'
         ]);
         break;
       case 'GetFormCollection':
-        utils.utils.addToPayload(opt, ['listName']);
+        utils.addToPayload(opt, ['listName']);
         break;
       // LIST OPERATIONS
       case 'AddAttachment':
-        utils.utils.addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'listItemID',
           'fileName',
@@ -1565,7 +1565,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'AddDiscussionBoardItem':
-        utils.utils.addToPayload(opt, [
+        utils.addToPayload(opt, [
           'listName',
           'message'
         ]);
@@ -1777,14 +1777,14 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         if (typeof opt.updates !== 'undefined' && opt.updates.length > 0) {
           utils.addToPayload(opt, ['updates']);
         } else {
-          utils.utils.SOAPEnvelope.payload += '<updates><Batch OnError=\'Continue\'><Method ID=\'1\' Cmd=\'' + opt.batchCmd + '\'>';
+          constants.SOAPEnvelope.payload += '<updates><Batch OnError=\'Continue\'><Method ID=\'1\' Cmd=\'' + opt.batchCmd + '\'>';
           for (i = 0; i < opt.valuepairs.length; i++) {
-            utils.utils.SOAPEnvelope.payload += '<Field Name=\'' + opt.valuepairs[i][0] + '\'>' + utils.escapeColumnValue(opt.valuepairs[i][1]) + '</Field>';
+            constants.SOAPEnvelope.payload += '<Field Name=\'' + opt.valuepairs[i][0] + '\'>' + constants.escapeColumnValue(opt.valuepairs[i][1]) + '</Field>';
           }
           if (opt.batchCmd !== 'New') {
-            utils.utils.SOAPEnvelope.payload += '<Field Name=\'ID\'>' + opt.ID + '</Field>';
+            constants.SOAPEnvelope.payload += '<Field Name=\'ID\'>' + opt.ID + '</Field>';
           }
-          utils.utils.SOAPEnvelope.payload += '</Method></Batch></updates>';
+          constants.SOAPEnvelope.payload += '</Method></Batch></updates>';
         }
         break;
       // MEETINGS OPERATIONS
@@ -1899,28 +1899,28 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         break;
       // SEARCH OPERATIONS
       case 'GetPortalSearchInfo':
-        utils.utils.SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
+        constants.SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
         SOAPAction = 'http://microsoft.com/webservices/OfficeServer/QueryService/' + opt.operation;
         break;
       case 'GetQuerySuggestions':
-        utils.utils.SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
+        constants.SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
         SOAPAction = 'http://microsoft.com/webservices/OfficeServer/QueryService/' + opt.operation;
-        utils.utils.SOAPEnvelope.payload += utils.wrapNode('queryXml', utils.encodeXml(opt.queryXml));
+        constants.SOAPEnvelope.payload += utils.wrapNode('queryXml', constants.encodeXml(opt.queryXml));
         break;
       case 'GetSearchMetadata':
-        utils.SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
+        constants.SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
         SOAPAction = 'http://microsoft.com/webservices/OfficeServer/QueryService/' + opt.operation;
         break;
       case 'Query':
-        utils.SOAPEnvelope.payload += utils.wrapNode('queryXml', utils.encodeXml(opt.queryXml));
+        constants.SOAPEnvelope.payload += utils.wrapNode('queryXml', constants.encodeXml(opt.queryXml));
         break;
       case 'QueryEx':
-        utils.SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
+        constants.SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
         SOAPAction = 'http://microsoft.com/webservices/OfficeServer/QueryService/' + opt.operation;
-        utils.SOAPEnvelope.payload += utils.wrapNode('queryXml', utils.encodeXml(opt.queryXml));
+        constants.SOAPEnvelope.payload += utils.wrapNode('queryXml', constants.encodeXml(opt.queryXml));
         break;
       case 'Registration':
-        utils.SOAPEnvelope.payload += utils.wrapNode('registrationXml', utils.encodeXml(opt.registrationXml));
+        constants.SOAPEnvelope.payload += utils.wrapNode('registrationXml', constants.encodeXml(opt.registrationXml));
         break;
       case 'Status':
         break;
@@ -1949,24 +1949,24 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
       case 'SiteDataGetList':
         utils.addToPayload(opt, ['strListName']);
         // Because this operation has a name which duplicates the Lists WS, need to handle
-        utils.SOAPEnvelope = utils.siteDataFixSOAPEnvelope(utils.SOAPEnvelope, opt.operation);
+        constants.SOAPEnvelope = constants.siteDataFixSOAPEnvelope(constants.SOAPEnvelope, opt.operation);
         break;
       case 'SiteDataGetListCollection':
         // Because this operation has a name which duplicates the Lists WS, need to handle
-        utils.SOAPEnvelope = utils.siteDataFixSOAPEnvelope(utils.SOAPEnvelope, opt.operation);
+        constants.SOAPEnvelope = constants.siteDataFixSOAPEnvelope(constants.SOAPEnvelope, opt.operation);
         break;
       case 'SiteDataGetSite':
         // Because this operation has a name which duplicates the Lists WS, need to handle
-        utils.SOAPEnvelope = utils.siteDataFixSOAPEnvelope(utils.SOAPEnvelope, opt.operation);
+        constants.SOAPEnvelope = constants.siteDataFixSOAPEnvelope(constants.SOAPEnvelope, opt.operation);
         break;
       case 'SiteDataGetSiteUrl':
         utils.addToPayload(opt, ['Url']);
         // Because this operation has a name which duplicates the Lists WS, need to handle
-        utils.SOAPEnvelope = utils.siteDataFixSOAPEnvelope(utils.SOAPEnvelope, opt.operation);
+        constants.SOAPEnvelope = constants.siteDataFixSOAPEnvelope(constants.SOAPEnvelope, opt.operation);
         break;
       case 'SiteDataGetWeb':
         // Because this operation has a name which duplicates the Lists WS, need to handle
-        utils.SOAPEnvelope = utils.siteDataFixSOAPEnvelope(utils.SOAPEnvelope, opt.operation);
+        constants.SOAPEnvelope = constants.siteDataFixSOAPEnvelope(constants.SOAPEnvelope, opt.operation);
         break;
       // SITES OPERATIONS
       case 'CreateWeb':
@@ -2103,7 +2103,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
           'startIndex'
         ]);
         if (typeof opt.excludeItemsTime !== 'undefined' && opt.excludeItemsTime.length > 0) {
-          utils.SOAPEnvelope.payload += utils.wrapNode('excludeItemsTime', opt.excludeItemsTime);
+          constants.SOAPEnvelope.payload += utils.wrapNode('excludeItemsTime', opt.excludeItemsTime);
         }
         break;
       case 'GetRatingAverageOnUrl':
@@ -2844,7 +2844,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         break;
       }
       // Glue together the pieces of the SOAP message
-      var msg = utils.SOAPEnvelope.header + utils.SOAPEnvelope.opheader + utils.SOAPEnvelope.payload + utils.SOAPEnvelope.opfooter + utils.SOAPEnvelope.footer;
+      var msg = constants.SOAPEnvelope.header + constants.SOAPEnvelope.opheader + constants.SOAPEnvelope.payload + constants.SOAPEnvelope.opfooter + constants.SOAPEnvelope.footer;
       // Check to see if we've already cached the results
       var cachedPromise;
       if (opt.cacheXML) {
@@ -2961,7 +2961,480 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
       // Allow the user to force async
       completefunc: null  // Function to call on completion
     };  // End $.fn.SPServices.defaults
-  }(jquery, src_core_SPServicesutilsjs, src_utils_constants);
+  }(jquery, src_core_SPServicesutils, src_utils_constants);
+  src_core_Version = function ($, constants) {
+    // Return the current version of SPServices as a string
+    $.fn.SPServices.Version = function () {
+      return constants.VERSION;
+    };
+    // End $.fn.SPServices.Version
+    return $;
+  }(jquery, src_utils_constants);
+  src_utils_SPGetCurrentSite = function ($, utils, constants) {
+    // Function to determine the current Web's URL.  We need this for successful Ajax calls.
+    // The function is also available as a public function.
+    $.fn.SPServices.SPGetCurrentSite = function () {
+      // We've already determined the current site...
+      if (utils.SPServicesContext().thisSite.length > 0) {
+        return utils.SPServicesContext().thisSite;
+      }
+      // If we still don't know the current site, we call WebUrlFromPageUrlResult.
+      var msg = utils.SOAPEnvelope.header + '<WebUrlFromPageUrl xmlns=\'' + constants.SCHEMASharePoint + '/soap/\' ><pageUrl>' + (location.href.indexOf('?') > 0 ? location.href.substr(0, location.href.indexOf('?')) : location.href) + '</pageUrl></WebUrlFromPageUrl>' + utils.SOAPEnvelope.footer;
+      $.ajax({
+        async: false,
+        // Need this to be synchronous so we're assured of a valid value
+        url: '/_vti_bin/Webs.asmx',
+        type: 'POST',
+        data: msg,
+        dataType: 'xml',
+        contentType: 'text/xml;charset="utf-8"',
+        complete: function (xData) {
+          utils.SPServicesContext().thisSite = $(xData.responseXML).find('WebUrlFromPageUrlResult').text();
+        }
+      });
+      return utils.SPServicesContext().thisSite;  // Return the URL
+    };
+    // End $.fn.SPServices.SPGetCurrentSite
+    return $;
+  }(jquery, src_core_SPServicesutils, src_utils_constants);
+  src_utils_SPGetCurrentUser = function ($, utils) {
+    // Function which returns the account name for the current user in DOMAIN\username format
+    $.fn.SPServices.SPGetCurrentUser = function (options) {
+      var opt = $.extend({}, {
+        webURL: '',
+        // URL of the target Site Collection.  If not specified, the current Web is used.
+        fieldName: 'Name',
+        // Specifies which field to return from the userdisp.aspx page
+        fieldNames: {},
+        // Specifies which fields to return from the userdisp.aspx page - added in v0.7.2 to allow multiple columns
+        debug: false  // If true, show error messages; if false, run silent
+      }, options);
+      // The current user's ID is reliably available in an existing JavaScript variable
+      if (opt.fieldName === 'ID' && typeof utils.SPServicesContext().thisUserId !== 'undefined') {
+        return utils.SPServicesContext().thisUserId;
+      }
+      var thisField = '';
+      var theseFields = {};
+      var fieldCount = opt.fieldNames.length > 0 ? opt.fieldNames.length : 1;
+      var thisUserDisp;
+      var thisWeb = opt.webURL.length > 0 ? opt.webURL : $().SPServices.SPGetCurrentSite();
+      // Get the UserDisp.aspx page using AJAX
+      $.ajax({
+        // Need this to be synchronous so we're assured of a valid value
+        async: false,
+        // Force parameter forces redirection to a page that displays the information as stored in the UserInfo table rather than My Site.
+        // Adding the extra Query String parameter with the current date/time forces the server to view this as a new request.
+        url: (thisWeb === '/' ? '' : thisWeb) + '/_layouts/userdisp.aspx?Force=True&' + new Date().getTime(),
+        complete: function (xData) {
+          thisUserDisp = xData;
+        }
+      });
+      for (var i = 0; i < fieldCount; i++) {
+        // The current user's ID is reliably available in an existing JavaScript variable
+        if (opt.fieldNames[i] === 'ID') {
+          thisField = utils.SPServicesContext().thisUserId;
+        } else {
+          var thisTextValue;
+          if (fieldCount > 1) {
+            thisTextValue = RegExp('FieldInternalName="' + opt.fieldNames[i] + '"', 'gi');
+          } else {
+            thisTextValue = RegExp('FieldInternalName="' + opt.fieldName + '"', 'gi');
+          }
+          $(thisUserDisp.responseText).find('table.ms-formtable td[id^=\'SPField\']').each(function () {
+            if (thisTextValue.test($(this).html())) {
+              // Each fieldtype contains a different data type, as indicated by the id
+              switch ($(this).attr('id')) {
+              case 'SPFieldText':
+                thisField = $(this).text();
+                break;
+              case 'SPFieldNote':
+                thisField = $(this).find('div').html();
+                break;
+              case 'SPFieldURL':
+                thisField = $(this).find('img').attr('src');
+                break;
+              // Just in case
+              default:
+                thisField = $(this).text();
+                break;
+              }
+              // Stop looking; we're done
+              return false;
+            }
+          });
+        }
+        if (opt.fieldNames[i] !== 'ID') {
+          thisField = typeof thisField !== 'undefined' ? thisField.replace(/(^[\s\xA0]+|[\s\xA0]+$)/g, '') : null;
+        }
+        if (fieldCount > 1) {
+          theseFields[opt.fieldNames[i]] = thisField;
+        }
+      }
+      return fieldCount > 1 ? theseFields : thisField;
+    };
+    // End $.fn.SPServices.SPGetCurrentUser
+    return $;
+  }(jquery, src_core_SPServicesutils);
+  src_value_added_SPCascadeDropdowns = function ($, utils, constants) {
+    // Function to set up cascading dropdowns on a SharePoint form
+    // (Newform.aspx, EditForm.aspx, or any other customized form.)
+    $.fn.SPServices.SPCascadeDropdowns = function (options) {
+      var opt = $.extend({}, {
+        relationshipWebURL: '',
+        // [Optional] The name of the Web (site) which contains the relationships list
+        relationshipList: '',
+        // The name of the list which contains the parent/child relationships
+        relationshipListParentColumn: '',
+        // The internal name of the parent column in the relationship list
+        relationshipListChildColumn: '',
+        // The internal name of the child column in the relationship list
+        relationshipListSortColumn: '',
+        // [Optional] If specified, sort the options in the dropdown by this column,
+        // otherwise the options are sorted by relationshipListChildColumn
+        parentColumn: '',
+        // The display name of the parent column in the form
+        childColumn: '',
+        // The display name of the child column in the form
+        listName: $().SPServices.SPListNameFromUrl(),
+        // The list the form is working with. This is useful if the form is not in the list context.
+        CAMLQuery: '',
+        // [Optional] For power users, this CAML fragment will be Anded with the default query on the relationshipList
+        CAMLQueryOptions: '<QueryOptions><IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns></QueryOptions>',
+        // [Optional] For power users, ability to specify Query Options
+        promptText: '',
+        // [DEPRECATED] Text to use as prompt. If included, {0} will be replaced with the value of childColumn. Original value "Choose {0}..."
+        noneText: '(None)',
+        // [Optional] Text to use for the (None) selection. Provided for non-English language support.
+        simpleChild: false,
+        // [Optional] If set to true and childColumn is a complex dropdown, convert it to a simple dropdown
+        selectSingleOption: false,
+        // [Optional] If set to true and there is only a single child option, select it
+        matchOnId: false,
+        // By default, we match on the lookup's text value. If matchOnId is true, we'll match on the lookup id instead.
+        completefunc: null,
+        // Function to call on completion of rendering the change.
+        debug: false  // If true, show error messages;if false, run silent
+      }, options);
+      var thisParentSetUp = false;
+      var thisFunction = 'SPServices.SPCascadeDropdowns';
+      // Find the parent column's select (dropdown)
+      var parentSelect = $().SPServices.SPDropdownCtl({ displayName: opt.parentColumn });
+      if (parentSelect.Obj.html() === null && opt.debug) {
+        utils.errBox(thisFunction, 'parentColumn: ' + opt.parentColumn, constants.TXTColumnNotFound);
+        return;
+      }
+      // Find the child column's select (dropdown)
+      var childSelect = $().SPServices.SPDropdownCtl({ displayName: opt.childColumn });
+      if (childSelect.Obj.html() === null && opt.debug) {
+        utils.errBox(thisFunction, 'childColumn: ' + opt.childColumn, constants.TXTColumnNotFound);
+        return;
+      }
+      // If requested and the childColumn is a complex dropdown, convert to a simple dropdown
+      if (opt.simpleChild === true && childSelect.Type === constants.dropdownType.complex) {
+        $().SPServices.SPComplexToSimpleDropdown({
+          listName: opt.listName,
+          columnName: opt.childColumn
+        });
+        // Set the childSelect to reference the new simple dropdown
+        childSelect = $().SPServices.SPDropdownCtl({ displayName: opt.childColumn });
+      }
+      var childColumnRequired, childColumnStatic;
+      // Get information about the childColumn from the current list
+      $().SPServices({
+        operation: 'GetList',
+        async: false,
+        cacheXML: true,
+        listName: opt.listName,
+        completefunc: function (xData) {
+          $(xData.responseXML).find('Fields').each(function () {
+            $(this).find('Field[DisplayName=\'' + opt.childColumn + '\']').each(function () {
+              // Determine whether childColumn is Required
+              childColumnRequired = $(this).attr('Required') === 'TRUE';
+              childColumnStatic = $(this).attr('StaticName');
+              // Stop looking; we're done
+              return false;
+            });
+          });
+        }
+      });
+      // Save data about each child column on the parent
+      var childColumn = {
+        opt: opt,
+        childSelect: childSelect,
+        childColumnStatic: childColumnStatic,
+        childColumnRequired: childColumnRequired
+      };
+      var childColumns = parentSelect.Obj.data('SPCascadeDropdownsChildColumns');
+      // If this is the first child for this parent, then create the data object to hold the settings
+      if (typeof childColumns === 'undefined') {
+        parentSelect.Obj.data('SPCascadeDropdownsChildColumns', [childColumn]);  // If we already have a data object for this parent, then add the setting for this child to it
+      } else {
+        childColumns.push(childColumn);
+        parentSelect.Obj.data('SPCascadeDropdownsChildColumns', childColumns);
+        thisParentSetUp = true;
+      }
+      // We only need to bind to the event(s) if we haven't already done so
+      if (!thisParentSetUp) {
+        switch (parentSelect.Type) {
+        // Plain old select
+        case constants.dropdownType.simple:
+          parentSelect.Obj.bind('change', function () {
+            cascadeDropdown(parentSelect);
+          });
+          break;
+        // Input / Select hybrid
+        case constants.dropdownType.complex:
+          // Bind to any change on the hidden input element
+          parentSelect.optHid.bind('propertychange', function () {
+            cascadeDropdown(parentSelect);
+          });
+          break;
+        // Multi-select hybrid
+        case constants.dropdownType.multiSelect:
+          // Handle the dblclick on the candidate select
+          $(parentSelect.master.candidateControl).bind('dblclick', function () {
+            cascadeDropdown(parentSelect);
+          });
+          // Handle the dblclick on the selected values
+          $(parentSelect.master.resultControl).bind('dblclick', function () {
+            cascadeDropdown(parentSelect);
+          });
+          // Handle button clicks
+          $(parentSelect.master.addControl).bind('click', function () {
+            cascadeDropdown(parentSelect);
+          });
+          $(parentSelect.master.removeControl).bind('click', function () {
+            cascadeDropdown(parentSelect);
+          });
+          break;
+        default:
+          break;
+        }
+      }
+      // Fire the change to set the initially allowable values
+      cascadeDropdown(parentSelect);
+    };
+    // End $.fn.SPServices.SPCascadeDropdowns
+    function cascadeDropdown(parentSelect) {
+      var choices = '';
+      var parentSelectSelected;
+      var childSelectSelected = null;
+      var newMultiLookupPickerdata;
+      var numChildOptions;
+      var firstChildOptionId;
+      var firstChildOptionValue;
+      // Filter each child column
+      var childColumns = parentSelect.Obj.data('SPCascadeDropdownsChildColumns');
+      $(childColumns).each(function () {
+        // Break out the data objects for this child column
+        var i;
+        var opt = this.opt;
+        var childSelect = this.childSelect;
+        var childColumnStatic = this.childColumnStatic;
+        var childColumnRequired = this.childColumnRequired;
+        // Get the parent column selection(s)
+        parentSelectSelected = utils.getDropdownSelected(parentSelect, opt.matchOnId);
+        // If the selection hasn't changed, then there's nothing to do right now.  This is useful to reduce
+        // the number of Web Service calls when the parentSelect.Type = constants.dropdownType.complex or constants.dropdownType.multiSelect, as there are multiple propertychanges
+        // which don't require any action.  The attribute will be unique per child column in case there are
+        // multiple children for a given parent.
+        var allParentSelections = parentSelectSelected.join(constants.spDelim);
+        if (parentSelect.Obj.data('SPCascadeDropdown_Selected_' + childColumnStatic) === allParentSelections) {
+          return;
+        }
+        parentSelect.Obj.data('SPCascadeDropdown_Selected_' + childColumnStatic, allParentSelections);
+        // Get the current child column selection(s)
+        childSelectSelected = utils.getDropdownSelected(childSelect, true);
+        // When the parent column's selected option changes, get the matching items from the relationship list
+        // Get the list items which match the current selection
+        var sortColumn = opt.relationshipListSortColumn.length > 0 ? opt.relationshipListSortColumn : opt.relationshipListChildColumn;
+        var camlQuery = '<Query><OrderBy><FieldRef Name=\'' + sortColumn + '\'/></OrderBy><Where><And>';
+        if (opt.CAMLQuery.length > 0) {
+          camlQuery += '<And>';
+        }
+        // Build up the criteria for inclusion
+        if (parentSelectSelected.length === 0) {
+          // Handle the case where no values are selected in multi-selects
+          camlQuery += '<Eq><FieldRef Name=\'' + opt.relationshipListParentColumn + '\'/><Value Type=\'Text\'></Value></Eq>';
+        } else if (parentSelectSelected.length === 1) {
+          // Only one value is selected
+          camlQuery += '<Eq><FieldRef Name=\'' + opt.relationshipListParentColumn + (opt.matchOnId ? '\' LookupId=\'True\'/><Value Type=\'Integer\'>' : '\'/><Value Type=\'Text\'>') + utils.escapeColumnValue(parentSelectSelected[0]) + '</Value></Eq>';
+        } else {
+          var compound = parentSelectSelected.length > 2;
+          for (i = 0; i < parentSelectSelected.length - 1; i++) {
+            camlQuery += '<Or>';
+          }
+          for (i = 0; i < parentSelectSelected.length; i++) {
+            camlQuery += '<Eq><FieldRef Name=\'' + opt.relationshipListParentColumn + (opt.matchOnId ? '\' LookupId=\'True\'/><Value Type=\'Integer\'>' : '\'/><Value Type=\'Text\'>') + utils.escapeColumnValue(parentSelectSelected[i]) + '</Value></Eq>';
+            if (i > 0 && i < parentSelectSelected.length - 1 && compound) {
+              camlQuery += '</Or>';
+            }
+          }
+          camlQuery += '</Or>';
+        }
+        if (opt.CAMLQuery.length > 0) {
+          camlQuery += opt.CAMLQuery + '</And>';
+        }
+        // Make sure we don't get any items which don't have the child value
+        camlQuery += '<IsNotNull><FieldRef Name=\'' + opt.relationshipListChildColumn + '\' /></IsNotNull>';
+        camlQuery += '</And></Where></Query>';
+        $().SPServices({
+          operation: 'GetListItems',
+          // Force sync so that we have the right values for the child column onchange trigger
+          async: false,
+          webURL: opt.relationshipWebURL,
+          listName: opt.relationshipList,
+          // Filter based on the currently selected parent column's value
+          CAMLQuery: camlQuery,
+          // Only get the parent and child columns
+          CAMLViewFields: '<ViewFields><FieldRef Name=\'' + opt.relationshipListParentColumn + '\' /><FieldRef Name=\'' + opt.relationshipListChildColumn + '\' /></ViewFields>',
+          // Override the default view rowlimit and get all appropriate rows
+          CAMLRowLimit: 0,
+          // Even though setting IncludeMandatoryColumns to FALSE doesn't work as the docs describe, it fixes a bug in GetListItems with mandatory multi-selects
+          CAMLQueryOptions: opt.CAMLQueryOptions,
+          completefunc: function (xData) {
+            // Handle errors
+            $(xData.responseXML).find('errorstring').each(function () {
+              var thisFunction = 'SPServices.SPCascadeDropdowns';
+              var errorText = $(this).text();
+              if (opt.debug && errorText === 'One or more field types are not installed properly. Go to the list settings page to delete these fields.') {
+                utils.errBox(thisFunction, 'relationshipListParentColumn: ' + opt.relationshipListParentColumn + ' or ' + 'relationshipListChildColumn: ' + opt.relationshipListChildColumn, 'Not found in relationshipList ' + opt.relationshipList);
+              } else if (opt.debug && errorText === 'Guid should contain 32 digits with 4 dashes (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).') {
+                utils.errBox(thisFunction, 'relationshipList: ' + opt.relationshipList, 'List not found');
+              }
+            });
+            // Add an explanatory prompt
+            switch (childSelect.Type) {
+            case constants.dropdownType.simple:
+              // Remove all of the existing options
+              childSelect.Obj[0].innerHTML = '';
+              //                            $(childSelect.Obj).find("option").remove();
+              // If the column is required or the promptText option is empty, don't add the prompt text
+              if (!childColumnRequired && opt.promptText.length > 0) {
+                childSelect.Obj.append('<option value=\'0\'>' + opt.promptText.replace(/\{0\}/g, opt.childColumn) + '</option>');
+              } else if (!childColumnRequired) {
+                childSelect.Obj.append('<option value=\'0\'>' + opt.noneText + '</option>');
+              }
+              break;
+            case constants.dropdownType.complex:
+              // If the column is required, don't add the "(None)" option
+              choices = childColumnRequired ? '' : opt.noneText + '|0';
+              childSelect.Obj.val('');
+              break;
+            case constants.dropdownType.multiSelect:
+              // Remove all of the existing options
+              $(childSelect.master.candidateControl).find('option').remove();
+              newMultiLookupPickerdata = '';
+              break;
+            default:
+              break;
+            }
+            // Get the count of items returned and save it so that we can select if it's a single option
+            // The item count is stored thus: <rs:data ItemCount="1">
+            numChildOptions = parseFloat($(xData.responseXML).SPFilterNode('rs:data').attr('ItemCount'));
+            // Add an option for each child item
+            $(xData.responseXML).SPFilterNode('z:row').each(function () {
+              var thisOption = {};
+              // If relationshipListChildColumn is a Lookup column, then the ID should be for the Lookup value,
+              // else the ID of the relationshipList item
+              var thisValue = $(this).attr('ows_' + opt.relationshipListChildColumn);
+              if (typeof thisValue !== 'undefined' && thisValue.indexOf(constants.spDelim) > 0) {
+                thisOption = new utils.SplitIndex(thisValue);
+              } else {
+                thisOption.id = $(this).attr('ows_ID');
+                thisOption.value = thisValue;
+              }
+              // If the relationshipListChildColumn is a calculated column, then the value isn't preceded by the ID,
+              // but by the datatype.  In this case, thisOption.id should be the ID of the relationshipList item.
+              // e.g., float;#12345.67
+              if (isNaN(thisOption.id)) {
+                thisOption.id = $(this).attr('ows_ID');
+              }
+              // Save the id and value for the first child option in case we need to select it (selectSingleOption option is true)
+              firstChildOptionId = thisOption.id;
+              firstChildOptionValue = thisOption.value;
+              switch (childSelect.Type) {
+              case constants.dropdownType.simple:
+                var selected = $(this).attr('ows_ID') === childSelectSelected[0] ? ' selected=\'selected\'' : '';
+                childSelect.Obj.append('<option' + selected + ' value=\'' + thisOption.id + '\'>' + thisOption.value + '</option>');
+                break;
+              case constants.dropdownType.complex:
+                if (thisOption.id === childSelectSelected[0]) {
+                  childSelect.Obj.val(thisOption.value);
+                }
+                choices = choices + (choices.length > 0 ? '|' : '') + thisOption.value + '|' + thisOption.id;
+                break;
+              case constants.dropdownType.multiSelect:
+                $(childSelect.master.candidateControl).append('<option value=\'' + thisOption.id + '\'>' + thisOption.value + '</option>');
+                newMultiLookupPickerdata += thisOption.id + '|t' + thisOption.value + '|t |t |t';
+                break;
+              default:
+                break;
+              }
+            });
+            switch (childSelect.Type) {
+            case constants.dropdownType.simple:
+              childSelect.Obj.trigger('change');
+              // If there is only one option and the selectSingleOption option is true, then select it
+              if (numChildOptions === 1 && opt.selectSingleOption === true) {
+                $(childSelect.Obj).find('option[value!=\'0\']:first').attr('selected', 'selected');
+              }
+              break;
+            case constants.dropdownType.complex:
+              // Set the allowable choices
+              childSelect.Obj.attr('choices', choices);
+              // If there is only one option and the selectSingleOption option is true, then select it
+              if (numChildOptions === 1 && opt.selectSingleOption === true) {
+                // Set the input element value
+                $(childSelect.Obj).val(firstChildOptionValue);
+                // Set the value of the optHid input element
+                childSelect.optHid.val(firstChildOptionId);
+              }
+              // If there's no selection, then remove the value in the associated hidden input element (optHid)
+              if (childSelect.Obj.val() === '') {
+                childSelect.optHid.val('');
+              }
+              break;
+            case constants.dropdownType.multiSelect:
+              // Clear the master
+              childSelect.master.data = '';
+              childSelect.MultiLookupPickerdata.val(newMultiLookupPickerdata);
+              // Clear any prior selections that are no longer valid or aren't selected
+              $(childSelect.master.resultControl).find('option').each(function () {
+                var thisSelected = $(this);
+                thisSelected.prop('selected', true);
+                $(childSelect.master.candidateControl).find('option[value=\'' + thisSelected.val() + '\']').each(function () {
+                  thisSelected.prop('selected', false);
+                });
+              });
+              GipRemoveSelectedItems(childSelect.master);
+              // Hide any options in the candidate list which are already selected
+              $(childSelect.master.candidateControl).find('option').each(function () {
+                var thisSelected = $(this);
+                $(childSelect.master.resultControl).find('option[value=\'' + thisSelected.val() + '\']').each(function () {
+                  thisSelected.remove();
+                });
+              });
+              GipAddSelectedItems(childSelect.master);
+              // Set master.data to the newly allowable values
+              childSelect.master.data = GipGetGroupData(newMultiLookupPickerdata);
+              // Trigger a dblclick so that the child will be cascaded if it is a multiselect.
+              $(childSelect.master.candidateControl).trigger('dblclick');
+              break;
+            default:
+              break;
+            }
+          }
+        });
+        // If present, call completefunc when all else is done
+        if (opt.completefunc !== null) {
+          opt.completefunc();
+        }
+      });  // $(childColumns).each(function()
+    }
+    // End cascadeDropdown
+    return $;
+  }(jquery, src_core_SPServicesutils, src_utils_constants);
   src_SPServices = function ($) {
     return $;
   }(jquery);

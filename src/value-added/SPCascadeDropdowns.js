@@ -1,7 +1,8 @@
 define([
     'jquery',
-    '../core/SPServices.utils.js',
-    "../utils/constants", //---------------------------
+    '../core/SPServices.utils',
+    "../utils/constants",
+    //---------------------------
     // We don't need local variables for these dependencies
     // because they are added to the jQuery namespace.
     '../core/SPServices.core'
@@ -10,6 +11,9 @@ define([
     utils,
     constants
 ) {
+
+    "use strict";
+
     // Function to set up cascading dropdowns on a SharePoint form
     // (Newform.aspx, EditForm.aspx, or any other customized form.)
     $.fn.SPServices.SPCascadeDropdowns = function (options) {
