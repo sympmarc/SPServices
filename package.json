@@ -23,7 +23,9 @@
     "grunt-zip": "~0.17.1",
     "grunt-contrib-requirejs": "^0.4.4",
     "rjs-build-analysis": "^0.0.3",
-    "amdclean": "^2.7.0"
+    "amdclean": "^2.7.0",
+    "qunit": "^0.7.7"
+
   },
   "package_zipfiles": [
     "build/license.txt",
