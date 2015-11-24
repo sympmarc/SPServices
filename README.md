@@ -62,5 +62,8 @@ To deploy using grunt, run:
 
     grunt deploy
 
+### Unit Tests
 
+Unit test cases are written under the test folder using [QUnit](http://qunitjs.com/). Tests will run in the dev.aspx above.
 
+Currently the tests require a real SharePoint server. The tests will create and deletes some test data to validate basic core calls. 
