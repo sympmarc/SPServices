@@ -15,10 +15,10 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-11-24 12:22:18
+* @build SPServices 2.0.0 2015-11-24 12:37:46
 */
 ;(function() {
-var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_value_added_SPCascadeDropdowns, src_SPServices;
+var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescorejs, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_value_added_SPCascadeDropdowns, src_SPServices;
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
@@ -114,7 +114,7 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
     };
     return constants;
   }();
-  src_core_SPServicesutils = function ($, constants) {
+  src_core_SPServicesutilsjs = function ($, constants) {
     var utils = /** @lends spservices.utils */
       {
         // Get the current context (as much as we can) on startup
@@ -427,7 +427,7 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
     // End of function modalBox;
     return utils;
   }(jquery, src_utils_constants);
-  src_core_SPServicescore = function ($, utils, constants) {
+  src_core_SPServicescorejs = function ($, utils, constants) {
     var SOAPAction;
     // Caching
     var promisesCache = {};
@@ -3075,6 +3075,400 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
     // End $.fn.SPServices.SPGetCurrentUser
     return $;
   }(jquery, src_core_SPServicesutils);
+  src_utils_SPFilterNode = function ($) {
+    // This method for finding specific nodes in the returned XML was developed by Steve Workman. See his blog post
+    // http://www.steveworkman.com/html5-2/javascript/2011/improving-javascript-xml-node-finding-performance-by-2000/
+    // for performance details.
+    $.fn.SPFilterNode = function (name) {
+      return this.find('*').filter(function () {
+        return this.nodeName === name;
+      });
+    };
+    // End $.fn.SPFilterNode
+    return $;
+  }(jquery);
+  src_utils_SPGetListItemsJson = function ($, utils, constants) {
+    // SPGetListItemsJson retrieves items from a list in JSON format
+    $.fn.SPServices.SPGetListItemsJson = function (options) {
+      var opt = $.extend({}, {
+        webURL: '',
+        // [Optional] URL of the target Web.  If not specified, the current Web is used.
+        listName: '',
+        viewName: '',
+        CAMLQuery: '',
+        CAMLViewFields: '',
+        CAMLRowLimit: '',
+        CAMLQueryOptions: '',
+        changeToken: '',
+        // [Optional] If provided, will be passed with the request
+        contains: '',
+        // CAML snippet for an additional filter
+        mapping: null,
+        // If provided, use this mapping rather than creating one automagically from the list schema
+        mappingOverrides: null,
+        // Pass in specific column overrides here
+        debug: false  // If true, show error messages;if false, run silent
+      }, $().SPServices.defaults, options);
+      var newChangeToken;
+      var thisListJsonMapping = {};
+      var deletedIds = [];
+      var result = $.Deferred();
+      // Call GetListItems to find all of the items matching the CAMLQuery
+      var thisData = $().SPServices({
+        operation: 'GetListItemChangesSinceToken',
+        webURL: opt.webURL,
+        listName: opt.listName,
+        viewName: opt.viewName,
+        CAMLQuery: opt.CAMLQuery,
+        CAMLViewFields: opt.CAMLViewFields,
+        CAMLRowLimit: opt.CAMLRowLimit,
+        CAMLQueryOptions: opt.CAMLQueryOptions,
+        changeToken: opt.changeToken,
+        contains: opt.contains
+      });
+      thisData.done(function () {
+        var mappingKey = 'SPGetListItemsJson' + opt.webURL + opt.listName;
+        // We're going to use this multiple times
+        var responseXml = $(thisData.responseXML);
+        // Get the changeToken
+        newChangeToken = responseXml.find('Changes').attr('LastChangeToken');
+        // Some of the existing items may have been deleted
+        responseXml.find('listitems Changes Id[ChangeType=\'Delete\']').each(function () {
+          deletedIds.push($(this).text());
+        });
+        if (opt.mapping === null) {
+          // Automagically create the mapping
+          responseXml.find('List > Fields > Field').each(function () {
+            var thisField = $(this);
+            var thisType = thisField.attr('Type');
+            // Only work with known column types
+            if ($.inArray(thisType, constants.spListFieldTypes) >= 0) {
+              thisListJsonMapping['ows_' + thisField.attr('Name')] = {
+                mappedName: thisField.attr('Name'),
+                objectType: thisField.attr('Type')
+              };
+            }
+          });
+        } else {
+          thisListJsonMapping = opt.mapping;
+        }
+        // Implement any mappingOverrides
+        // Example: { ows_JSONTextColumn: { mappedName: "JTC", objectType: "JSON" } }
+        if (opt.mappingOverrides !== null) {
+          // For each mappingOverride, override the list schema
+          for (var mapping in opt.mappingOverrides) {
+            thisListJsonMapping[mapping] = opt.mappingOverrides[mapping];
+          }
+        }
+        // If we haven't retrieved the list schema in this call, try to grab it from the saved data from a prior call
+        if ($.isEmptyObject(thisListJsonMapping)) {
+          thisListJsonMapping = $(document).data(mappingKey);
+        } else {
+          $(document).data(mappingKey, thisListJsonMapping);
+        }
+        var jsonData = responseXml.SPFilterNode('z:row').SPXmlToJson({
+          mapping: thisListJsonMapping,
+          sparse: true
+        });
+        var thisResult = {
+          changeToken: newChangeToken,
+          mapping: thisListJsonMapping,
+          data: jsonData,
+          deletedIds: deletedIds
+        };
+        result.resolveWith(thisResult);
+      });
+      return result.promise();
+    };
+    // End $.fn.SPServices.SPGetListItemsJson
+    return $;
+  }(jquery, src_core_SPServicesutilsjs, src_utils_constants);
+  src_utils_SPXmlToJson = function ($, utils, constants) {
+    // This function converts an XML node set to JSON
+    // Initial implementation focuses only on GetListItems
+    $.fn.SPXmlToJson = function (options) {
+      var opt = $.extend({}, {
+        mapping: {},
+        // columnName: mappedName: "mappedName", objectType: "objectType"
+        includeAllAttrs: false,
+        // If true, return all attributes, regardless whether they are in the mapping
+        removeOws: true,
+        // Specifically for GetListItems, if true, the leading ows_ will be stripped off the field name
+        sparse: false  // If true, empty ("") values will not be returned
+      }, options);
+      var attrNum;
+      var jsonObject = [];
+      this.each(function () {
+        var row = {};
+        var rowAttrs = this.attributes;
+        if (!opt.sparse) {
+          // Bring back all mapped columns, even those with no value
+          $.each(opt.mapping, function () {
+            row[this.mappedName] = '';
+          });
+        }
+        // Parse through the element's attributes
+        for (attrNum = 0; attrNum < rowAttrs.length; attrNum++) {
+          var thisAttrName = rowAttrs[attrNum].name;
+          var thisMapping = opt.mapping[thisAttrName];
+          var thisObjectName = typeof thisMapping !== 'undefined' ? thisMapping.mappedName : opt.removeOws ? thisAttrName.split('ows_')[1] : thisAttrName;
+          var thisObjectType = typeof thisMapping !== 'undefined' ? thisMapping.objectType : undefined;
+          if (opt.includeAllAttrs || thisMapping !== undefined) {
+            row[thisObjectName] = attrToJson(rowAttrs[attrNum].value, thisObjectType);
+          }
+        }
+        // Push this item into the JSON Object
+        jsonObject.push(row);
+      });
+      // Return the JSON object
+      return jsonObject;
+    };
+    // End $.fn.SPServices.SPXmlToJson
+    function attrToJson(v, objectType) {
+      var result = {
+        /* Generic [Reusable] Functions */
+        'Integer': intToJsonObject(v),
+        'Number': floatToJsonObject(v),
+        'Boolean': booleanToJsonObject(v),
+        'DateTime': dateToJsonObject(v),
+        'User': userToJsonObject(v),
+        'UserMulti': userMultiToJsonObject(v),
+        'Lookup': lookupToJsonObject(v),
+        'lookupMulti': lookupMultiToJsonObject(v),
+        'MultiChoice': choiceMultiToJsonObject(v),
+        'Calculated': calcToJsonObject(v),
+        'Attachments': attachmentsToJsonObject(v),
+        'URL': urlToJsonObject(v),
+        'JSON': jsonToJsonObject(v),
+        // Special case for text JSON stored in text columns
+        /* These objectTypes reuse above functions */
+        'Text': result.Default(v),
+        'Counter': result.Integer(v),
+        'datetime': result.DateTime(v),
+        // For calculated columns, stored as datetime;#value
+        'AllDayEvent': result.Boolean(v),
+        'Recurrence': result.Boolean(v),
+        'Currency': result.Number(v),
+        'float': result.Number(v),
+        // For calculated columns, stored as float;#value
+        'RelatedItems': result.JSON(v),
+        'Default': v
+      };
+      if (result[objectType] !== undefined) {
+        return result.objectType(v);
+      } else {
+        return v;
+      }  /*
+                 switch (objectType) {
+         
+                     case "Text":
+                         colValue = v;
+                         break;
+                     case "DateTime":
+                     case "datetime": // For calculated columns, stored as datetime;#value
+                         // Dates have dashes instead of slashes: ows_Created="2009-08-25 14:24:48"
+                         colValue = dateToJsonObject(v);
+                         break;
+                     case "User":
+                         colValue = userToJsonObject(v);
+                         break;
+                     case "UserMulti":
+                         colValue = userMultiToJsonObject(v);
+                         break;
+                     case "Lookup":
+                         colValue = lookupToJsonObject(v);
+                         break;
+         
+                     case "LookupMulti":
+                         colValue = lookupMultiToJsonObject(v);
+                         break;
+                     case "Boolean":
+                     case "AllDayEvent":
+                     case "Recurrence":
+                         colValue = booleanToJsonObject(v);
+                         break;
+         
+                     case "Integer":
+                         colValue = intToJsonObject(v);
+                         break;
+         
+                     case "Counter":
+                         colValue = intToJsonObject(v);
+                         break;
+         
+                     case "MultiChoice":
+                         colValue = choiceMultiToJsonObject(v);
+                         break;
+                     case "Number":
+                     case "Currency":
+                     case "float": // For calculated columns, stored as float;#value
+                         colValue = floatToJsonObject(v);
+                         break;
+                     case "Calculated":
+                         colValue = calcToJsonObject(v);
+                         break;
+                     case "Attachments":
+                         colValue = attachmentsToJsonObject(v);
+                         break;
+                     case "URL":
+                         colValue = urlToJsonObject(v);
+                         break;
+                     case "JSON":
+                     case "RelatedItems":
+                         colValue = jsonToJsonObject(v); // Special case for text JSON stored in text columns
+                         break;
+         
+                     default:
+                         // All other objectTypes will be simple strings
+                         colValue = v;
+                         break;
+                 }
+                 return colValue;
+          */
+    }
+    function intToJsonObject(s) {
+      return parseInt(s, 10);
+    }
+    function floatToJsonObject(s) {
+      return parseFloat(s);
+    }
+    function booleanToJsonObject(s) {
+      return s !== '0';
+    }
+    function dateToJsonObject(s) {
+      var dt = s.split('T')[0] !== s ? s.split('T') : s.split(' ');
+      var d = dt[0].split('-');
+      var t = dt[1].split(':');
+      var t3 = t[2].split('Z');
+      return new Date(d[0], d[1] - 1, d[2], t[0], t[1], t3[0]);
+    }
+    function userToJsonObject(s) {
+      if (s.length === 0) {
+        return null;
+      } else {
+        var thisUser = new utils.SplitIndex(s);
+        var thisUserExpanded = thisUser.value.split(',#');
+        if (thisUserExpanded.length === 1) {
+          return {
+            userId: thisUser.id,
+            userName: thisUser.value
+          };
+        } else {
+          return {
+            userId: thisUser.id,
+            userName: thisUserExpanded[0].replace(/(,,)/g, ','),
+            loginName: thisUserExpanded[1].replace(/(,,)/g, ','),
+            email: thisUserExpanded[2].replace(/(,,)/g, ','),
+            sipAddress: thisUserExpanded[3].replace(/(,,)/g, ','),
+            title: thisUserExpanded[4].replace(/(,,)/g, ',')
+          };
+        }
+      }
+    }
+    function userMultiToJsonObject(s) {
+      if (s.length === 0) {
+        return null;
+      } else {
+        var thisUserMultiObject = [];
+        var thisUserMulti = s.split(constants.spDelim);
+        for (var i = 0; i < thisUserMulti.length; i = i + 2) {
+          var thisUser = userToJsonObject(thisUserMulti[i] + constants.spDelim + thisUserMulti[i + 1]);
+          thisUserMultiObject.push(thisUser);
+        }
+        return thisUserMultiObject;
+      }
+    }
+    function lookupToJsonObject(s) {
+      if (s.length === 0) {
+        return null;
+      } else {
+        var thisLookup = s.split(constants.spDelim);
+        return {
+          lookupId: thisLookup[0],
+          lookupValue: thisLookup[1]
+        };
+      }
+    }
+    function lookupMultiToJsonObject(s) {
+      if (s.length === 0) {
+        return null;
+      } else {
+        var thisLookupMultiObject = [];
+        var thisLookupMulti = s.split(constants.spDelim);
+        for (var i = 0; i < thisLookupMulti.length; i = i + 2) {
+          var thisLookup = lookupToJsonObject(thisLookupMulti[i] + constants.spDelim + thisLookupMulti[i + 1]);
+          thisLookupMultiObject.push(thisLookup);
+        }
+        return thisLookupMultiObject;
+      }
+    }
+    function choiceMultiToJsonObject(s) {
+      if (s.length === 0) {
+        return null;
+      } else {
+        var thisChoiceMultiObject = [];
+        var thisChoiceMulti = s.split(constants.spDelim);
+        for (var i = 0; i < thisChoiceMulti.length; i++) {
+          if (thisChoiceMulti[i].length !== 0) {
+            thisChoiceMultiObject.push(thisChoiceMulti[i]);
+          }
+        }
+        return thisChoiceMultiObject;
+      }
+    }
+    function attachmentsToJsonObject(s) {
+      if (s.length === 0) {
+        return null;
+      } else if (s === '0' || s === '1') {
+        return s;
+      } else {
+        var thisObject = [];
+        var thisString = s.split(constants.spDelim);
+        for (var i = 0; i < thisString.length; i++) {
+          if (thisString[i].length !== 0) {
+            var fileName = thisString[i];
+            if (thisString[i].lastIndexOf('/') !== -1) {
+              var tokens = thisString[i].split('/');
+              fileName = tokens[tokens.length - 1];
+            }
+            thisObject.push({
+              attachment: thisString[i],
+              fileName: fileName
+            });
+          }
+        }
+        return thisObject;
+      }
+    }
+    function urlToJsonObject(s) {
+      if (s.length === 0) {
+        return null;
+      } else {
+        var thisUrl = s.split(', ');
+        return {
+          Url: thisUrl[0],
+          Description: thisUrl[1]
+        };
+      }
+    }
+    function calcToJsonObject(s) {
+      if (s.length === 0) {
+        return null;
+      } else {
+        var thisCalc = s.split(constants.spDelim);
+        // The first value will be the calculated column value type, the second will be the value
+        return attrToJson(thisCalc[1], thisCalc[0]);
+      }
+    }
+    function jsonToJsonObject(s) {
+      if (s.length === 0) {
+        return null;
+      } else {
+        return $.parseJSON(s);
+      }
+    }
+    return $;
+  }(jquery, src_core_SPServicesutilsjs, src_utils_constants);
   src_value_added_SPCascadeDropdowns = function ($, utils, constants) {
     // Function to set up cascading dropdowns on a SharePoint form
     // (Newform.aspx, EditForm.aspx, or any other customized form.)

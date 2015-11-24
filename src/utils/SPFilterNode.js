@@ -4,11 +4,10 @@ define([
     //---------------------------
     // We don't need local variables for these dependencies
     // because they are added to the jQuery namespace.
-    '../src/core/SPServices.core.js'
+    '../core/SPServices.core.js'
 ], function (
     $
 ) {
-
     "use strict";
 
     // This method for finding specific nodes in the returned XML was developed by Steve Workman. See his blog post

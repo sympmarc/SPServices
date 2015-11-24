@@ -53,15 +53,14 @@ QUnit.test( "UpdateListItems - New", function(assert) {
     });
     p.done(function(){
 
-        var listError = $(p.responseXML).SPFilterNode("ErrorCode");
-        equal(listError.attr("Title"), "0x00000000", "Error code should be should be 0x00000000");
+        var listError = $(p.responseXML).SPFilterNode("ErrorCode").text();
+        equal(listError, "0x00000000", "Error code should be should be 0x00000000");
         done();
 
     });
 
 });
 
-/*
 QUnit.test( "GetListItems", function(assert) {
 
     assert.expect(1);
@@ -80,7 +79,7 @@ QUnit.test( "GetListItems", function(assert) {
     });
 
 });
-*/
+
 QUnit.test( "DeleteList", function(assert) {
 
     assert.expect(1);

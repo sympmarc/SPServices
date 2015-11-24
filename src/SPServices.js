@@ -23,6 +23,9 @@ define([
     "./core/Version",
     "./utils/SPGetCurrentSite",
     "./utils/SPGetCurrentUser",
+    "./utils/SPFilterNode",
+    "./utils/SPGetListItemsJson",
+    "./utils/SPXmlToJson",
     "./value-added/SPCascadeDropdowns"
 ], function($){
     return $;

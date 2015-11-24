@@ -6,7 +6,7 @@ module.exports = function(grunt) {
     "use strict";
 
     var
-    path        = require("path"),
+//    path        = require("path"),
     fs          = require("fs"),
     buildDate   = grunt.template.today('yyyy-mm-dd'),
     buildYear   = grunt.template.today('yyyy'),
@@ -60,6 +60,8 @@ module.exports = function(grunt) {
      * @see {https://github.com/gruntjs/grunt-contrib-copy/issues/78#issuecomment-19027806}
      *
      */
+
+/*
     function onlyNew(target, timestampFile) {
 
         if (!onlyNew.isTaskCreated) {
@@ -113,10 +115,10 @@ module.exports = function(grunt) {
         };
 
     } //end: onlyNew()
-
+*/
 
     /**
-     * Repaces build variables in files with actual values. Meant to be used
+     * Replaces build variables in files with actual values. Meant to be used
      * with the 'copy' task as a contentProcess function
      *
      * @param {String} fileContent
@@ -166,8 +168,9 @@ module.exports = function(grunt) {
                     "tests/**/*"
                 ],
                 dest:   "<%= userBuildOpt.deployLocation %>",
-                expand: true,
-                filter: onlyNew(['copy', 'deploy'], "me.deploy.timestamp.txt")
+                expand: true
+//                ,
+//                filter: onlyNew(['copy', 'deploy'], "me.deploy.timestamp.txt")
             },
 
             // DEPLOY ALWAYS
