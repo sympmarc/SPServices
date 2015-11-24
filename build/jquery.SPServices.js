@@ -15,7 +15,7 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-11-24 10:40:08
+* @build SPServices 2.0.0 2015-11-24 12:22:18
 */
 ;(function() {
 var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_value_added_SPCascadeDropdowns, src_SPServices;
@@ -1779,7 +1779,7 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
         } else {
           constants.SOAPEnvelope.payload += '<updates><Batch OnError=\'Continue\'><Method ID=\'1\' Cmd=\'' + opt.batchCmd + '\'>';
           for (i = 0; i < opt.valuepairs.length; i++) {
-            constants.SOAPEnvelope.payload += '<Field Name=\'' + opt.valuepairs[i][0] + '\'>' + constants.escapeColumnValue(opt.valuepairs[i][1]) + '</Field>';
+            constants.SOAPEnvelope.payload += '<Field Name=\'' + opt.valuepairs[i][0] + '\'>' + utils.escapeColumnValue(opt.valuepairs[i][1]) + '</Field>';
           }
           if (opt.batchCmd !== 'New') {
             constants.SOAPEnvelope.payload += '<Field Name=\'ID\'>' + opt.ID + '</Field>';

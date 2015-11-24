@@ -568,7 +568,7 @@ define([
                 } else {
                     constants.SOAPEnvelope.payload += "<updates><Batch OnError='Continue'><Method ID='1' Cmd='" + opt.batchCmd + "'>";
                     for (i = 0; i < opt.valuepairs.length; i++) {
-                        constants.SOAPEnvelope.payload += "<Field Name='" + opt.valuepairs[i][0] + "'>" + constants.escapeColumnValue(opt.valuepairs[i][1]) + "</Field>";
+                        constants.SOAPEnvelope.payload += "<Field Name='" + opt.valuepairs[i][0] + "'>" + utils.escapeColumnValue(opt.valuepairs[i][1]) + "</Field>";
                     }
                     if (opt.batchCmd !== "New") {
                         constants.SOAPEnvelope.payload += "<Field Name='ID'>" + opt.ID + "</Field>";

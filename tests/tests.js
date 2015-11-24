@@ -40,6 +40,47 @@ QUnit.test( "AddList", function(assert) {
 
 });
 
+QUnit.test( "UpdateListItems - New", function(assert) {
+
+    assert.expect(1);
+    var done = assert.async();
+
+    var p = $().SPServices({
+        operation: "UpdateListItems",
+        listName: testList.Name,
+        batchCmd: "New",
+        valuepairs: [["Title", "New Title Value"]]
+    });
+    p.done(function(){
+
+        var listError = $(p.responseXML).SPFilterNode("ErrorCode");
+        equal(listError.attr("Title"), "0x00000000", "Error code should be should be 0x00000000");
+        done();
+
+    });
+
+});
+
+/*
+QUnit.test( "GetListItems", function(assert) {
+
+    assert.expect(1);
+    var done = assert.async();
+
+    var p = $().SPServices({
+        operation: "GetListItems",
+        listName: testList.Name
+    });
+    p.done(function(){
+
+        var listCount = $(p.responseXML).SPFilterNode("rs:data").attr("ItemCount");
+        equal(listCount, 1, "Count of list items should be should be 1");
+        done();
+
+    });
+
+});
+*/
 QUnit.test( "DeleteList", function(assert) {
 
     assert.expect(1);
