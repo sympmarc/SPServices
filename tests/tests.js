@@ -22,6 +22,11 @@ QUnit.test( "SPGetCurrentSite", function( assert ) {
     assert.ok( currentSite !== undefined, "Passed! SPCurrentSite =::" + currentSite + "::" );
 });
 
+QUnit.test( "SPConvertDateToISO", function( assert ) {
+    var nowISO = $().SPServices.SPConvertDateToISO(new Date());
+    assert.ok( nowISO !== undefined, "Passed! SPConvertDateToISO =::" + nowISO + "::" );
+});
+
 QUnit.test( "AddList", function(assert) {
 
     assert.expect(2);
@@ -84,6 +89,19 @@ QUnit.test( "GetListItems", function(assert) {
 
 });
 
+QUnit.test( "SPGetDisplayFromStatic", function(assert) {
+
+    assert.expect(1);
+
+    var thisDisplayName = $().SPServices.SPGetDisplayFromStatic({
+        listName: testList.Name,
+        columnStaticName: "Title"
+    });
+
+    equal(thisDisplayName, "Title", "SPGetDisplayFromStatic retrieved displayName=::" + thisDisplayName + "::");
+
+});
+
 QUnit.test( "DeleteList", function(assert) {
 
     assert.expect(1);
@@ -103,63 +121,3 @@ QUnit.test( "DeleteList", function(assert) {
     });
 
 });
-
-/*
-QUnit.test( "UpdateList", function( assert ) {
-    var done = assert.async();
-    var input = $( "#test-input" ).focus();
-    setTimeout(function() {
-        assert.equal( document.activeElement, input[0], "Input was focused" );
-        done();
-    });
-});
-*/
-
-
-
-
-
-/* SUPPORTING FUNCTIONS */
-/*
-function AddList() {
-
-    var deferred = $.Deferred();
-
-    var p = $().SPServices({
-        operation: "AddList",
-        listName: testList.Name,
-        description: testList.Description,
-        templateID: 100
-    });
-
-    p.done(function() {
-        deferred.resolveWith(p);
-    });
-
-    return deferred.promise;
-
-}
-
-
-function UpdateList() {
-
-    var deferred = $.Deferred();
-
-    var fieldsToUpdate = '<Fields>';
-    fieldsToUpdate += '<Method ID="1"><Field Type="Text" Name="ProjectName" DisplayName="Project name"><Default>Boo</Default></Field></Method>';
-    fieldsToUpdate += '</Fields>';
-
-    var p = $().SPServices({
-        operation: "UpdateList",
-        listName: testList.Name,
-        updateFields: fieldsToUpdate
-    });
-
-    p.done(function() {
-        deferred.resolveWith(p);
-    });
-
-    return deferred.promise;
-
-}
-*/

@@ -1,6 +1,6 @@
 define([
     'jquery',
-    '../core/SPServices.utils.js',
+    '../core/SPServices.utils',
     "../utils/constants",
     //---------------------------
     // We don't need local variables for these dependencies

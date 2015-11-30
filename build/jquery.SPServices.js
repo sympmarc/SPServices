@@ -15,10 +15,10 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-11-30 05:30:13
+* @build SPServices 2.0.0 2015-11-30 06:18:15
 */
 ;(function() {
-var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescorejs, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_value_added_SPCascadeDropdowns, src_SPServices;
+var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_utils_SPConvertDateToISO, src_value_added_SPCascadeDropdowns, src_SPServices;
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
@@ -114,7 +114,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescorejs, 
     };
     return constants;
   }();
-  src_core_SPServicesutilsjs = function ($, constants) {
+  src_core_SPServicesutils = function ($, constants) {
     var utils = /** @lends spservices.utils */
       {
         // Get the current context (as much as we can) on startup
@@ -3182,7 +3182,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescorejs, 
     };
     // End $.fn.SPServices.SPGetListItemsJson
     return $;
-  }(jquery, src_core_SPServicesutilsjs, src_utils_constants);
+  }(jquery, src_core_SPServicesutils, src_utils_constants);
   src_utils_SPXmlToJson = function ($, utils, constants) {
     // This function converts an XML node set to JSON
     // Initial implementation focuses only on GetListItems
@@ -3468,8 +3468,31 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescorejs, 
       }
     }
     return $;
-  }(jquery, src_core_SPServicesutilsjs, src_utils_constants);
-  src_value_added_SPCascadeDropdowns = function ($, utils, constants) {
+  }(jquery, src_core_SPServicesutils, src_utils_constants);
+  src_utils_SPConvertDateToISO = function ($, utils) {
+    // Convert a JavaScript date to the ISO 8601 format required by SharePoint to update list items
+    $.fn.SPServices.SPConvertDateToISO = function (options) {
+      var opt = $.extend({}, {
+        dateToConvert: new Date(),
+        // The JavaScript date we'd like to convert. If no date is passed, the function returns the current date/time
+        dateOffset: '-05:00'  // The time zone offset requested. Default is EST
+      }, options);
+      //Generate ISO 8601 date/time formatted string
+      var s = '';
+      var d = opt.dateToConvert;
+      s += d.getFullYear() + '-';
+      s += utils.pad(d.getMonth() + 1) + '-';
+      s += utils.pad(d.getDate());
+      s += 'T' + utils.pad(d.getHours()) + ':';
+      s += utils.pad(d.getMinutes()) + ':';
+      s += utils.pad(d.getSeconds()) + 'Z' + opt.dateOffset;
+      //Return the ISO8601 date string
+      return s;
+    };
+    // End $.fn.SPServices.SPConvertDateToISO
+    return $;
+  }(jquery, src_core_SPServicesutils);
+  src_value_added_SPCascadeDropdowns = function ($, constants, utils) {
     // Function to set up cascading dropdowns on a SharePoint form
     // (Newform.aspx, EditForm.aspx, or any other customized form.)
     $.fn.SPServices.SPCascadeDropdowns = function (options) {
@@ -3828,7 +3851,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescorejs, 
     }
     // End cascadeDropdown
     return $;
-  }(jquery, src_core_SPServicesutils, src_utils_constants);
+  }(jquery, src_utils_constants, src_core_SPServicesutils);
   src_SPServices = function ($) {
     return $;
   }(jquery);

@@ -110,7 +110,7 @@
 
         (function(window, document){
 
-            var done = function($){
+            var done = function($, SPServices){
                 $("#spservices_dev_cntr").append(
                     "<div>jQuery: v." + jQuery.fn.jquery + " Loaded!</div>" +
                     "<div>SPServices Loaded!</div>" +
@@ -130,8 +130,8 @@
                         shim: {}
                     });
 
-                app(["require", "jquery", "SPServices"], function(require, $){
-                    done($);
+                app(["require", "jquery", "SPServices"], function(require, $, SPServices){
+                    done($, SPServices);
                 });
 
             } else {

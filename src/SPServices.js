@@ -26,6 +26,7 @@ define([
     "./utils/SPFilterNode",
     "./utils/SPGetListItemsJson",
     "./utils/SPXmlToJson",
+    "./utils/SPConvertDateToISO",
     "./value-added/SPCascadeDropdowns"
 ], function($){
     return $;
