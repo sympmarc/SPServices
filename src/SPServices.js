@@ -27,6 +27,7 @@ define([
     "./utils/SPGetListItemsJson",
     "./utils/SPXmlToJson",
     "./utils/SPConvertDateToISO",
+    "./utils/SPGetDisplayFromStatic",
     "./value-added/SPCascadeDropdowns"
 ], function($){
     return $;

@@ -15,10 +15,10 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-11-30 06:25:12
+* @build SPServices 2.0.0 2015-11-30 06:32:21
 */
 ;(function() {
-var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_utils_SPConvertDateToISO, src_value_added_SPCascadeDropdowns, src_SPServices;
+var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_utils_SPConvertDateToISO, src_utils_SPGetDisplayFromStatic, src_value_added_SPCascadeDropdowns, src_SPServices;
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
@@ -3492,6 +3492,42 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, sr
     // End $.fn.SPServices.SPConvertDateToISO
     return $;
   }(jquery, src_core_SPServicesutils);
+  src_utils_SPGetDisplayFromStatic = function ($) {
+    // This function returns the DisplayName for a column based on the StaticName.
+    $.fn.SPServices.SPGetDisplayFromStatic = function (options) {
+      var opt = $.extend({}, {
+        webURL: '',
+        // URL of the target Web.  If not specified, the current Web is used.
+        listName: '',
+        // The name or GUID of the list
+        columnStaticName: '',
+        // StaticName of the column
+        columnStaticNames: {}  // StaticName of the columns - added in v0.7.2 to allow multiple columns
+      }, options);
+      var displayName = '';
+      var displayNames = {};
+      var nameCount = opt.columnStaticNames.length > 0 ? opt.columnStaticNames.length : 1;
+      $().SPServices({
+        operation: 'GetList',
+        async: false,
+        cacheXML: true,
+        webURL: opt.webURL,
+        listName: opt.listName,
+        completefunc: function (xData) {
+          if (nameCount > 1) {
+            for (var i = 0; i < nameCount; i++) {
+              displayNames[opt.columnStaticNames[i]] = $(xData.responseXML).find('Field[StaticName=\'' + opt.columnStaticNames[i] + '\']').attr('DisplayName');
+            }
+          } else {
+            displayName = $(xData.responseXML).find('Field[StaticName=\'' + opt.columnStaticName + '\']').attr('DisplayName');
+          }
+        }
+      });
+      return nameCount > 1 ? displayNames : displayName;
+    };
+    // End $.fn.SPServices.SPGetDisplayFromStatic
+    return $;
+  }(jquery);
   src_value_added_SPCascadeDropdowns = function ($, constants, utils) {
     // Function to set up cascading dropdowns on a SharePoint form
     // (Newform.aspx, EditForm.aspx, or any other customized form.)
