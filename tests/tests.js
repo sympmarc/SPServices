@@ -7,11 +7,15 @@ var testList = {};
 testList.Name = new Date().toString();
 testList.Description = "This is the test description.";
 
+QUnit.test( "Version", function( assert ) {
+    var v = $().SPServices.Version();
+    assert.ok( v !== undefined, "Passed! Ver =::" + v + "::" );
+});
+
 QUnit.test( "SPGetCurrentUser", function( assert ) {
     var currentUser = $().SPServices.SPGetCurrentUser();
     assert.ok( currentUser !== undefined, "Passed! SPCurrentUser =::" + currentUser + "::" );
 });
-
 
 QUnit.test( "SPGetCurrentSite", function( assert ) {
     var currentSite = $().SPServices.SPGetCurrentSite();

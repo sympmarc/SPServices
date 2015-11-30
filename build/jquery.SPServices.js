@@ -15,7 +15,7 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-11-24 12:37:46
+* @build SPServices 2.0.0 2015-11-30 05:30:13
 */
 ;(function() {
 var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescorejs, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_value_added_SPCascadeDropdowns, src_SPServices;

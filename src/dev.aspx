@@ -41,6 +41,10 @@
             );
     </script>
 
+    <!-- Load Blanket
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/blanket.js/1.1.4/blanket.min.js" data-cover-reporter="reporter/grunt-reporter.js"></script>
+-->
+
     <script type="text/javascript">
 
         window.SPSERVICES = {
@@ -110,7 +114,7 @@
                 $("#spservices_dev_cntr").append(
                     "<div>jQuery: v." + jQuery.fn.jquery + " Loaded!</div>" +
                     "<div>SPServices Loaded!</div>" +
-                    "<div>v." + $.fn.SPServices.Version() + ", Build: @BUILD</div>" +
+                    "<div>v." + $().SPServices.Version() + ", Build: @BUILD</div>" +
                     "<div>Open the browser console to debug/test</div><hr/>"
                 );
             };
