@@ -89,11 +89,11 @@ QUnit.test( "GetListItems", function(assert) {
 
 });
 
-QUnit.test( "SPGetDisplayFromStatic", function(assert) {
+QUnit.test("SPGetDisplayFromStatic", function(assert) {
 
     assert.expect(1);
 
-    var thisDisplayName = $().SPServices.SPGetDisplayFromStatic({
+    var thisDisplayName =  $().SPServices.SPGetDisplayFromStatic({
         listName: testList.Name,
         columnStaticName: "Title"
     });
