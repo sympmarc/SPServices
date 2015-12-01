@@ -29,6 +29,7 @@ define([
     "./utils/SPConvertDateToISO",
     "./utils/SPGetDisplayFromStatic",
     "./utils/SPGetStaticFromDisplay",
+    "./utils/SPGetLastItemId",
     "./value-added/SPCascadeDropdowns"
 ], function($){
     return $;

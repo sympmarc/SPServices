@@ -15,10 +15,10 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-12-01 02:15:02
+* @build SPServices 2.0.0 2015-12-01 02:26:17
 */
 ;(function() {
-var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_utils_SPConvertDateToISO, src_utils_SPGetDisplayFromStatic, src_utils_SPGetStaticFromDisplay, src_value_added_SPCascadeDropdowns, src_SPServices;
+var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_utils_SPConvertDateToISO, src_utils_SPGetDisplayFromStatic, src_utils_SPGetStaticFromDisplay, src_utils_SPGetLastItemId, src_value_added_SPCascadeDropdowns, src_SPServices;
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
@@ -3562,6 +3562,63 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, sr
       return nameCount > 1 ? staticNames : staticName;
     };
     // End $.fn.SPServices.SPGetStaticFromDisplay
+    return $;
+  }(jquery);
+  src_utils_SPGetLastItemId = function ($) {
+    // Function to return the ID of the last item created on a list by a specific user. Useful for maintaining parent/child relationships
+    // between list forms
+    $.fn.SPServices.SPGetLastItemId = function (options) {
+      var opt = $.extend({}, {
+        webURL: '',
+        // URL of the target Web.  If not specified, the current Web is used.
+        listName: '',
+        // The name or GUID of the list
+        userAccount: '',
+        // The account for the user in DOMAIN\username format. If not specified, the current user is used.
+        CAMLQuery: ''  // [Optional] For power users, this CAML fragment will be Anded with the default query on the relatedList
+      }, options);
+      var userId;
+      var lastId = 0;
+      $().SPServices({
+        operation: 'GetUserInfo',
+        webURL: opt.webURL,
+        async: false,
+        userLoginName: opt.userAccount !== '' ? opt.userAccount : $().SPServices.SPGetCurrentUser(),
+        completefunc: function (xData) {
+          $(xData.responseXML).find('User').each(function () {
+            userId = $(this).attr('ID');
+          });
+        }
+      });
+      // Get the list items for the user, sorted by Created, descending. If the CAMLQuery option has been specified, And it with
+      // the existing Where clause
+      var camlQuery = '<Query><Where>';
+      if (opt.CAMLQuery.length > 0) {
+        camlQuery += '<And>';
+      }
+      camlQuery += '<Eq><FieldRef Name=\'Author\' LookupId=\'TRUE\'/><Value Type=\'Integer\'>' + userId + '</Value></Eq>';
+      if (opt.CAMLQuery.length > 0) {
+        camlQuery += opt.CAMLQuery + '</And>';
+      }
+      camlQuery += '</Where><OrderBy><FieldRef Name=\'Created_x0020_Date\' Ascending=\'FALSE\'/></OrderBy></Query>';
+      $().SPServices({
+        operation: 'GetListItems',
+        async: false,
+        webURL: opt.webURL,
+        listName: opt.listName,
+        CAMLQuery: camlQuery,
+        CAMLViewFields: '<ViewFields><FieldRef Name=\'ID\'/></ViewFields>',
+        CAMLRowLimit: 1,
+        CAMLQueryOptions: '<QueryOptions><ViewAttributes Scope=\'Recursive\' /></QueryOptions>',
+        completefunc: function (xData) {
+          $(xData.responseXML).SPFilterNode('z:row').each(function () {
+            lastId = $(this).attr('ows_ID');
+          });
+        }
+      });
+      return lastId;
+    };
+    // End $.fn.SPServices.SPGetLastItemId
     return $;
   }(jquery);
   src_value_added_SPCascadeDropdowns = function ($, constants, utils) {

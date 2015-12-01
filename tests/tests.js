@@ -111,7 +111,19 @@ QUnit.test("SPGetStaticFromDisplay", function(assert) {
         columnDisplayName: "Title"
     });
 
-    equal(thisStaticName, "Title", "SPGetStaticFromDisplay retrieved statisName=::" + thisStaticName + "::");
+    equal(thisStaticName, "Title", "SPGetStaticFromDisplay retrieved staticName=::" + thisStaticName + "::");
+
+});
+
+QUnit.test("SPGetLastItemId", function(assert) {
+
+    assert.expect(1);
+
+    var thisItemId =  $().SPServices.SPGetLastItemId({
+        listName: testList.Name
+    });
+
+    equal(thisItemId, 1, "SPGetLastItemId retrieved thisItemId=::" + thisItemId + "::");
 
 });
 
