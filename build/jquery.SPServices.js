@@ -15,10 +15,10 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-11-30 06:32:21
+* @build SPServices 2.0.0 2015-12-01 02:15:02
 */
 ;(function() {
-var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_utils_SPConvertDateToISO, src_utils_SPGetDisplayFromStatic, src_value_added_SPCascadeDropdowns, src_SPServices;
+var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_utils_SPConvertDateToISO, src_utils_SPGetDisplayFromStatic, src_utils_SPGetStaticFromDisplay, src_value_added_SPCascadeDropdowns, src_SPServices;
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
@@ -3526,6 +3526,42 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, sr
       return nameCount > 1 ? displayNames : displayName;
     };
     // End $.fn.SPServices.SPGetDisplayFromStatic
+    return $;
+  }(jquery);
+  src_utils_SPGetStaticFromDisplay = function ($) {
+    // This function returns the StaticName for a column based on the DisplayName.
+    $.fn.SPServices.SPGetStaticFromDisplay = function (options) {
+      var opt = $.extend({}, {
+        webURL: '',
+        // URL of the target Web.  If not specified, the current Web is used.
+        listName: '',
+        // The name or GUID of the list
+        columnDisplayName: '',
+        // DisplayName of the column
+        columnDisplayNames: {}  // DisplayNames of the columns - added in v0.7.2 to allow multiple columns
+      }, options);
+      var staticName = '';
+      var staticNames = {};
+      var nameCount = opt.columnDisplayNames.length > 0 ? opt.columnDisplayNames.length : 1;
+      $().SPServices({
+        operation: 'GetList',
+        async: false,
+        cacheXML: true,
+        webURL: opt.webURL,
+        listName: opt.listName,
+        completefunc: function (xData) {
+          if (nameCount > 1) {
+            for (var i = 0; i < nameCount; i++) {
+              staticNames[opt.columnDisplayNames[i]] = $(xData.responseXML).find('Field[DisplayName=\'' + opt.columnDisplayNames[i] + '\']').attr('StaticName');
+            }
+          } else {
+            staticName = $(xData.responseXML).find('Field[DisplayName=\'' + opt.columnDisplayName + '\']').attr('StaticName');
+          }
+        }
+      });
+      return nameCount > 1 ? staticNames : staticName;
+    };
+    // End $.fn.SPServices.SPGetStaticFromDisplay
     return $;
   }(jquery);
   src_value_added_SPCascadeDropdowns = function ($, constants, utils) {

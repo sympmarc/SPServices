@@ -102,6 +102,19 @@ QUnit.test("SPGetDisplayFromStatic", function(assert) {
 
 });
 
+QUnit.test("SPGetStaticFromDisplay", function(assert) {
+
+    assert.expect(1);
+
+    var thisStaticName =  $().SPServices.SPGetStaticFromDisplay({
+        listName: testList.Name,
+        columnDisplayName: "Title"
+    });
+
+    equal(thisStaticName, "Title", "SPGetStaticFromDisplay retrieved statisName=::" + thisStaticName + "::");
+
+});
+
 QUnit.test( "DeleteList", function(assert) {
 
     assert.expect(1);

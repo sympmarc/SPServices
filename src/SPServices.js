@@ -28,6 +28,7 @@ define([
     "./utils/SPXmlToJson",
     "./utils/SPConvertDateToISO",
     "./utils/SPGetDisplayFromStatic",
+    "./utils/SPGetStaticFromDisplay",
     "./value-added/SPCascadeDropdowns"
 ], function($){
     return $;
