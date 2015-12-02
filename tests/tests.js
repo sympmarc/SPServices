@@ -22,7 +22,7 @@
 
     QUnit.test( "SPGetQueryString", function( assert ) {
         var qs = $().SPServices.SPGetQueryString();
-        assert.ok( qs !== undefined, "Passed! SPGetQueryString length =::" + qs.length + "::" );
+        assert.ok( qs !== undefined, "Passed! SPGetQueryString =::" + qs + "::" );
     });
 
     QUnit.test( "SPGetCurrentUser", function( assert ) {
