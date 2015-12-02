@@ -15,10 +15,10 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-12-01 07:36:46
+* @build SPServices 2.0.0 2015-12-01 08:37:32
 */
 ;(function() {
-var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_utils_SPConvertDateToISO, src_utils_SPGetDisplayFromStatic, src_utils_SPGetStaticFromDisplay, src_utils_SPGetLastItemId, src_value_added_SPCascadeDropdowns, src_SPServices;
+var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_utils_SPConvertDateToISO, src_utils_SPGetDisplayFromStatic, src_utils_SPGetStaticFromDisplay, src_utils_SPGetLastItemId, src_utils_SPGetQueryString, src_value_added_SPCascadeDropdowns, src_SPServices;
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
@@ -3619,6 +3619,26 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, sr
       return lastId;
     };
     // End $.fn.SPServices.SPGetLastItemId
+    return $;
+  }(jquery);
+  src_utils_SPGetQueryString = function ($) {
+    // Get the Query String parameters and their values and return in an array
+    // Includes code from http://www.developerdrive.com/2013/08/turning-the-querystring-into-a-json-object-using-javascript/
+    // Simplified in 2014.01 using this code
+    $.fn.SPServices.SPGetQueryString = function (options) {
+      var opt = $.extend({}, {
+        lowercase: false  // If true, parameter names will be converted to lowercase
+      }, options);
+      var queryStringVals = {};
+      var qs = location.search.slice(1).split('&');
+      for (var i = 0; i < qs.length; i++) {
+        var param = qs[i].split('=');
+        var paramName = opt.lowercase ? param[0].toLowerCase() : param[0];
+        queryStringVals[paramName] = decodeURIComponent(param[1] || '');
+      }
+      return queryStringVals;
+    };
+    // End $.fn.SPServices.SPGetQueryString
     return $;
   }(jquery);
   src_value_added_SPCascadeDropdowns = function ($, constants, utils) {

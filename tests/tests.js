@@ -20,6 +20,11 @@
         assert.ok( v !== undefined, "Passed! Ver =::" + v + "::" );
     });
 
+    QUnit.test( "SPGetQueryString", function( assert ) {
+        var qs = $().SPServices.SPGetQueryString();
+        assert.ok( qs !== undefined, "Passed! SPGetQueryString length =::" + qs.length + "::" );
+    });
+
     QUnit.test( "SPGetCurrentUser", function( assert ) {
         var currentUser = $().SPServices.SPGetCurrentUser();
         assert.ok( currentUser !== undefined, "Passed! SPCurrentUser =::" + currentUser + "::" );

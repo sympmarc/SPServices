@@ -10,8 +10,8 @@
  * require(['jquery', "src/SPServices"], function($){
  *      // $.fn.SPServices() should now be available here.
  *      // Notice how there is no need to define a second function parameter
- *      // for the `SPServices` module - that's because all SPSerivces methods
- *      // utilities add them selves to the jQuery namespace.
+ *      // for the `SPServices` module - that's because all SPServices methods
+ *      // utilities add themselves to the jQuery namespace.
  * })
  *
  */
@@ -30,6 +30,7 @@ define([
     "./utils/SPGetDisplayFromStatic",
     "./utils/SPGetStaticFromDisplay",
     "./utils/SPGetLastItemId",
+    "./utils/SPGetQueryString",
     "./value-added/SPCascadeDropdowns"
 ], function($){
     return $;
