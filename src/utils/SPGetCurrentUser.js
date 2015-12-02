@@ -1,10 +1,6 @@
 define([
     'jquery',
-    '../core/SPServices.utils',
-   //---------------------------
-    // We don't need local variables for these dependencies
-    // because they are added to the jQuery namespace.
-    '../core/SPServices.core'
+    '../core/SPServices.utils'
 ], function (
     $,
     utils
@@ -91,9 +87,6 @@ define([
         return (fieldCount > 1) ? theseFields : thisField;
 
     }; // End $.fn.SPServices.SPGetCurrentUser
-
-
-
 
     return $;
 
