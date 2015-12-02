@@ -34,19 +34,19 @@
 
     <!-- Load QUnit -->
     <link rel="stylesheet" href="//code.jquery.com/qunit/qunit-1.20.0.css">
-    <script src="//code.jquery.com/qunit/qunit-1.20.0.js"></script>
-    <script type="text/javascript">
-                document.write(
-                '<script src=".' + './tests/tests.js"></' + 'script>'
-            );
-    </script>
+    <script type="text/javascript" src="//code.jquery.com/qunit/qunit-1.20.0.js"></script>
 
     <!-- Load Blanket
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/blanket.js/1.1.4/blanket.min.js" data-cover-reporter="reporter/grunt-reporter.js"></script>
 -->
 
     <script type="text/javascript">
+        document.write(
+            '<link rel="stylesheet" href="/' +
+            '/ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.css?_@BUILD">'
+        );
 
+        // Define SPSERVICES global variable - for dev. stuff
         window.SPSERVICES = {
             mode: "dev" // others: built, builtmin
         };
@@ -75,11 +75,11 @@
             );
         }
 
-        document.write(
-            '<link rel="stylesheet" href="/' +
-            '/ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.css?_@BUILD">'
-        );
     </script>
+
+    <!-- LOAD TEST CASE FILES -->
+    <script type="text/javascript" src="../tests/tests.js"></script>
+
 
 </asp:Content>
 <asp:Content ContentPlaceHolderId="PlaceHolderSearchArea" runat="server">
@@ -117,6 +117,9 @@
                     "<div>v." + $().SPServices.Version() + ", Build: @BUILD</div>" +
                     "<div>Open the browser console to debug/test</div><hr/>"
                 );
+
+                // now run the test cases
+                QUnit.start();
             };
 
             if (window.SPSERVICES.mode === "dev") {
@@ -137,7 +140,6 @@
             } else {
                 done(jQuery);
             }
-
 
         }(window, document));
 
