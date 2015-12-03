@@ -337,7 +337,7 @@ define([
         constants.SOAPEnvelope.opheader = "<" + opt.operation + " ";
         switch (WSops[opt.operation][0]) {
             case webServices.ALERTS:
-                constants.utils.SOAPEnvelope.opheader += "xmlns='" + constants.SCHEMASharePoint + "/soap/2002/1/alerts/' >";
+                constants.SOAPEnvelope.opheader += "xmlns='" + constants.SCHEMASharePoint + "/soap/2002/1/alerts/' >";
                 SOAPAction = constants.SCHEMASharePoint + "/soap/2002/1/alerts/";
                 break;
             case webServices.MEETINGS:
