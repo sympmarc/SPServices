@@ -16,6 +16,9 @@ _*Until otherwise announced, this is not a fully functional version of SPService
 
 For full documentation, please visit http://spservices.codeplex.com/documentation
 
+Contribute
+-----------
+Would you like to contribute to the next generation of SPServices? Do you have ideas for functionality that you wish was in SPServices? Please let me know by adding questions or comments in the [Issues](https://github.com/sympmarc/SPServices/issues) here.
 
 Development
 -----------
