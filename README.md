@@ -14,7 +14,7 @@ _*Until otherwise announced, this is not a fully functional version of SPService
 * Enabled to take advantage of SharePoint's REST APIs - where available - for internal calls to get list data in the value-added functions
 
 ### Progress Report
-* 2015-12-09 I have begun adding modules back in to build up a "full build" of existing SPService functionality.
+* 2015-12-06 Began adding modules back in to build up a "full build" of existing SPService functionality.
 * 2015-12-05 Initial tests using QUnit are in place. Instructions below.
 * 2015-12-01 The monolithic SPServices file is not broken out into modules, one per major function.
 
