@@ -78,7 +78,8 @@
     </script>
 
     <!-- LOAD TEST CASE FILES -->
-    <script type="text/javascript" src="../tests/tests.js"></script>
+    <script type="text/javascript" src="../tests/general.js"></script>
+    <script type="text/javascript" src="../tests/Lists.js"></script>
 
 
 </asp:Content>

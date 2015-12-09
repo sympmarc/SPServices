@@ -1,8 +1,3 @@
-/**
- * Created by Marc D Anderson on 11/23/2015.
- */
-// SPSERVICES variable is a global variable defined in the dev.aspx page
-// for dev./testing purposes
 !(function(){
 
     // A few QUnit configuration settings
@@ -14,31 +9,6 @@
     var testList = {};
     testList.Name = new Date().toString();
     testList.Description = "This is the test description.";
-
-    QUnit.test( "Version", function( assert ) {
-        var v = $().SPServices.Version();
-        assert.ok( v !== undefined, "Passed! Ver =::" + v + "::" );
-    });
-
-    QUnit.test( "SPGetQueryString", function( assert ) {
-        var qs = $().SPServices.SPGetQueryString();
-        assert.ok( qs !== undefined, "Passed! SPGetQueryString =::" + qs + "::" );
-    });
-
-    QUnit.test( "SPGetCurrentUser", function( assert ) {
-        var currentUser = $().SPServices.SPGetCurrentUser();
-        assert.ok( currentUser !== undefined, "Passed! SPCurrentUser =::" + currentUser + "::" );
-    });
-
-    QUnit.test( "SPGetCurrentSite", function( assert ) {
-        var currentSite = $().SPServices.SPGetCurrentSite();
-        assert.ok( currentSite !== undefined, "Passed! SPCurrentSite =::" + currentSite + "::" );
-    });
-
-    QUnit.test( "SPConvertDateToISO", function( assert ) {
-        var nowISO = $().SPServices.SPConvertDateToISO(new Date());
-        assert.ok( nowISO !== undefined, "Passed! SPConvertDateToISO =::" + nowISO + "::" );
-    });
 
     QUnit.test( "AddList", function(assert) {
 
@@ -161,5 +131,3 @@
     });
 
 }());
-
-
