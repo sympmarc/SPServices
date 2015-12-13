@@ -201,7 +201,7 @@ module.exports = function(grunt) {
 
         concat: {
             license: {
-                src: "src/license.txt",
+                src: "license.txt",
                 dest: "build/license.txt"
             },
             src: {

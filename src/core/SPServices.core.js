@@ -1105,7 +1105,7 @@ define([
 
             // VIEW OPERATIONS
             case "AddView":
-                utils.addToPayload(opt, ["listName", "viewName", "viewFields", "query", "rowLimit", "rowLimit", "type", "makeViewDefault"]);
+                utils.addToPayload(opt, ["listName", "viewName", "viewFields", "query", "rowLimit", "type", "makeViewDefault"]);
                 break;
             case "DeleteView":
                 utils.addToPayload(opt, ["listName", "viewName"]);
