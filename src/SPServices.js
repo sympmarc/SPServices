@@ -31,7 +31,9 @@ define([
     "./utils/SPGetStaticFromDisplay",
     "./utils/SPGetLastItemId",
     "./utils/SPGetQueryString",
-    "./value-added/SPCascadeDropdowns"
+    "./utils/SPListNameFromUrl",
+    "./value-added/SPCascadeDropdowns",
+    "./value-added/SPUpdateMultipleListItems"
 ], function($){
     return $;
 });

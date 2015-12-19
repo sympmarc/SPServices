@@ -15,10 +15,10 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-12-16 11:05:36
+* @build SPServices 2.0.0 2015-12-19 12:05:36
 */
 ;(function() {
-var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_utils_SPConvertDateToISO, src_utils_SPGetDisplayFromStatic, src_utils_SPGetStaticFromDisplay, src_utils_SPGetLastItemId, src_utils_SPGetQueryString, src_value_added_SPCascadeDropdowns, src_SPServices;
+var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_utils_SPConvertDateToISO, src_utils_SPGetDisplayFromStatic, src_utils_SPGetStaticFromDisplay, src_utils_SPGetLastItemId, src_utils_SPGetQueryString, src_utils_SPListNameFromUrl, src_value_added_SPCascadeDropdowns, src_value_added_SPUpdateMultipleListItems, src_SPServices;
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
@@ -108,7 +108,7 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
     };
     return constants;
   }();
-  src_core_SPServicesutils = function ($, constants) {
+  src_core_SPServicesutilsjs = function ($, constants) {
     var utils = /** @lends spservices.utils */
       {
         // Get the current context (as much as we can) on startup
@@ -3641,6 +3641,45 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
     // End $.fn.SPServices.SPGetQueryString
     return $;
   }(jquery);
+  src_utils_SPListNameFromUrl = function ($, utils, constants) {
+    // Get the current list's GUID (ID) from the current URL.  Use of this function only makes sense if we're in a list's context,
+    // and we assume that we are calling it from an aspx page which is a form or view for the list.
+    $.fn.SPServices.SPListNameFromUrl = function (options) {
+      var opt = $.extend({}, {
+        listName: ''  // [Optional] Pass in the name or GUID of a list if you are not in its context. e.g., on a Web Part pages in the Pages library
+      }, options);
+      // Has the list name or GUID been passed in?
+      if (opt.listName.length > 0) {
+        utils.currentContext.thisList = opt.listName;
+        return utils.currentContext.thisList;  // Do we already know the current list?
+      } else if (utils.currentContext.thisList !== undefined && utils.currentContext.thisList.length > 0) {
+        return utils.currentContext.thisList;
+      }
+      // Parse out the list's root URL from the current location or the passed url
+      var thisPage = location.href;
+      var thisPageBaseName = thisPage.substring(0, thisPage.indexOf('.aspx'));
+      var listPath = decodeURIComponent(thisPageBaseName.substring(0, thisPageBaseName.lastIndexOf(constants.SLASH) + 1)).toUpperCase();
+      // Call GetListCollection and loop through the results to find a match with the list's URL to get the list's GUID
+      $().SPServices({
+        operation: 'GetListCollection',
+        async: false,
+        completefunc: function (xData) {
+          $(xData.responseXML).find('List').each(function () {
+            var defaultViewUrl = $(this).attr('DefaultViewUrl');
+            var listCollList = defaultViewUrl.substring(0, defaultViewUrl.lastIndexOf(constants.SLASH) + 1).toUpperCase();
+            if (listPath.indexOf(listCollList) > 0) {
+              utils.currentContext.thisList = $(this).attr('ID');
+              return false;
+            }
+          });
+        }
+      });
+      // Return the list GUID (ID)
+      return utils.currentContext.thisList;
+    };
+    // End $.fn.SPServices.SPListNameFromUrl
+    return $;
+  }(jquery, src_core_SPServicesutilsjs, src_utils_constants);
   src_value_added_SPCascadeDropdowns = function ($, constants, utils) {
     // Function to set up cascading dropdowns on a SharePoint form
     // (Newform.aspx, EditForm.aspx, or any other customized form.)
@@ -4001,6 +4040,76 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
     // End cascadeDropdown
     return $;
   }(jquery, src_utils_constants, src_core_SPServicesutils);
+  src_value_added_SPUpdateMultipleListItems = function ($, utils, constants) {
+    // SPUpdateMultipleListItems allows you to update multiple items in a list based upon some common characteristic or metadata criteria.
+    $.fn.SPServices.SPUpdateMultipleListItems = function (options) {
+      var opt = $.extend({}, {
+        webURL: '',
+        // [Optional] URL of the target Web.  If not specified, the current Web is used.
+        listName: '',
+        // The list to operate on.
+        CAMLQuery: '',
+        // A CAML fragment specifying which items in the list will be selected and updated
+        batchCmd: 'Update',
+        // The operation to perform. By default, Update.
+        valuepairs: [],
+        // Valuepairs for the update in the form [[fieldname1, fieldvalue1], [fieldname2, fieldvalue2]...]
+        completefunc: null,
+        // Function to call on completion of rendering the change.
+        debug: false  // If true, show error messages;if false, run silent
+      }, options);
+      var i;
+      var itemsToUpdate = [];
+      var documentsToUpdate = [];
+      // Call GetListItems to find all of the items matching the CAMLQuery
+      $().SPServices({
+        operation: 'GetListItems',
+        async: false,
+        webURL: opt.webURL,
+        listName: opt.listName,
+        CAMLQuery: opt.CAMLQuery,
+        CAMLQueryOptions: '<QueryOptions><ViewAttributes Scope=\'Recursive\' /></QueryOptions>',
+        completefunc: function (xData) {
+          $(xData.responseXML).SPFilterNode('z:row').each(function () {
+            itemsToUpdate.push($(this).attr('ows_ID'));
+            var fileRef = $(this).attr('ows_FileRef');
+            fileRef = '/' + fileRef.substring(fileRef.indexOf(constants.spDelim) + 2);
+            documentsToUpdate.push(fileRef);
+          });
+        }
+      });
+      var fieldNum;
+      var batch = '<Batch OnError=\'Continue\'>';
+      for (i = 0; i < itemsToUpdate.length; i++) {
+        batch += '<Method ID=\'' + i + '\' Cmd=\'' + opt.batchCmd + '\'>';
+        for (fieldNum = 0; fieldNum < opt.valuepairs.length; fieldNum++) {
+          batch += '<Field Name=\'' + opt.valuepairs[fieldNum][0] + '\'>' + utils.escapeColumnValue(opt.valuepairs[fieldNum][1]) + '</Field>';
+        }
+        batch += '<Field Name=\'ID\'>' + itemsToUpdate[i] + '</Field>';
+        if (documentsToUpdate[i].length > 0) {
+          batch += '<Field Name=\'FileRef\'>' + documentsToUpdate[i] + '</Field>';
+        }
+        batch += '</Method>';
+      }
+      batch += '</Batch>';
+      // Call UpdateListItems to update all of the items matching the CAMLQuery
+      $().SPServices({
+        operation: 'UpdateListItems',
+        async: false,
+        webURL: opt.webURL,
+        listName: opt.listName,
+        updates: batch,
+        completefunc: function (xData) {
+          // If present, call completefunc when all else is done
+          if (opt.completefunc !== null) {
+            opt.completefunc(xData);
+          }
+        }
+      });
+    };
+    // End $.fn.SPServices.SPUpdateMultipleListItems
+    return $;
+  }(jquery, src_core_SPServicesutilsjs, src_utils_constants);
   src_SPServices = function ($) {
     return $;
   }(jquery);
