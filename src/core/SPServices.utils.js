@@ -149,7 +149,7 @@ define([
         pad: function (n) {
             return n < 10 ? "0" + n : n;
         },
-
+// TODO
         // James Padolsey's Regex Selector for jQuery http://james.padolsey.com/javascript/regex-selector-for-jquery/
         /*    $.expr[':'].regex = function (elem, index, match) {
          var matchParams = match[3].split(','),

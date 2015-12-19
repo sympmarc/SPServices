@@ -15,7 +15,7 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-12-04 10:30:06
+* @build SPServices 2.0.0 2015-12-16 11:05:36
 */
 ;(function() {
 var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_utils_SPConvertDateToISO, src_utils_SPGetDisplayFromStatic, src_utils_SPGetStaticFromDisplay, src_utils_SPGetLastItemId, src_utils_SPGetQueryString, src_value_added_SPCascadeDropdowns, src_SPServices;
@@ -50,12 +50,6 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
       SCHEMASharePoint: 'http://schemas.microsoft.com/sharepoint',
       multiLookupPrefix: 'MultiLookupPicker',
       multiLookupPrefix2013: 'MultiLookup',
-      // Set up SOAP envelope
-      SOAPEnvelope: {
-        header: '<soap:Envelope xmlns:xsi=\'http://www.w3.org/2001/XMLSchema-instance\' xmlns:xsd=\'http://www.w3.org/2001/XMLSchema\' xmlns:soap=\'http://schemas.xmlsoap.org/soap/envelope/\'><soap:Body>',
-        footer: '</soap:Body></soap:Envelope>',
-        payload: ''
-      },
       // Dropdown Types
       dropdownType: {
         simple: 'S',
@@ -235,6 +229,7 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
         pad: function (n) {
           return n < 10 ? '0' + n : n;
         },
+        // TODO
         // James Padolsey's Regex Selector for jQuery http://james.padolsey.com/javascript/regex-selector-for-jquery/
         /*    $.expr[':'].regex = function (elem, index, match) {
          var matchParams = match[3].split(','),
@@ -429,6 +424,12 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
   }(jquery, src_utils_constants);
   src_core_SPServicescore = function ($, utils, constants) {
     var SOAPAction;
+    // Set up SOAP envelope
+    var SOAPEnvelope = {
+      header: '<soap:Envelope xmlns:xsi=\'http://www.w3.org/2001/XMLSchema-instance\' xmlns:xsd=\'http://www.w3.org/2001/XMLSchema\' xmlns:soap=\'http://schemas.xmlsoap.org/soap/envelope/\'><soap:Body>',
+      footer: '</soap:Body></soap:Envelope>',
+      payload: ''
+    };
     // Caching
     var promisesCache = {};
     //   Web Service names
@@ -1416,72 +1417,72 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
         }
       }
       // Put together operation header and SOAPAction for the SOAP call based on which Web Service we're calling
-      constants.SOAPEnvelope.opheader = '<' + opt.operation + ' ';
+      SOAPEnvelope.opheader = '<' + opt.operation + ' ';
       switch (WSops[opt.operation][0]) {
       case webServices.ALERTS:
-        constants.utils.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/2002/1/alerts/\' >';
+        SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/2002/1/alerts/\' >';
         SOAPAction = constants.SCHEMASharePoint + '/soap/2002/1/alerts/';
         break;
       case webServices.MEETINGS:
-        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/meetings/\' >';
+        SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/meetings/\' >';
         SOAPAction = constants.SCHEMASharePoint + '/soap/meetings/';
         break;
       case webServices.OFFICIALFILE:
-        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/recordsrepository/\' >';
+        SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/recordsrepository/\' >';
         SOAPAction = constants.SCHEMASharePoint + '/soap/recordsrepository/';
         break;
       case webServices.PERMISSIONS:
-        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/directory/\' >';
+        SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/directory/\' >';
         SOAPAction = constants.SCHEMASharePoint + '/soap/directory/';
         break;
       case webServices.PUBLISHEDLINKSSERVICE:
-        constants.SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/webservices/SharePointPortalServer/PublishedLinksService/\' >';
+        SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/webservices/SharePointPortalServer/PublishedLinksService/\' >';
         SOAPAction = 'http://microsoft.com/webservices/SharePointPortalServer/PublishedLinksService/';
         break;
       case webServices.SEARCH:
-        constants.SOAPEnvelope.opheader += 'xmlns=\'urn:Microsoft.Search\' >';
+        SOAPEnvelope.opheader += 'xmlns=\'urn:Microsoft.Search\' >';
         SOAPAction = 'urn:Microsoft.Search/';
         break;
       case webServices.SHAREPOINTDIAGNOSTICS:
-        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/diagnostics/\' >';
+        SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/diagnostics/\' >';
         SOAPAction = 'http://schemas.microsoft.com/sharepoint/diagnostics/';
         break;
       case webServices.SOCIALDATASERVICE:
-        constants.SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/webservices/SharePointPortalServer/SocialDataService\' >';
+        SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/webservices/SharePointPortalServer/SocialDataService\' >';
         SOAPAction = 'http://microsoft.com/webservices/SharePointPortalServer/SocialDataService/';
         break;
       case webServices.SPELLCHECK:
-        constants.SOAPEnvelope.opheader += 'xmlns=\'http://schemas.microsoft.com/sharepoint/publishing/spelling/\' >';
+        SOAPEnvelope.opheader += 'xmlns=\'http://schemas.microsoft.com/sharepoint/publishing/spelling/\' >';
         SOAPAction = 'http://schemas.microsoft.com/sharepoint/publishing/spelling/SpellCheck';
         break;
       case webServices.TAXONOMYSERVICE:
-        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/taxonomy/soap/\' >';
+        SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/taxonomy/soap/\' >';
         SOAPAction = constants.SCHEMASharePoint + '/taxonomy/soap/';
         break;
       case webServices.USERGROUP:
-        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/directory/\' >';
+        SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/directory/\' >';
         SOAPAction = constants.SCHEMASharePoint + '/soap/directory/';
         break;
       case webServices.USERPROFILESERVICE:
-        constants.SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/webservices/SharePointPortalServer/UserProfileService\' >';
+        SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/webservices/SharePointPortalServer/UserProfileService\' >';
         SOAPAction = 'http://microsoft.com/webservices/SharePointPortalServer/UserProfileService/';
         break;
       case webServices.WEBPARTPAGES:
-        constants.SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/sharepoint/webpartpages\' >';
+        SOAPEnvelope.opheader += 'xmlns=\'http://microsoft.com/sharepoint/webpartpages\' >';
         SOAPAction = 'http://microsoft.com/sharepoint/webpartpages/';
         break;
       case webServices.WORKFLOW:
-        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/workflow/\' >';
+        SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/workflow/\' >';
         SOAPAction = constants.SCHEMASharePoint + '/soap/workflow/';
         break;
       default:
-        constants.SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/\'>';
+        SOAPEnvelope.opheader += 'xmlns=\'' + constants.SCHEMASharePoint + '/soap/\'>';
         SOAPAction = constants.SCHEMASharePoint + '/soap/';
         break;
       }
       // Add the operation to the SOAPAction and opfooter
       SOAPAction += opt.operation;
-      constants.SOAPEnvelope.opfooter = '</' + opt.operation + '>';
+      SOAPEnvelope.opfooter = '</' + opt.operation + '>';
       // Build the URL for the Ajax call based on which operation we're calling
       // If the webURL has been provided, then use it, else use the current site
       var ajaxURL = '_vti_bin/' + WSops[opt.operation][0] + '.asmx';
@@ -1494,18 +1495,18 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
         var thisSite = $().SPServices.SPGetCurrentSite();
         ajaxURL = thisSite + (thisSite.charAt(thisSite.length - 1) === constants.SLASH ? ajaxURL : constants.SLASH + ajaxURL);
       }
-      constants.SOAPEnvelope.payload = '';
-      // Each operation requires a different set of values.  This switch statement sets them up in the constants.SOAPEnvelope.payload.
+      SOAPEnvelope.payload = '';
+      // Each operation requires a different set of values.  This switch statement sets them up in the SOAPEnvelope.payload.
       switch (opt.operation) {
       // ALERT OPERATIONS
       case 'GetAlerts':
         break;
       case 'DeleteAlerts':
-        constants.SOAPEnvelope.payload += '<IDs>';
+        SOAPEnvelope.payload += '<IDs>';
         for (i = 0; i < opt.IDs.length; i++) {
-          constants.SOAPEnvelope.payload += constants.wrapNode('string', opt.IDs[i]);
+          SOAPEnvelope.payload += constants.wrapNode('string', opt.IDs[i]);
         }
-        constants.SOAPEnvelope.payload += '</IDs>';
+        SOAPEnvelope.payload += '</IDs>';
         break;
       // AUTHENTICATION OPERATIONS
       case 'Mode':
@@ -1519,11 +1520,11 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
       // COPY OPERATIONS
       case 'CopyIntoItems':
         utils.addToPayload(opt, ['SourceUrl']);
-        constants.SOAPEnvelope.payload += '<DestinationUrls>';
+        SOAPEnvelope.payload += '<DestinationUrls>';
         for (i = 0; i < opt.DestinationUrls.length; i++) {
-          constants.SOAPEnvelope.payload += utils.wrapNode('string', opt.DestinationUrls[i]);
+          SOAPEnvelope.payload += utils.wrapNode('string', opt.DestinationUrls[i]);
         }
-        constants.SOAPEnvelope.payload += '</DestinationUrls>';
+        SOAPEnvelope.payload += '</DestinationUrls>';
         utils.addToPayload(opt, [
           'Fields',
           'Stream',
@@ -1532,11 +1533,11 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
         break;
       case 'CopyIntoItemsLocal':
         utils.addToPayload(opt, ['SourceUrl']);
-        constants.SOAPEnvelope.payload += '<DestinationUrls>';
+        SOAPEnvelope.payload += '<DestinationUrls>';
         for (i = 0; i < opt.DestinationUrls.length; i++) {
-          constants.SOAPEnvelope.payload += utils.wrapNode('string', opt.DestinationUrls[i]);
+          SOAPEnvelope.payload += utils.wrapNode('string', opt.DestinationUrls[i]);
         }
-        constants.SOAPEnvelope.payload += '</DestinationUrls>';
+        SOAPEnvelope.payload += '</DestinationUrls>';
         break;
       case 'GetItem':
         utils.addToPayload(opt, [
@@ -1777,14 +1778,14 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
         if (typeof opt.updates !== 'undefined' && opt.updates.length > 0) {
           utils.addToPayload(opt, ['updates']);
         } else {
-          constants.SOAPEnvelope.payload += '<updates><Batch OnError=\'Continue\'><Method ID=\'1\' Cmd=\'' + opt.batchCmd + '\'>';
+          SOAPEnvelope.payload += '<updates><Batch OnError=\'Continue\'><Method ID=\'1\' Cmd=\'' + opt.batchCmd + '\'>';
           for (i = 0; i < opt.valuepairs.length; i++) {
-            constants.SOAPEnvelope.payload += '<Field Name=\'' + opt.valuepairs[i][0] + '\'>' + utils.escapeColumnValue(opt.valuepairs[i][1]) + '</Field>';
+            SOAPEnvelope.payload += '<Field Name=\'' + opt.valuepairs[i][0] + '\'>' + utils.escapeColumnValue(opt.valuepairs[i][1]) + '</Field>';
           }
           if (opt.batchCmd !== 'New') {
-            constants.SOAPEnvelope.payload += '<Field Name=\'ID\'>' + opt.ID + '</Field>';
+            SOAPEnvelope.payload += '<Field Name=\'ID\'>' + opt.ID + '</Field>';
           }
-          constants.SOAPEnvelope.payload += '</Method></Batch></updates>';
+          SOAPEnvelope.payload += '</Method></Batch></updates>';
         }
         break;
       // MEETINGS OPERATIONS
@@ -1899,28 +1900,28 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
         break;
       // SEARCH OPERATIONS
       case 'GetPortalSearchInfo':
-        constants.SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
+        SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
         SOAPAction = 'http://microsoft.com/webservices/OfficeServer/QueryService/' + opt.operation;
         break;
       case 'GetQuerySuggestions':
-        constants.SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
+        SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
         SOAPAction = 'http://microsoft.com/webservices/OfficeServer/QueryService/' + opt.operation;
-        constants.SOAPEnvelope.payload += utils.wrapNode('queryXml', constants.encodeXml(opt.queryXml));
+        SOAPEnvelope.payload += utils.wrapNode('queryXml', constants.encodeXml(opt.queryXml));
         break;
       case 'GetSearchMetadata':
-        constants.SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
+        SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
         SOAPAction = 'http://microsoft.com/webservices/OfficeServer/QueryService/' + opt.operation;
         break;
       case 'Query':
-        constants.SOAPEnvelope.payload += utils.wrapNode('queryXml', constants.encodeXml(opt.queryXml));
+        SOAPEnvelope.payload += utils.wrapNode('queryXml', constants.encodeXml(opt.queryXml));
         break;
       case 'QueryEx':
-        constants.SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
+        SOAPEnvelope.opheader = '<' + opt.operation + ' xmlns=\'http://microsoft.com/webservices/OfficeServer/QueryService\'>';
         SOAPAction = 'http://microsoft.com/webservices/OfficeServer/QueryService/' + opt.operation;
-        constants.SOAPEnvelope.payload += utils.wrapNode('queryXml', constants.encodeXml(opt.queryXml));
+        SOAPEnvelope.payload += utils.wrapNode('queryXml', constants.encodeXml(opt.queryXml));
         break;
       case 'Registration':
-        constants.SOAPEnvelope.payload += utils.wrapNode('registrationXml', constants.encodeXml(opt.registrationXml));
+        SOAPEnvelope.payload += utils.wrapNode('registrationXml', constants.encodeXml(opt.registrationXml));
         break;
       case 'Status':
         break;
@@ -1949,24 +1950,24 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
       case 'SiteDataGetList':
         utils.addToPayload(opt, ['strListName']);
         // Because this operation has a name which duplicates the Lists WS, need to handle
-        constants.SOAPEnvelope = constants.siteDataFixSOAPEnvelope(constants.SOAPEnvelope, opt.operation);
+        SOAPEnvelope = constants.siteDataFixSOAPEnvelope(SOAPEnvelope, opt.operation);
         break;
       case 'SiteDataGetListCollection':
         // Because this operation has a name which duplicates the Lists WS, need to handle
-        constants.SOAPEnvelope = constants.siteDataFixSOAPEnvelope(constants.SOAPEnvelope, opt.operation);
+        SOAPEnvelope = constants.siteDataFixSOAPEnvelope(SOAPEnvelope, opt.operation);
         break;
       case 'SiteDataGetSite':
         // Because this operation has a name which duplicates the Lists WS, need to handle
-        constants.SOAPEnvelope = constants.siteDataFixSOAPEnvelope(constants.SOAPEnvelope, opt.operation);
+        SOAPEnvelope = constants.siteDataFixSOAPEnvelope(SOAPEnvelope, opt.operation);
         break;
       case 'SiteDataGetSiteUrl':
         utils.addToPayload(opt, ['Url']);
         // Because this operation has a name which duplicates the Lists WS, need to handle
-        constants.SOAPEnvelope = constants.siteDataFixSOAPEnvelope(constants.SOAPEnvelope, opt.operation);
+        SOAPEnvelope = constants.siteDataFixSOAPEnvelope(SOAPEnvelope, opt.operation);
         break;
       case 'SiteDataGetWeb':
         // Because this operation has a name which duplicates the Lists WS, need to handle
-        constants.SOAPEnvelope = constants.siteDataFixSOAPEnvelope(constants.SOAPEnvelope, opt.operation);
+        SOAPEnvelope = constants.siteDataFixSOAPEnvelope(SOAPEnvelope, opt.operation);
         break;
       // SITES OPERATIONS
       case 'CreateWeb':
@@ -2103,7 +2104,7 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
           'startIndex'
         ]);
         if (typeof opt.excludeItemsTime !== 'undefined' && opt.excludeItemsTime.length > 0) {
-          constants.SOAPEnvelope.payload += utils.wrapNode('excludeItemsTime', opt.excludeItemsTime);
+          SOAPEnvelope.payload += utils.wrapNode('excludeItemsTime', opt.excludeItemsTime);
         }
         break;
       case 'GetRatingAverageOnUrl':
@@ -2627,7 +2628,6 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
           'viewFields',
           'query',
           'rowLimit',
-          'rowLimit',
           'type',
           'makeViewDefault'
         ]);
@@ -2844,7 +2844,7 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_
         break;
       }
       // Glue together the pieces of the SOAP message
-      var msg = constants.SOAPEnvelope.header + constants.SOAPEnvelope.opheader + constants.SOAPEnvelope.payload + constants.SOAPEnvelope.opfooter + constants.SOAPEnvelope.footer;
+      var msg = SOAPEnvelope.header + SOAPEnvelope.opheader + SOAPEnvelope.payload + SOAPEnvelope.opfooter + SOAPEnvelope.footer;
       // Check to see if we've already cached the results
       var cachedPromise;
       if (opt.cacheXML) {

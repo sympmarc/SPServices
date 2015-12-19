@@ -28,13 +28,13 @@
     <meta name="description" content="A plugin to add discussions to any item.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--[if lt IE 9]>
-        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
 
     <!-- Load QUnit -->
-    <link rel="stylesheet" href="//code.jquery.com/qunit/qunit-1.20.0.css">
-    <script type="text/javascript" src="//code.jquery.com/qunit/qunit-1.20.0.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-1.20.0.css">
+    <script type="text/javascript" src="https://code.jquery.com/qunit/qunit-1.20.0.js"></script>
 
     <!-- Load Blanket
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/blanket.js/1.1.4/blanket.min.js" data-cover-reporter="reporter/grunt-reporter.js"></script>
@@ -79,7 +79,7 @@
 
     <!-- LOAD TEST CASE FILES -->
     <script type="text/javascript" src="../tests/general.js"></script>
-    <script type="text/javascript" src="../tests/Lists.js"></script>
+<!--    <script type="text/javascript" src="../tests/Lists.js"></script> -->
 
 
 </asp:Content>
