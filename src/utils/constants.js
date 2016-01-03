@@ -1,6 +1,4 @@
-define([
-
-], function(){
+define([], function () {
 
     "use strict";
 
@@ -10,32 +8,27 @@ define([
      * @namespace constants
      */
 
-    var SPServices = window.SPServices || {};
-    SPServices.WebServices = SPServices.WebService || {};
-    SPServices.SOAP = SPServices.SOAP || {};
-    SPServices.SOAP.Action = "";
-
     var constants = {
 
         // Version info
         VERSION: "@VERSION", // update it in package.json... build takes care of the rest
 
         // Simple strings
-        spDelim:            ";#",
+        spDelim: ";#",
         SLASH: "/",
-        TXTColumnNotFound:  "Column not found on page",
+        TXTColumnNotFound: "Column not found on page",
 
         // String constants
         //   General
         SCHEMASharePoint: "http://schemas.microsoft.com/sharepoint",
         multiLookupPrefix: "MultiLookupPicker",
-        multiLookupPrefix2013:"MultiLookup",
+        multiLookupPrefix2013: "MultiLookup",
 
-    // Dropdown Types
+        // Dropdown Types
         dropdownType: {
-            simple:         "S",
-            complex:        "C",
-            multiSelect:    "M"
+            simple: "S",
+            complex: "C",
+            multiSelect: "M"
         },
 
         // Known list field types - See: http://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.spfieldtype(v=office.15).aspx
@@ -81,8 +74,7 @@ define([
             "Calc" // General calculated
         ]
 
-
-};
+    };
 
     return constants;
 

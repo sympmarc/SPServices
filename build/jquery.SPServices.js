@@ -15,10 +15,10 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2015-12-19 12:05:36
+* @build SPServices 2.0.0 2015-12-31 11:05:08
 */
 ;(function() {
-var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, src_core_Version, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPFilterNode, src_utils_SPGetListItemsJson, src_utils_SPXmlToJson, src_utils_SPConvertDateToISO, src_utils_SPGetDisplayFromStatic, src_utils_SPGetStaticFromDisplay, src_utils_SPGetLastItemId, src_utils_SPGetQueryString, src_utils_SPListNameFromUrl, src_value_added_SPCascadeDropdowns, src_value_added_SPUpdateMultipleListItems, src_SPServices;
+var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescore, src_core_Version, src_utils_SPConvertDateToISO, src_utils_SPDropdownCtl, src_utils_SPFilterNode, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPGetDisplayFromStatic, src_utils_SPGetLastItemId, src_utils_SPGetListItemsJson, src_utils_SPGetQueryString, src_utils_SPGetStaticFromDisplay, src_utils_SPListNameFromUrl, src_utils_SPXmlToJson, src_value_added_SPArrangeChoices, src_value_added_SPAutocomplete, src_value_added_SPCascadeDropdowns, src_value_added_SPComplexToSimpleDropdown, src_value_added_SPUpdateMultipleListItems, src_SPServices;
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
@@ -33,10 +33,6 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
      *
      * @namespace constants
      */
-    var SPServices = window.SPServices || {};
-    SPServices.WebServices = SPServices.WebService || {};
-    SPServices.SOAP = SPServices.SOAP || {};
-    SPServices.SOAP.Action = '';
     var constants = {
       // Version info
       VERSION: '2.0.0',
@@ -108,27 +104,30 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
     };
     return constants;
   }();
-  src_core_SPServicesutilsjs = function ($, constants) {
+  src_core_SPServicesutils = function ($, constants) {
     var utils = /** @lends spservices.utils */
       {
         // Get the current context (as much as we can) on startup
         // See: http://johnliu.net/blog/2012/2/3/sharepoint-javascript-current-page-context-info.html
-        SPServicesContext: function () {
+        SPServicesContext: function (options) {
+          var opt = $.extend({}, {
+            listName: $().SPServices.SPListNameFromUrl()  // The list the form is working with. This is useful if the form is not in the list context.
+          }, options);
           // The SharePoint variables only give us a relative path. to match the result from WebUrlFromPageUrl, we need to add the protocol, host, and (if present) port.
           var siteRoot = location.protocol + '//' + location.host;
           // + (location.port !== "" ? location.port : "");
-          var temp = {};
+          var thisContext = {};
           // SharePoint 2010+ gives us a context variable
           if (typeof _spPageContextInfo !== 'undefined') {
-            temp.thisSite = siteRoot + _spPageContextInfo.webServerRelativeUrl;
-            temp.thisList = _spPageContextInfo.pageListId;
-            temp.thisUserId = _spPageContextInfo.userId;  // In SharePoint 2007, we know the UserID only
+            thisContext.thisSite = siteRoot + _spPageContextInfo.webServerRelativeUrl;
+            thisContext.thisList = opt.listName ? opt.listName : _spPageContextInfo.pageListId;
+            thisContext.thisUserId = _spPageContextInfo.userId;  // In SharePoint 2007, we know the UserID only
           } else {
-            temp.thisSite = typeof L_Menu_BaseUrl !== 'undefined' ? siteRoot + L_Menu_BaseUrl : '';
-            temp.thisList = '';
-            temp.thisUserId = typeof _spUserId !== 'undefined' ? _spUserId : undefined;
+            thisContext.thisSite = typeof L_Menu_BaseUrl !== 'undefined' ? siteRoot + L_Menu_BaseUrl : '';
+            thisContext.thisList = opt.listName ? opt.listName : '';
+            thisContext.thisUserId = typeof _spUserId !== 'undefined' ? _spUserId : undefined;
           }
-          return temp;
+          return thisContext;
         },
         // End of function SPServicesContext
         // Global variables
@@ -287,22 +286,23 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
           return out;
         },
         // End of function showAttrs
-        // Add the option values to the constants.SOAPEnvelope.payload for the operation
+        // Add the option values to the SPServices.SOAPEnvelope.payload for the operation
         //  opt = options for the call
+        //  SOAPEnvelope = envelope to add to
         //  paramArray = an array of option names to add to the payload
         //      "paramName" if the parameter name and the option name match
         //      ["paramName", "optionName"] if the parameter name and the option name are different (this handles early "wrappings" with inconsistent naming)
         //      {name: "paramName", sendNull: false} indicates the element is marked as "add to payload only if non-null"
-        addToPayload: function (opt, paramArray) {
+        addToPayload: function (opt, SOAPEnvelope, paramArray) {
           var i;
           for (i = 0; i < paramArray.length; i++) {
             // the parameter name and the option name match
             if (typeof paramArray[i] === 'string') {
-              constants.SOAPEnvelope.payload += utils.wrapNode(paramArray[i], opt[paramArray[i]]);  // the parameter name and the option name are different
+              SOAPEnvelope.payload += utils.wrapNode(paramArray[i], opt[paramArray[i]]);  // the parameter name and the option name are different
             } else if ($.isArray(paramArray[i]) && paramArray[i].length === 2) {
-              constants.SOAPEnvelope.payload += utils.wrapNode(paramArray[i][0], opt[paramArray[i][1]]);  // the element not a string or an array and is marked as "add to payload only if non-null"
+              SOAPEnvelope.payload += utils.wrapNode(paramArray[i][0], opt[paramArray[i][1]]);  // the element not a string or an array and is marked as "add to payload only if non-null"
             } else if (typeof paramArray[i] === 'object' && paramArray[i].sendNull !== undefined) {
-              constants.SOAPEnvelope.payload += opt[paramArray[i].name] === undefined || opt[paramArray[i].name].length === 0 ? '' : utils.wrapNode(paramArray[i].name, opt[paramArray[i].name]);  // something isn't right, so report it
+              SOAPEnvelope.payload += opt[paramArray[i].name] === undefined || opt[paramArray[i].name].length === 0 ? '' : utils.wrapNode(paramArray[i].name, opt[paramArray[i].name]);  // something isn't right, so report it
             } else {
               utils.errBox(opt.operation, 'paramArray[' + i + ']: ' + paramArray[i], 'Invalid paramArray element passed to addToPayload()');
             }
@@ -310,7 +310,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         },
         // End of function addToPayload
         // The SiteData operations have the same names as other Web Service operations. To make them easy to call and unique, I'm using
-        // the SiteData prefix on their names. This function replaces that name with the right name in the utils.SOAPEnvelope.
+        // the SiteData prefix on their names. This function replaces that name with the right name in the SPServices.SOAPEnvelope.
         siteDataFixSOAPEnvelope: function (SOAPEnvelope, siteDataOperation) {
           var siteDataOp = siteDataOperation.substring(8);
           SOAPEnvelope.opheader = SOAPEnvelope.opheader.replace(siteDataOperation, siteDataOp);
@@ -422,9 +422,8 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
     // End of function modalBox;
     return utils;
   }(jquery, src_utils_constants);
-  src_core_SPServicescore = function ($, utils, constants) {
-    var SOAPAction;
-    // Set up SOAP envelope
+  src_core_SPServicescore = function ($, constants, utils) {
+    var SOAPAction = '';
     var SOAPEnvelope = {
       header: '<soap:Envelope xmlns:xsi=\'http://www.w3.org/2001/XMLSchema-instance\' xmlns:xsd=\'http://www.w3.org/2001/XMLSchema\' xmlns:soap=\'http://schemas.xmlsoap.org/soap/envelope/\'><soap:Body>',
       footer: '</soap:Body></soap:Envelope>',
@@ -1512,27 +1511,27 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
       case 'Mode':
         break;
       case 'Login':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'username',
           'password'
         ]);
         break;
       // COPY OPERATIONS
       case 'CopyIntoItems':
-        utils.addToPayload(opt, ['SourceUrl']);
+        utils.addToPayload(opt, SOAPEnvelope, ['SourceUrl']);
         SOAPEnvelope.payload += '<DestinationUrls>';
         for (i = 0; i < opt.DestinationUrls.length; i++) {
           SOAPEnvelope.payload += utils.wrapNode('string', opt.DestinationUrls[i]);
         }
         SOAPEnvelope.payload += '</DestinationUrls>';
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'Fields',
           'Stream',
           'Results'
         ]);
         break;
       case 'CopyIntoItemsLocal':
-        utils.addToPayload(opt, ['SourceUrl']);
+        utils.addToPayload(opt, SOAPEnvelope, ['SourceUrl']);
         SOAPEnvelope.payload += '<DestinationUrls>';
         for (i = 0; i < opt.DestinationUrls.length; i++) {
           SOAPEnvelope.payload += utils.wrapNode('string', opt.DestinationUrls[i]);
@@ -1540,7 +1539,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         SOAPEnvelope.payload += '</DestinationUrls>';
         break;
       case 'GetItem':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'Url',
           'Fields',
           'Stream'
@@ -1548,17 +1547,17 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         break;
       // FORM OPERATIONS
       case 'GetForm':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'formUrl'
         ]);
         break;
       case 'GetFormCollection':
-        utils.addToPayload(opt, ['listName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['listName']);
         break;
       // LIST OPERATIONS
       case 'AddAttachment':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'listItemID',
           'fileName',
@@ -1566,20 +1565,20 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'AddDiscussionBoardItem':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'message'
         ]);
         break;
       case 'AddList':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'description',
           'templateID'
         ]);
         break;
       case 'AddListFromFeature':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'description',
           'featureID',
@@ -1587,28 +1586,28 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'ApplyContentTypeToList':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'webUrl',
           'contentTypeId',
           'listName'
         ]);
         break;
       case 'CheckInFile':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'pageUrl',
           'comment',
           'CheckinType'
         ]);
         break;
       case 'CheckOutFile':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'pageUrl',
           'checkoutToLocal',
           'lastmodified'
         ]);
         break;
       case 'CreateContentType':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'displayName',
           'parentType',
@@ -1618,30 +1617,30 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'DeleteAttachment':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'listItemID',
           'url'
         ]);
         break;
       case 'DeleteContentType':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'contentTypeId'
         ]);
         break;
       case 'DeleteContentTypeXmlDocument':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'contentTypeId',
           'documentUri'
         ]);
         break;
       case 'DeleteList':
-        utils.addToPayload(opt, ['listName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['listName']);
         break;
       case 'GetAttachmentCollection':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           [
             'listItemID',
@@ -1650,10 +1649,10 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'GetList':
-        utils.addToPayload(opt, ['listName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['listName']);
         break;
       case 'GetListAndView':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'viewName'
         ]);
@@ -1661,16 +1660,16 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
       case 'GetListCollection':
         break;
       case 'GetListContentType':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'contentTypeId'
         ]);
         break;
       case 'GetListContentTypes':
-        utils.addToPayload(opt, ['listName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['listName']);
         break;
       case 'GetListItems':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'viewName',
           [
@@ -1692,7 +1691,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'GetListItemChanges':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'viewFields',
           'since',
@@ -1700,7 +1699,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'GetListItemChangesSinceToken':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'viewName',
           [
@@ -1730,17 +1729,17 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'GetVersionCollection':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'strlistID',
           'strlistItemID',
           'strFieldName'
         ]);
         break;
       case 'UndoCheckOut':
-        utils.addToPayload(opt, ['pageUrl']);
+        utils.addToPayload(opt, SOAPEnvelope, ['pageUrl']);
         break;
       case 'UpdateContentType':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'contentTypeId',
           'contentTypeProperties',
@@ -1751,20 +1750,20 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'UpdateContentTypesXmlDocument':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'newDocument'
         ]);
         break;
       case 'UpdateContentTypeXmlDocument':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'contentTypeId',
           'newDocument'
         ]);
         break;
       case 'UpdateList':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'listProperties',
           'newFields',
@@ -1774,9 +1773,9 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'UpdateListItems':
-        utils.addToPayload(opt, ['listName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['listName']);
         if (typeof opt.updates !== 'undefined' && opt.updates.length > 0) {
-          utils.addToPayload(opt, ['updates']);
+          utils.addToPayload(opt, SOAPEnvelope, ['updates']);
         } else {
           SOAPEnvelope.payload += '<updates><Batch OnError=\'Continue\'><Method ID=\'1\' Cmd=\'' + opt.batchCmd + '\'>';
           for (i = 0; i < opt.valuepairs.length; i++) {
@@ -1790,7 +1789,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         break;
       // MEETINGS OPERATIONS
       case 'AddMeeting':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'organizerEmail',
           'uid',
           'sequence',
@@ -1803,7 +1802,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'CreateWorkspace':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'title',
           'templateName',
           'lcid',
@@ -1811,7 +1810,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'RemoveMeeting':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'recurrenceId',
           'uid',
           'sequence',
@@ -1820,29 +1819,29 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'SetWorkspaceTitle':
-        utils.addToPayload(opt, ['title']);
+        utils.addToPayload(opt, SOAPEnvelope, ['title']);
         break;
       // OFFICIALFILE OPERATIONS
       case 'GetRecordRouting':
-        utils.addToPayload(opt, ['recordRouting']);
+        utils.addToPayload(opt, SOAPEnvelope, ['recordRouting']);
         break;
       case 'GetRecordRoutingCollection':
         break;
       case 'GetServerInfo':
         break;
       case 'SubmitFile':
-        utils.addToPayload(opt, ['fileToSubmit'], ['properties'], ['recordRouting'], ['sourceUrl'], ['userName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['fileToSubmit'], ['properties'], ['recordRouting'], ['sourceUrl'], ['userName']);
         break;
       // PEOPLE OPERATIONS
       case 'ResolvePrincipals':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'principalKeys',
           'principalType',
           'addToUserInfoList'
         ]);
         break;
       case 'SearchPrincipals':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'searchText',
           'maxResults',
           'principalType'
@@ -1850,7 +1849,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         break;
       // PERMISSION OPERATIONS
       case 'AddPermission':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'objectName',
           'objectType',
           'permissionIdentifier',
@@ -1859,20 +1858,20 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'AddPermissionCollection':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'objectName',
           'objectType',
           'permissionsInfoXml'
         ]);
         break;
       case 'GetPermissionCollection':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'objectName',
           'objectType'
         ]);
         break;
       case 'RemovePermission':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'objectName',
           'objectType',
           'permissionIdentifier',
@@ -1880,14 +1879,14 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'RemovePermissionCollection':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'objectName',
           'objectType',
           'memberIdsXml'
         ]);
         break;
       case 'UpdatePermission':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'objectName',
           'objectType',
           'permissionIdentifier',
@@ -1927,7 +1926,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         break;
       // SHAREPOINTDIAGNOSTICS OPERATIONS
       case 'SendClientScriptErrorReport':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'message',
           'file',
           'line',
@@ -1939,16 +1938,16 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         break;
       // SITEDATA OPERATIONS
       case 'EnumerateFolder':
-        utils.addToPayload(opt, ['strFolderUrl']);
+        utils.addToPayload(opt, SOAPEnvelope, ['strFolderUrl']);
         break;
       case 'GetAttachments':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'strListName',
           'strItemId'
         ]);
         break;
       case 'SiteDataGetList':
-        utils.addToPayload(opt, ['strListName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['strListName']);
         // Because this operation has a name which duplicates the Lists WS, need to handle
         SOAPEnvelope = constants.siteDataFixSOAPEnvelope(SOAPEnvelope, opt.operation);
         break;
@@ -1961,7 +1960,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         SOAPEnvelope = constants.siteDataFixSOAPEnvelope(SOAPEnvelope, opt.operation);
         break;
       case 'SiteDataGetSiteUrl':
-        utils.addToPayload(opt, ['Url']);
+        utils.addToPayload(opt, SOAPEnvelope, ['Url']);
         // Because this operation has a name which duplicates the Lists WS, need to handle
         SOAPEnvelope = constants.siteDataFixSOAPEnvelope(SOAPEnvelope, opt.operation);
         break;
@@ -1971,7 +1970,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         break;
       // SITES OPERATIONS
       case 'CreateWeb':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'url',
           'title',
           'description',
@@ -1991,20 +1990,20 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'DeleteWeb':
-        utils.addToPayload(opt, ['url']);
+        utils.addToPayload(opt, SOAPEnvelope, ['url']);
         break;
       case 'GetSite':
-        utils.addToPayload(opt, ['SiteUrl']);
+        utils.addToPayload(opt, SOAPEnvelope, ['SiteUrl']);
         break;
       case 'GetSiteTemplates':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'LCID',
           'TemplateList'
         ]);
         break;
       // SOCIALDATASERVICE OPERATIONS
       case 'AddComment':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'url',
           'comment',
           'isHighPriority',
@@ -2012,7 +2011,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'AddTag':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'url',
           'termID',
           'title',
@@ -2020,7 +2019,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'AddTagByKeyword':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'url',
           'keyword',
           'title',
@@ -2028,77 +2027,77 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'CountCommentsOfUser':
-        utils.addToPayload(opt, ['userAccountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['userAccountName']);
         break;
       case 'CountCommentsOfUserOnUrl':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'userAccountName',
           'url'
         ]);
         break;
       case 'CountCommentsOnUrl':
-        utils.addToPayload(opt, ['url']);
+        utils.addToPayload(opt, SOAPEnvelope, ['url']);
         break;
       case 'CountRatingsOnUrl':
-        utils.addToPayload(opt, ['url']);
+        utils.addToPayload(opt, SOAPEnvelope, ['url']);
         break;
       case 'CountTagsOfUser':
-        utils.addToPayload(opt, ['userAccountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['userAccountName']);
         break;
       case 'DeleteComment':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'url',
           'lastModifiedTime'
         ]);
         break;
       case 'DeleteRating':
-        utils.addToPayload(opt, ['url']);
+        utils.addToPayload(opt, SOAPEnvelope, ['url']);
         break;
       case 'DeleteTag':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'url',
           'termID'
         ]);
         break;
       case 'DeleteTagByKeyword':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'url',
           'keyword'
         ]);
         break;
       case 'DeleteTags':
-        utils.addToPayload(opt, ['url']);
+        utils.addToPayload(opt, SOAPEnvelope, ['url']);
         break;
       case 'GetAllTagTerms':
-        utils.addToPayload(opt, ['maximumItemsToReturn']);
+        utils.addToPayload(opt, SOAPEnvelope, ['maximumItemsToReturn']);
         break;
       case 'GetAllTagTermsForUrlFolder':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'urlFolder',
           'maximumItemsToReturn'
         ]);
         break;
       case 'GetAllTagUrls':
-        utils.addToPayload(opt, ['termID']);
+        utils.addToPayload(opt, SOAPEnvelope, ['termID']);
         break;
       case 'GetAllTagUrlsByKeyword':
-        utils.addToPayload(opt, ['keyword']);
+        utils.addToPayload(opt, SOAPEnvelope, ['keyword']);
         break;
       case 'GetCommentsOfUser':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'userAccountName',
           'maximumItemsToReturn',
           'startIndex'
         ]);
         break;
       case 'GetCommentsOfUserOnUrl':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'userAccountName',
           'url'
         ]);
         break;
       case 'GetCommentsOnUrl':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'url',
           'maximumItemsToReturn',
           'startIndex'
@@ -2108,71 +2107,71 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         }
         break;
       case 'GetRatingAverageOnUrl':
-        utils.addToPayload(opt, ['url']);
+        utils.addToPayload(opt, SOAPEnvelope, ['url']);
         break;
       case 'GetRatingOfUserOnUrl':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'userAccountName',
           'url'
         ]);
         break;
       case 'GetRatingOnUrl':
-        utils.addToPayload(opt, ['url']);
+        utils.addToPayload(opt, SOAPEnvelope, ['url']);
         break;
       case 'GetRatingsOfUser':
-        utils.addToPayload(opt, ['userAccountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['userAccountName']);
         break;
       case 'GetRatingsOnUrl':
-        utils.addToPayload(opt, ['url']);
+        utils.addToPayload(opt, SOAPEnvelope, ['url']);
         break;
       case 'GetSocialDataForFullReplication':
-        utils.addToPayload(opt, ['userAccountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['userAccountName']);
         break;
       case 'GetTags':
-        utils.addToPayload(opt, ['url']);
+        utils.addToPayload(opt, SOAPEnvelope, ['url']);
         break;
       case 'GetTagsOfUser':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'userAccountName',
           'maximumItemsToReturn',
           'startIndex'
         ]);
         break;
       case 'GetTagTerms':
-        utils.addToPayload(opt, ['maximumItemsToReturn']);
+        utils.addToPayload(opt, SOAPEnvelope, ['maximumItemsToReturn']);
         break;
       case 'GetTagTermsOfUser':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'userAccountName',
           'maximumItemsToReturn'
         ]);
         break;
       case 'GetTagTermsOnUrl':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'url',
           'maximumItemsToReturn'
         ]);
         break;
       case 'GetTagUrls':
-        utils.addToPayload(opt, ['termID']);
+        utils.addToPayload(opt, SOAPEnvelope, ['termID']);
         break;
       case 'GetTagUrlsByKeyword':
-        utils.addToPayload(opt, ['keyword']);
+        utils.addToPayload(opt, SOAPEnvelope, ['keyword']);
         break;
       case 'GetTagUrlsOfUser':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'termID',
           'userAccountName'
         ]);
         break;
       case 'GetTagUrlsOfUserByKeyword':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'keyword',
           'userAccountName'
         ]);
         break;
       case 'SetRating':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'url',
           'rating',
           'title',
@@ -2180,7 +2179,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'UpdateComment':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'url',
           'lastModifiedTime',
           'comment',
@@ -2189,7 +2188,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         break;
       // SPELLCHECK OPERATIONS
       case 'SpellCheck':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'chunksToSpell',
           'declaredLanguage',
           'useLad'
@@ -2197,7 +2196,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         break;
       // TAXONOMY OPERATIONS
       case 'AddTerms':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'sharedServiceId',
           'termSetId',
           'lcid',
@@ -2205,7 +2204,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'GetChildTermsInTerm':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'sspId',
           'lcid',
           'termId',
@@ -2213,20 +2212,20 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'GetChildTermsInTermSet':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'sspId',
           'lcid',
           'termSetId'
         ]);
         break;
       case 'GetKeywordTermsByGuids':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'termIds',
           'lcid'
         ]);
         break;
       case 'GetTermsByLabel':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'label',
           'lcid',
           'matchOption',
@@ -2236,7 +2235,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'GetTermSets':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'sharedServiceIds',
           'termSetIds',
           'lcid',
@@ -2246,7 +2245,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         break;
       // USERS AND GROUPS OPERATIONS
       case 'AddGroup':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'groupName',
           'ownerIdentifier',
           'ownerType',
@@ -2255,39 +2254,39 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'AddGroupToRole':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'groupName',
           'roleName'
         ]);
         break;
       case 'AddRole':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'roleName',
           'description',
           'permissionMask'
         ]);
         break;
       case 'AddRoleDef':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'roleName',
           'description',
           'permissionMask'
         ]);
         break;
       case 'AddUserCollectionToGroup':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'groupName',
           'usersInfoXml'
         ]);
         break;
       case 'AddUserCollectionToRole':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'roleName',
           'usersInfoXml'
         ]);
         break;
       case 'AddUserToGroup':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'groupName',
           'userName',
           'userLoginName',
@@ -2296,7 +2295,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'AddUserToRole':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'roleName',
           'userName',
           'userLoginName',
@@ -2307,105 +2306,105 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
       case 'GetAllUserCollectionFromWeb':
         break;
       case 'GetGroupCollection':
-        utils.addToPayload(opt, ['groupNamesXml']);
+        utils.addToPayload(opt, SOAPEnvelope, ['groupNamesXml']);
         break;
       case 'GetGroupCollectionFromRole':
-        utils.addToPayload(opt, ['roleName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['roleName']);
         break;
       case 'GetGroupCollectionFromSite':
         break;
       case 'GetGroupCollectionFromUser':
-        utils.addToPayload(opt, ['userLoginName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['userLoginName']);
         break;
       case 'GetGroupCollectionFromWeb':
         break;
       case 'GetGroupInfo':
-        utils.addToPayload(opt, ['groupName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['groupName']);
         break;
       case 'GetRoleCollection':
-        utils.addToPayload(opt, ['roleNamesXml']);
+        utils.addToPayload(opt, SOAPEnvelope, ['roleNamesXml']);
         break;
       case 'GetRoleCollectionFromGroup':
-        utils.addToPayload(opt, ['groupName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['groupName']);
         break;
       case 'GetRoleCollectionFromUser':
-        utils.addToPayload(opt, ['userLoginName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['userLoginName']);
         break;
       case 'GetRoleCollectionFromWeb':
         break;
       case 'GetRoleInfo':
-        utils.addToPayload(opt, ['roleName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['roleName']);
         break;
       case 'GetRolesAndPermissionsForCurrentUser':
         break;
       case 'GetRolesAndPermissionsForSite':
         break;
       case 'GetUserCollection':
-        utils.addToPayload(opt, ['userLoginNamesXml']);
+        utils.addToPayload(opt, SOAPEnvelope, ['userLoginNamesXml']);
         break;
       case 'GetUserCollectionFromGroup':
-        utils.addToPayload(opt, ['groupName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['groupName']);
         break;
       case 'GetUserCollectionFromRole':
-        utils.addToPayload(opt, ['roleName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['roleName']);
         break;
       case 'GetUserCollectionFromSite':
         break;
       case 'GetUserCollectionFromWeb':
         break;
       case 'GetUserInfo':
-        utils.addToPayload(opt, ['userLoginName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['userLoginName']);
         break;
       case 'GetUserLoginFromEmail':
-        utils.addToPayload(opt, ['emailXml']);
+        utils.addToPayload(opt, SOAPEnvelope, ['emailXml']);
         break;
       case 'RemoveGroup':
-        utils.addToPayload(opt, ['groupName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['groupName']);
         break;
       case 'RemoveGroupFromRole':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'roleName',
           'groupName'
         ]);
         break;
       case 'RemoveRole':
-        utils.addToPayload(opt, ['roleName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['roleName']);
         break;
       case 'RemoveUserCollectionFromGroup':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'groupName',
           'userLoginNamesXml'
         ]);
         break;
       case 'RemoveUserCollectionFromRole':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'roleName',
           'userLoginNamesXml'
         ]);
         break;
       case 'RemoveUserCollectionFromSite':
-        utils.addToPayload(opt, ['userLoginNamesXml']);
+        utils.addToPayload(opt, SOAPEnvelope, ['userLoginNamesXml']);
         break;
       case 'RemoveUserFromGroup':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'groupName',
           'userLoginName'
         ]);
         break;
       case 'RemoveUserFromRole':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'roleName',
           'userLoginName'
         ]);
         break;
       case 'RemoveUserFromSite':
-        utils.addToPayload(opt, ['userLoginName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['userLoginName']);
         break;
       case 'RemoveUserFromWeb':
-        utils.addToPayload(opt, ['userLoginName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['userLoginName']);
         break;
       case 'UpdateGroupInfo':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'oldGroupName',
           'groupName',
           'ownerIdentifier',
@@ -2414,7 +2413,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'UpdateRoleDefInfo':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'oldRoleName',
           'roleName',
           'description',
@@ -2422,7 +2421,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'UpdateRoleInfo':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'oldRoleName',
           'roleName',
           'description',
@@ -2430,7 +2429,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'UpdateUserInfo':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'userLoginName',
           'userName',
           'userEmail',
@@ -2439,7 +2438,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         break;
       // USERPROFILESERVICE OPERATIONS
       case 'AddColleague':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'accountName',
           'colleagueAccountName',
           'group',
@@ -2448,7 +2447,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'AddLink':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'accountName',
           'name',
           'url',
@@ -2457,7 +2456,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'AddMembership':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'accountName',
           'membershipInfo',
           'group',
@@ -2465,60 +2464,60 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'AddPinnedLink':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'accountName',
           'name',
           'url'
         ]);
         break;
       case 'CreateMemberGroup':
-        utils.addToPayload(opt, ['membershipInfo']);
+        utils.addToPayload(opt, SOAPEnvelope, ['membershipInfo']);
         break;
       case 'CreateUserProfileByAccountName':
-        utils.addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['accountName']);
         break;
       case 'GetCommonColleagues':
-        utils.addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['accountName']);
         break;
       case 'GetCommonManager':
-        utils.addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['accountName']);
         break;
       case 'GetCommonMemberships':
-        utils.addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['accountName']);
         break;
       case 'GetInCommon':
-        utils.addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['accountName']);
         break;
       case 'GetPropertyChoiceList':
-        utils.addToPayload(opt, ['propertyName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['propertyName']);
         break;
       case 'GetUserColleagues':
-        utils.addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['accountName']);
         break;
       case 'GetUserLinks':
-        utils.addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['accountName']);
         break;
       case 'GetUserMemberships':
-        utils.addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['accountName']);
         break;
       case 'GetUserPinnedLinks':
-        utils.addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['accountName']);
         break;
       case 'GetUserProfileByGuid':
-        utils.addToPayload(opt, ['guid']);
+        utils.addToPayload(opt, SOAPEnvelope, ['guid']);
         break;
       case 'GetUserProfileByIndex':
-        utils.addToPayload(opt, ['index']);
+        utils.addToPayload(opt, SOAPEnvelope, ['index']);
         break;
       case 'GetUserProfileByName':
         // Note that this operation is inconsistent with the others, using AccountName rather than accountName
         if (typeof opt.accountName !== 'undefined' && opt.accountName.length > 0) {
-          utils.addToPayload(opt, [[
+          utils.addToPayload(opt, SOAPEnvelope, [[
               'AccountName',
               'accountName'
             ]]);
         } else {
-          utils.addToPayload(opt, ['AccountName']);
+          utils.addToPayload(opt, SOAPEnvelope, ['AccountName']);
         }
         break;
       case 'GetUserProfileCount':
@@ -2526,69 +2525,69 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
       case 'GetUserProfileSchema':
         break;
       case 'GetUserPropertyByAccountName':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'accountName',
           'propertyName'
         ]);
         break;
       case 'ModifyUserPropertyByAccountName':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'accountName',
           'newData'
         ]);
         break;
       case 'RemoveAllColleagues':
-        utils.addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['accountName']);
         break;
       case 'RemoveAllLinks':
-        utils.addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['accountName']);
         break;
       case 'RemoveAllMemberships':
-        utils.addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['accountName']);
         break;
       case 'RemoveAllPinnedLinks':
-        utils.addToPayload(opt, ['accountName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['accountName']);
         break;
       case 'RemoveColleague':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'accountName',
           'colleagueAccountName'
         ]);
         break;
       case 'RemoveLink':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'accountName',
           'id'
         ]);
         break;
       case 'RemoveMembership':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'accountName',
           'sourceInternal',
           'sourceReference'
         ]);
         break;
       case 'RemovePinnedLink':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'accountName',
           'id'
         ]);
         break;
       case 'UpdateColleaguePrivacy':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'accountName',
           'colleagueAccountName',
           'newPrivacy'
         ]);
         break;
       case 'UpdateLink':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'accountName',
           'data'
         ]);
         break;
       case 'UpdateMembershipPrivacy':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'accountName',
           'sourceInternal',
           'sourceReference',
@@ -2596,33 +2595,33 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'UpdatePinnedLink ':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'accountName',
           'data'
         ]);
         break;
       // VERSIONS OPERATIONS
       case 'DeleteAllVersions':
-        utils.addToPayload(opt, ['fileName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['fileName']);
         break;
       case 'DeleteVersion':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'fileName',
           'fileVersion'
         ]);
         break;
       case 'GetVersions':
-        utils.addToPayload(opt, ['fileName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['fileName']);
         break;
       case 'RestoreVersion':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'fileName',
           'fileVersion'
         ]);
         break;
       // VIEW OPERATIONS
       case 'AddView':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'viewName',
           'viewFields',
@@ -2633,28 +2632,28 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'DeleteView':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'viewName'
         ]);
         break;
       case 'GetView':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'viewName'
         ]);
         break;
       case 'GetViewCollection':
-        utils.addToPayload(opt, ['listName']);
+        utils.addToPayload(opt, SOAPEnvelope, ['listName']);
         break;
       case 'GetViewHtml':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'viewName'
         ]);
         break;
       case 'UpdateView':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'viewName',
           'viewProperties',
@@ -2666,7 +2665,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'UpdateViewHtml':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'listName',
           'viewName',
           'viewProperties',
@@ -2685,14 +2684,14 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         break;
       // WEBPARTPAGES OPERATIONS
       case 'AddWebPart':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'pageUrl',
           'webPartXml',
           'storage'
         ]);
         break;
       case 'AddWebPartToZone':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'pageUrl',
           'webPartXml',
           'storage',
@@ -2701,14 +2700,14 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'DeleteWebPart':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'pageUrl',
           'storageKey',
           'storage'
         ]);
         break;
       case 'GetWebPart2':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'pageUrl',
           'storageKey',
           'storage',
@@ -2716,26 +2715,26 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'GetWebPartPage':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'documentName',
           'behavior'
         ]);
         break;
       case 'GetWebPartProperties':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'pageUrl',
           'storage'
         ]);
         break;
       case 'GetWebPartProperties2':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'pageUrl',
           'storage',
           'behavior'
         ]);
         break;
       case 'SaveWebPart2':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'pageUrl',
           'storageKey',
           'webPartXml',
@@ -2745,7 +2744,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         break;
       // WEBS OPERATIONS
       case 'WebsCreateContentType':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'displayName',
           'parentType',
           'newFields',
@@ -2753,23 +2752,23 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'GetColumns':
-        utils.addToPayload(opt, ['webUrl']);
+        utils.addToPayload(opt, SOAPEnvelope, ['webUrl']);
         break;
       case 'GetContentType':
-        utils.addToPayload(opt, ['contentTypeId']);
+        utils.addToPayload(opt, SOAPEnvelope, ['contentTypeId']);
         break;
       case 'GetContentTypes':
         break;
       case 'GetCustomizedPageStatus':
-        utils.addToPayload(opt, ['fileUrl']);
+        utils.addToPayload(opt, SOAPEnvelope, ['fileUrl']);
         break;
       case 'GetListTemplates':
         break;
       case 'GetObjectIdFromUrl':
-        utils.addToPayload(opt, ['objectUrl']);
+        utils.addToPayload(opt, SOAPEnvelope, ['objectUrl']);
         break;
       case 'GetWeb':
-        utils.addToPayload(opt, [[
+        utils.addToPayload(opt, SOAPEnvelope, [[
             'webUrl',
             'webURL'
           ]]);
@@ -2779,14 +2778,14 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
       case 'GetAllSubWebCollection':
         break;
       case 'UpdateColumns':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'newFields',
           'updateFields',
           'deleteFields'
         ]);
         break;
       case 'WebsUpdateContentType':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'contentTypeId',
           'contentTypeProperties',
           'newFields',
@@ -2795,14 +2794,14 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'WebUrlFromPageUrl':
-        utils.addToPayload(opt, [[
+        utils.addToPayload(opt, SOAPEnvelope, [[
             'pageUrl',
             'pageURL'
           ]]);
         break;
       // WORKFLOW OPERATIONS
       case 'AlterToDo':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'item',
           'todoId',
           'todoListId',
@@ -2810,7 +2809,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'ClaimReleaseTask':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'item',
           'taskId',
           'listId',
@@ -2818,23 +2817,23 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         ]);
         break;
       case 'GetTemplatesForItem':
-        utils.addToPayload(opt, ['item']);
+        utils.addToPayload(opt, SOAPEnvelope, ['item']);
         break;
       case 'GetToDosForItem':
-        utils.addToPayload(opt, ['item']);
+        utils.addToPayload(opt, SOAPEnvelope, ['item']);
         break;
       case 'GetWorkflowDataForItem':
-        utils.addToPayload(opt, ['item']);
+        utils.addToPayload(opt, SOAPEnvelope, ['item']);
         break;
       case 'GetWorkflowTaskData':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'item',
           'listId',
           'taskId'
         ]);
         break;
       case 'StartWorkflow':
-        utils.addToPayload(opt, [
+        utils.addToPayload(opt, SOAPEnvelope, [
           'item',
           'templateId',
           'workflowParameters'
@@ -2961,7 +2960,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
       // Allow the user to force async
       completefunc: null  // Function to call on completion
     };  // End $.fn.SPServices.defaults
-  }(jquery, src_core_SPServicesutils, src_utils_constants);
+  }(jquery, src_utils_constants, src_core_SPServicesutils);
   src_core_Version = function ($, constants) {
     // Return the current version of SPServices as a string
     $.fn.SPServices.Version = function () {
@@ -2970,16 +2969,123 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
     // End $.fn.SPServices.Version
     return $;
   }(jquery, src_utils_constants);
-  src_utils_SPGetCurrentSite = function ($, utils, constants) {
+  src_utils_SPConvertDateToISO = function ($, constants, utils) {
+    // Convert a JavaScript date to the ISO 8601 format required by SharePoint to update list items
+    $.fn.SPServices.SPConvertDateToISO = function (options) {
+      var opt = $.extend({}, {
+        dateToConvert: new Date(),
+        // The JavaScript date we'd like to convert. If no date is passed, the function returns the current date/time
+        dateOffset: '-05:00'  // The time zone offset requested. Default is EST
+      }, options);
+      //Generate ISO 8601 date/time formatted string
+      var s = '';
+      var d = opt.dateToConvert;
+      s += d.getFullYear() + '-';
+      s += utils.pad(d.getMonth() + 1) + '-';
+      s += utils.pad(d.getDate());
+      s += 'T' + utils.pad(d.getHours()) + ':';
+      s += utils.pad(d.getMinutes()) + ':';
+      s += utils.pad(d.getSeconds()) + 'Z' + opt.dateOffset;
+      //Return the ISO8601 date string
+      return s;
+    };
+    // End $.fn.SPServices.SPConvertDateToISO
+    return $;
+  }(jquery, src_utils_constants, src_core_SPServicesutils);
+  src_utils_SPDropdownCtl = function ($, utils, constants) {
+    // Find a dropdown (or multi-select) in the DOM. Returns the dropdown object and its type:
+    // S = Simple (select)
+    // C = Compound (input + select hybrid)
+    // M = Multi-select (select hybrid)
+    $.fn.SPServices.SPDropdownCtl = function (options) {
+      var opt = $.extend({}, {
+        displayName: ''  // The displayName of the column on the form
+      }, options);
+      var columnObj = {};
+      // Paul T., 2015.05.02: Commented out since is not currently used
+      // var colStaticName = $().SPServices.SPGetStaticFromDisplay({
+      // listName: $().SPServices.SPListNameFromUrl(),
+      // columnDisplayName: opt.displayName
+      // });
+      // Simple, where the select's title attribute is colName (DisplayName)
+      //  Examples:
+      //      SP2013 <select title="Country" id="Country_d578ed64-2fa7-4c1e-8b41-9cc1d524fc28_$LookupField">
+      //      SP2010: <SELECT name=ctl00$m$g_d10479d7_6965_4da0_b162_510bbbc58a7f$ctl00$ctl05$ctl01$ctl00$ctl00$ctl04$ctl00$Lookup title=Country id=ctl00_m_g_d10479d7_6965_4da0_b162_510bbbc58a7f_ctl00_ctl05_ctl01_ctl00_ctl00_ctl04_ctl00_Lookup>
+      //      SP2007: <select name="ctl00$m$g_e845e690_00da_428f_afbd_fbe804787763$ctl00$ctl04$ctl04$ctl00$ctl00$ctl04$ctl00$Lookup" Title="Country" id="ctl00_m_g_e845e690_00da_428f_afbd_fbe804787763_ctl00_ctl04_ctl04_ctl00_ctl00_ctl04_ctl00_Lookup">
+      if ((columnObj.Obj = $('select[Title=\'' + opt.displayName + '\']')).length === 1) {
+        columnObj.Type = constants.dropdownType.simple;  // Compound
+      } else if ((columnObj.Obj = $('input[Title=\'' + opt.displayName + '\']')).length === 1) {
+        columnObj.Type = constants.dropdownType.complex;  // Simple, where the select's id begins with colStaticName (StaticName) - needed for required columns where title="DisplayName Required Field"
+                                                          //   Example: SP2013 <select title="Region Required Field" id="Region_59566f6f-1c3b-4efb-9b7b-6dbc35fe3b0a_$LookupField" showrelatedselected="3">
+                                                          //        } else if ((columnObj.Obj = $("select:regex(id, (" + colStaticName + ")(_)[0-9a-fA-F]{8}(-))")).length === 1) {
+                                                          //            columnObj.Type = constants.dropdownType.simple;
+                                                          // Multi-select: This will find the multi-select column control in English and most other language sites where the Title looks like 'Column Name possible values'
+      } else if ((columnObj.Obj = $('select[ID$=\'SelectCandidate\'][Title^=\'' + opt.displayName + ' \']')).length === 1) {
+        columnObj.Type = constants.dropdownType.multiSelect;  // Multi-select: This will find the multi-select column control on a Russian site (and perhaps others) where the Title looks like '????????? ????????: Column Name'
+      } else if ((columnObj.Obj = $('select[ID$=\'SelectCandidate\'][Title$=\': ' + opt.displayName + '\']')).length === 1) {
+        columnObj.Type = constants.dropdownType.multiSelect;  // Multi-select: This will find the multi-select column control on a German site (and perhaps others)
+      } else if ((columnObj.Obj = $('select[ID$=\'SelectCandidate\'][Title$=\'"' + opt.displayName + '".\']')).length === 1) {
+        columnObj.Type = constants.dropdownType.multiSelect;  // Multi-select: This will find the multi-select column control on a Italian site (and perhaps others) where the Title looks like "Valori possibili Column name"
+      } else if ((columnObj.Obj = $('select[ID$=\'SelectCandidate\'][Title$=\' ' + opt.displayName + '\']')).length === 1) {
+        columnObj.Type = constants.dropdownType.multiSelect;
+      } else {
+        columnObj.Type = null;
+      }
+      // Last ditch effort
+      // Simple, finding based on the comment text at the top of the td.ms-formbody where the select's title begins with DisplayName - needed for required columns where title="DisplayName Required Field"
+      //   Examples: SP2010 <select name="ctl00$m$g_308135f8_3f59_4d67_b5f8_c26776c498b7$ff51$ctl00$Lookup" id="ctl00_m_g_308135f8_3f59_4d67_b5f8_c26776c498b7_ff51_ctl00_Lookup" title="Region Required Field">
+      //            SP2013 <select id="Soort_x0020_medicijn_ded19932-0b4f-4d71-bc3b-2d510e5f297a_$LookupField" title="Soort medicijn Vereist veld">
+      if (columnObj.Type === null) {
+        var fieldContainer = utils.findFormField(opt.displayName);
+        if (fieldContainer !== undefined) {
+          var fieldSelect1 = fieldContainer.find('select[title^=\'' + opt.displayName + ' \'][id$=\'_Lookup\']');
+          var fieldSelect2 = fieldContainer.find('select[title^=\'' + opt.displayName + ' \'][id$=\'LookupField\']');
+          var fieldSelect = fieldSelect1.length > 0 ? fieldSelect1 : fieldSelect2;
+          if (fieldSelect && fieldSelect.length === 1) {
+            columnObj.Type = constants.dropdownType.simple;
+            columnObj.Obj = fieldSelect;
+          }
+        }
+      }
+      if (columnObj.Type === constants.dropdownType.complex) {
+        columnObj.optHid = $('input[id=\'' + columnObj.Obj.attr('optHid') + '\']');
+      } else if (columnObj.Type === constants.dropdownType.multiSelect) {
+        // Find the important bits of the multiselect control
+        columnObj.container = columnObj.Obj.closest('span');
+        columnObj.MultiLookupPickerdata = columnObj.container.find('input[id$=\'' + utils.multiLookupPrefix + '_data\'], input[id$=\'' + utils.multiLookupPrefix2013 + '_data\']');
+        var addButtonId = columnObj.container.find('[id$=\'AddButton\']').attr('id');
+        columnObj.master = window[addButtonId.replace(/AddButton/, utils.multiLookupPrefix + '_m')] || // SharePoint 2007
+        window[addButtonId.replace(/AddButton/, utils.multiLookupPrefix2013 + '_m')];  // SharePoint 2013
+      }
+      return columnObj;
+    };
+    // End of function $.fn.SPServices.SPDropdownCtl
+    return $;
+  }(jquery, src_core_SPServicesutils, src_utils_constants);
+  src_utils_SPFilterNode = function ($) {
+    // This method for finding specific nodes in the returned XML was developed by Steve Workman. See his blog post
+    // http://www.steveworkman.com/html5-2/javascript/2011/improving-javascript-xml-node-finding-performance-by-2000/
+    // for performance details.
+    $.fn.SPFilterNode = function (name) {
+      return this.find('*').filter(function () {
+        return this.nodeName === name;
+      });
+    };
+    // End $.fn.SPFilterNode
+    return $;
+  }(jquery);
+  src_utils_SPGetCurrentSite = function ($, constants, utils) {
+    var SPServices = window.SPServices || {};
     // Function to determine the current Web's URL.  We need this for successful Ajax calls.
     // The function is also available as a public function.
     $.fn.SPServices.SPGetCurrentSite = function () {
+      var currentContext = utils.SPServicesContext();
       // We've already determined the current site...
-      if (utils.SPServicesContext().thisSite.length > 0) {
-        return utils.SPServicesContext().thisSite;
+      if (currentContext.thisSite.length > 0) {
+        return currentContext.thisSite;
       }
       // If we still don't know the current site, we call WebUrlFromPageUrlResult.
-      var msg = utils.SOAPEnvelope.header + '<WebUrlFromPageUrl xmlns=\'' + constants.SCHEMASharePoint + '/soap/\' ><pageUrl>' + (location.href.indexOf('?') > 0 ? location.href.substr(0, location.href.indexOf('?')) : location.href) + '</pageUrl></WebUrlFromPageUrl>' + utils.SOAPEnvelope.footer;
+      var msg = SPServices.SOAPEnvelope.header + '<WebUrlFromPageUrl xmlns=\'' + constants.SCHEMASharePoint + '/soap/\' ><pageUrl>' + (location.href.indexOf('?') > 0 ? location.href.substr(0, location.href.indexOf('?')) : location.href) + '</pageUrl></WebUrlFromPageUrl>' + SPServices.SOAPEnvelope.footer;
       $.ajax({
         async: false,
         // Need this to be synchronous so we're assured of a valid value
@@ -2989,14 +3095,14 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         dataType: 'xml',
         contentType: 'text/xml;charset="utf-8"',
         complete: function (xData) {
-          utils.SPServicesContext().thisSite = $(xData.responseXML).find('WebUrlFromPageUrlResult').text();
+          currentContext.thisSite = $(xData.responseXML).find('WebUrlFromPageUrlResult').text();
         }
       });
-      return utils.SPServicesContext().thisSite;  // Return the URL
+      return currentContext.thisSite;  // Return the URL
     };
     // End $.fn.SPServices.SPGetCurrentSite
     return $;
-  }(jquery, src_core_SPServicesutils, src_utils_constants);
+  }(jquery, src_utils_constants, src_core_SPServicesutils);
   src_utils_SPGetCurrentUser = function ($, utils) {
     // Function which returns the account name for the current user in DOMAIN\username format
     $.fn.SPServices.SPGetCurrentUser = function (options) {
@@ -3009,9 +3115,10 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
         // Specifies which fields to return from the userdisp.aspx page - added in v0.7.2 to allow multiple columns
         debug: false  // If true, show error messages; if false, run silent
       }, options);
+      var currentContext = utils.SPServicesContext();
       // The current user's ID is reliably available in an existing JavaScript variable
-      if (opt.fieldName === 'ID' && typeof utils.SPServicesContext().thisUserId !== 'undefined') {
-        return utils.SPServicesContext().thisUserId;
+      if (opt.fieldName === 'ID' && typeof currentContext.thisUserId !== 'undefined') {
+        return currentContext.thisUserId;
       }
       var thisField = '';
       var theseFields = {};
@@ -3032,7 +3139,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
       for (var i = 0; i < fieldCount; i++) {
         // The current user's ID is reliably available in an existing JavaScript variable
         if (opt.fieldNames[i] === 'ID') {
-          thisField = utils.SPServicesContext().thisUserId;
+          thisField = currentContext.thisUserId;
         } else {
           var thisTextValue;
           if (fieldCount > 1) {
@@ -3075,19 +3182,100 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
     // End $.fn.SPServices.SPGetCurrentUser
     return $;
   }(jquery, src_core_SPServicesutils);
-  src_utils_SPFilterNode = function ($) {
-    // This method for finding specific nodes in the returned XML was developed by Steve Workman. See his blog post
-    // http://www.steveworkman.com/html5-2/javascript/2011/improving-javascript-xml-node-finding-performance-by-2000/
-    // for performance details.
-    $.fn.SPFilterNode = function (name) {
-      return this.find('*').filter(function () {
-        return this.nodeName === name;
+  src_utils_SPGetDisplayFromStatic = function ($) {
+    // This function returns the DisplayName for a column based on the StaticName.
+    $.fn.SPServices.SPGetDisplayFromStatic = function (options) {
+      var opt = $.extend({}, {
+        webURL: '',
+        // URL of the target Web.  If not specified, the current Web is used.
+        listName: '',
+        // The name or GUID of the list
+        columnStaticName: '',
+        // StaticName of the column
+        columnStaticNames: {}  // StaticName of the columns - added in v0.7.2 to allow multiple columns
+      }, options);
+      var displayName = '';
+      var displayNames = {};
+      var nameCount = opt.columnStaticNames.length > 0 ? opt.columnStaticNames.length : 1;
+      $().SPServices({
+        operation: 'GetList',
+        async: false,
+        cacheXML: true,
+        webURL: opt.webURL,
+        listName: opt.listName,
+        completefunc: function (xData) {
+          if (nameCount > 1) {
+            for (var i = 0; i < nameCount; i++) {
+              displayNames[opt.columnStaticNames[i]] = $(xData.responseXML).find('Field[StaticName=\'' + opt.columnStaticNames[i] + '\']').attr('DisplayName');
+            }
+          } else {
+            displayName = $(xData.responseXML).find('Field[StaticName=\'' + opt.columnStaticName + '\']').attr('DisplayName');
+          }
+        }
       });
+      return nameCount > 1 ? displayNames : displayName;
     };
-    // End $.fn.SPFilterNode
+    // End $.fn.SPServices.SPGetDisplayFromStatic
     return $;
   }(jquery);
-  src_utils_SPGetListItemsJson = function ($, utils, constants) {
+  src_utils_SPGetLastItemId = function ($) {
+    // Function to return the ID of the last item created on a list by a specific user. Useful for maintaining parent/child relationships
+    // between list forms
+    $.fn.SPServices.SPGetLastItemId = function (options) {
+      var opt = $.extend({}, {
+        webURL: '',
+        // URL of the target Web.  If not specified, the current Web is used.
+        listName: '',
+        // The name or GUID of the list
+        userAccount: '',
+        // The account for the user in DOMAIN\username format. If not specified, the current user is used.
+        CAMLQuery: ''  // [Optional] For power users, this CAML fragment will be Anded with the default query on the relatedList
+      }, options);
+      var userId;
+      var lastId = 0;
+      $().SPServices({
+        operation: 'GetUserInfo',
+        webURL: opt.webURL,
+        async: false,
+        userLoginName: opt.userAccount !== '' ? opt.userAccount : $().SPServices.SPGetCurrentUser(),
+        completefunc: function (xData) {
+          $(xData.responseXML).find('User').each(function () {
+            userId = $(this).attr('ID');
+          });
+        }
+      });
+      // Get the list items for the user, sorted by Created, descending. If the CAMLQuery option has been specified, And it with
+      // the existing Where clause
+      var camlQuery = '<Query><Where>';
+      if (opt.CAMLQuery.length > 0) {
+        camlQuery += '<And>';
+      }
+      camlQuery += '<Eq><FieldRef Name=\'Author\' LookupId=\'TRUE\'/><Value Type=\'Integer\'>' + userId + '</Value></Eq>';
+      if (opt.CAMLQuery.length > 0) {
+        camlQuery += opt.CAMLQuery + '</And>';
+      }
+      camlQuery += '</Where><OrderBy><FieldRef Name=\'Created_x0020_Date\' Ascending=\'FALSE\'/></OrderBy></Query>';
+      $().SPServices({
+        operation: 'GetListItems',
+        async: false,
+        webURL: opt.webURL,
+        listName: opt.listName,
+        CAMLQuery: camlQuery,
+        CAMLViewFields: '<ViewFields><FieldRef Name=\'ID\'/></ViewFields>',
+        CAMLRowLimit: 1,
+        CAMLQueryOptions: '<QueryOptions><ViewAttributes Scope=\'Recursive\' /></QueryOptions>',
+        completefunc: function (xData) {
+          $(xData.responseXML).SPFilterNode('z:row').each(function () {
+            lastId = $(this).attr('ows_ID');
+          });
+        }
+      });
+      return lastId;
+    };
+    // End $.fn.SPServices.SPGetLastItemId
+    return $;
+  }(jquery);
+  src_utils_SPGetListItemsJson = function ($, constants) {
     // SPGetListItemsJson retrieves items from a list in JSON format
     $.fn.SPServices.SPGetListItemsJson = function (options) {
       var opt = $.extend({}, {
@@ -3182,8 +3370,102 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
     };
     // End $.fn.SPServices.SPGetListItemsJson
     return $;
-  }(jquery, src_core_SPServicesutils, src_utils_constants);
-  src_utils_SPXmlToJson = function ($, utils, constants) {
+  }(jquery, src_utils_constants);
+  src_utils_SPGetQueryString = function ($) {
+    // Get the Query String parameters and their values and return in an array
+    // Includes code from http://www.developerdrive.com/2013/08/turning-the-querystring-into-a-json-object-using-javascript/
+    // Simplified in 2014.01 using this code
+    $.fn.SPServices.SPGetQueryString = function (options) {
+      var opt = $.extend({}, {
+        lowercase: false  // If true, parameter names will be converted to lowercase
+      }, options);
+      var queryStringVals = {};
+      var qs = location.search.slice(1).split('&');
+      for (var i = 0; i < qs.length; i++) {
+        var param = qs[i].split('=');
+        var paramName = opt.lowercase ? param[0].toLowerCase() : param[0];
+        queryStringVals[paramName] = decodeURIComponent(param[1] || '');
+      }
+      return queryStringVals;
+    };
+    // End $.fn.SPServices.SPGetQueryString
+    return $;
+  }(jquery);
+  src_utils_SPGetStaticFromDisplay = function ($) {
+    // This function returns the StaticName for a column based on the DisplayName.
+    $.fn.SPServices.SPGetStaticFromDisplay = function (options) {
+      var opt = $.extend({}, {
+        webURL: '',
+        // URL of the target Web.  If not specified, the current Web is used.
+        listName: '',
+        // The name or GUID of the list
+        columnDisplayName: '',
+        // DisplayName of the column
+        columnDisplayNames: {}  // DisplayNames of the columns - added in v0.7.2 to allow multiple columns
+      }, options);
+      var staticName = '';
+      var staticNames = {};
+      var nameCount = opt.columnDisplayNames.length > 0 ? opt.columnDisplayNames.length : 1;
+      $().SPServices({
+        operation: 'GetList',
+        async: false,
+        cacheXML: true,
+        webURL: opt.webURL,
+        listName: opt.listName,
+        completefunc: function (xData) {
+          if (nameCount > 1) {
+            for (var i = 0; i < nameCount; i++) {
+              staticNames[opt.columnDisplayNames[i]] = $(xData.responseXML).find('Field[DisplayName=\'' + opt.columnDisplayNames[i] + '\']').attr('StaticName');
+            }
+          } else {
+            staticName = $(xData.responseXML).find('Field[DisplayName=\'' + opt.columnDisplayName + '\']').attr('StaticName');
+          }
+        }
+      });
+      return nameCount > 1 ? staticNames : staticName;
+    };
+    // End $.fn.SPServices.SPGetStaticFromDisplay
+    return $;
+  }(jquery);
+  src_utils_SPListNameFromUrl = function ($, constants, utils) {
+    $.fn.SPServices.SPListNameFromUrl = function (options) {
+      var opt = $.extend({}, {
+        listName: ''  // [Optional] Pass in the name or GUID of a list if you are not in its context. e.g., on a Web Part pages in the Pages library
+      }, options);
+      var currentContext = utils.SPServicesContext();
+      // Has the list name or GUID been passed in?
+      if (opt.listName.length > 0) {
+        // TODO            currentContext({ listName: opt.listName });
+        return opt.listName;  // Do we already know the current list?
+      } else if (currentContext.thisList !== undefined && currentContext.thisList.length > 0) {
+        return currentContext.thisList;
+      }
+      // Parse out the list's root URL from the current location or the passed url
+      var thisPage = location.href;
+      var thisPageBaseName = thisPage.substring(0, thisPage.indexOf('.aspx'));
+      var listPath = decodeURIComponent(thisPageBaseName.substring(0, thisPageBaseName.lastIndexOf(constants.SLASH) + 1)).toUpperCase();
+      // Call GetListCollection and loop through the results to find a match with the list's URL to get the list's GUID
+      $().SPServices({
+        operation: 'GetListCollection',
+        async: false,
+        completefunc: function (xData) {
+          $(xData.responseXML).find('List').each(function () {
+            var defaultViewUrl = $(this).attr('DefaultViewUrl');
+            var listCollList = defaultViewUrl.substring(0, defaultViewUrl.lastIndexOf(constants.SLASH) + 1).toUpperCase();
+            if (listPath.indexOf(listCollList) > 0) {
+              currentContext.thisList = $(this).attr('ID');
+              return false;
+            }
+          });
+        }
+      });
+      // Return the list GUID (ID)
+      return currentContext.thisList;
+    };
+    // End $.fn.SPServices.SPListNameFromUrl
+    return $;
+  }(jquery, src_utils_constants, src_core_SPServicesutils);
+  src_utils_SPXmlToJson = function ($, constants, utils) {
     // This function converts an XML node set to JSON
     // Initial implementation focuses only on GetListItems
     $.fn.SPXmlToJson = function (options) {
@@ -3468,218 +3750,253 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
       }
     }
     return $;
-  }(jquery, src_core_SPServicesutils, src_utils_constants);
-  src_utils_SPConvertDateToISO = function ($, utils) {
-    // Convert a JavaScript date to the ISO 8601 format required by SharePoint to update list items
-    $.fn.SPServices.SPConvertDateToISO = function (options) {
+  }(jquery, src_utils_constants, src_core_SPServicesutils);
+  src_value_added_SPArrangeChoices = function ($, utils) {
+    // Rearrange radio buttons or checkboxes in a form from vertical to horizontal display to save page real estate
+    $.fn.SPServices.SPArrangeChoices = function (options) {
       var opt = $.extend({}, {
-        dateToConvert: new Date(),
-        // The JavaScript date we'd like to convert. If no date is passed, the function returns the current date/time
-        dateOffset: '-05:00'  // The time zone offset requested. Default is EST
+        listName: $().SPServices.SPListNameFromUrl(),
+        // The list name for the current form
+        columnName: '',
+        // The display name of the column in the form
+        perRow: 99,
+        // Maximum number of choices desired per row.
+        randomize: false  // If true, randomize the order of the options
       }, options);
-      //Generate ISO 8601 date/time formatted string
-      var s = '';
-      var d = opt.dateToConvert;
-      s += d.getFullYear() + '-';
-      s += utils.pad(d.getMonth() + 1) + '-';
-      s += utils.pad(d.getDate());
-      s += 'T' + utils.pad(d.getHours()) + ':';
-      s += utils.pad(d.getMinutes()) + ':';
-      s += utils.pad(d.getSeconds()) + 'Z' + opt.dateOffset;
-      //Return the ISO8601 date string
-      return s;
+      var columnFillInChoice = false;
+      var columnOptions = [];
+      // Get information about columnName from the list to determine if we're allowing fill-in choices
+      var thisGetList = $().SPServices({
+        operation: 'GetList',
+        async: false,
+        cacheXML: true,
+        listName: opt.listName
+      });
+      // when the promise is available...
+      thisGetList.done(function () {
+        $(thisGetList.responseXML).find('Field[DisplayName=\'' + opt.columnName + '\']').each(function () {
+          // Determine whether columnName allows a fill-in choice
+          columnFillInChoice = $(this).attr('FillInChoice') === 'TRUE';
+          // Stop looking;we're done
+          return false;
+        });
+        var thisFormField = utils.findFormField(opt.columnName);
+        var totalChoices = $(thisFormField).find('tr').length;
+        var fillinPrompt;
+        var fillinInput;
+        // Collect all of the choices
+        $(thisFormField).find('tr').each(function (choiceNumber) {
+          // If this is the fill-in prompt, save it...
+          if (columnFillInChoice && choiceNumber === totalChoices - 2) {
+            fillinPrompt = $(this).find('td');  // ...or if it is the fill-in input box, save it...
+          } else if (columnFillInChoice && choiceNumber === totalChoices - 1) {
+            fillinInput = $(this).find('td');  // ...else push into the columnOptions array.
+          } else {
+            columnOptions.push($(this).find('td'));
+          }
+        });
+        // If randomize is true, randomly sort the options
+        if (opt.randomize) {
+          columnOptions.sort(utils.randOrd);
+        }
+        //Create a new choices table to hold the arranged choices.
+        var newChoiceTable = $('<table cellpadding=\'0\' cellspacing=\'1\'></table>');
+        //Iterate over all available choices placing them in the correct position in the new choices table.
+        for (var i = 0; i < columnOptions.length; i++) {
+          // If we've already got perRow columnOptions in the row, close off the row
+          if ((i + 1) % opt.perRow === 0) {
+            newChoiceTable.append('<tr></tr>');
+          }
+          newChoiceTable.append(columnOptions[i]);
+        }
+        //Insert fillInChoices section under available choices.
+        if (columnFillInChoice) {
+          var fillInRow = $('<tr><td colspan=\'99\'><table cellpadding=\'0\' cellspacing=\'1\'><tr></tr></table></td></tr>');
+          fillInRow.find('tr').append(fillinPrompt);
+          fillInRow.find('tr').append(fillinInput);
+          newChoiceTable.append(fillInRow);
+        }
+        //Insert new table before the old choice table so that choices will still line up with header.
+        var choiceTable = $(thisFormField).find('table:first');
+        choiceTable.before(newChoiceTable);
+        //Choices table is not removed because validation depends on the table id.
+        choiceTable.hide();
+      });
     };
-    // End $.fn.SPServices.SPConvertDateToISO
+    // End $.fn.SPServices.SPArrangeChoices
     return $;
   }(jquery, src_core_SPServicesutils);
-  src_utils_SPGetDisplayFromStatic = function ($) {
-    // This function returns the DisplayName for a column based on the StaticName.
-    $.fn.SPServices.SPGetDisplayFromStatic = function (options) {
+  src_value_added_SPAutocomplete = function ($, utils) {
+    // Provide suggested values from a list for in input column based on characters typed
+    $.fn.SPServices.SPAutocomplete = function (options) {
       var opt = $.extend({}, {
         webURL: '',
-        // URL of the target Web.  If not specified, the current Web is used.
-        listName: '',
-        // The name or GUID of the list
-        columnStaticName: '',
-        // StaticName of the column
-        columnStaticNames: {}  // StaticName of the columns - added in v0.7.2 to allow multiple columns
+        // [Optional] The name of the Web (site) which contains the sourceList
+        sourceList: '',
+        // The name of the list which contains the values
+        sourceColumn: '',
+        // The static name of the column which contains the values
+        columnName: '',
+        // The display name of the column in the form
+        listName: $().SPServices.SPListNameFromUrl(),
+        // The list the form is working with. This is useful if the form is not in the list context.
+        CAMLQuery: '',
+        // [Optional] For power users, this CAML fragment will be Anded with the default query on the relatedList
+        CAMLQueryOptions: '<QueryOptions></QueryOptions>',
+        // [Optional] For power users, allows specifying the CAMLQueryOptions for the GetListItems call
+        CAMLRowLimit: 0,
+        // [Optional] Override the default view rowlimit and get all appropriate rows
+        filterType: 'BeginsWith',
+        // Type of filtering: [BeginsWith, Contains]
+        numChars: 0,
+        // Wait until this number of characters has been typed before attempting any actions
+        ignoreCase: false,
+        // If set to true, the function ignores case, if false it looks for an exact match
+        highlightClass: '',
+        // If a class is supplied, highlight the matched characters in the values by applying that class to a wrapping span
+        uniqueVals: false,
+        // If set to true, the function only adds unique values to the list (no duplicates)
+        maxHeight: 99999,
+        // Sets the maximum number of values to display before scrolling occurs
+        slideDownSpeed: 'fast',
+        // Speed at which the div should slide down when values match (milliseconds or ["fast" | "slow"])
+        processingIndicator: '_layouts/images/REFRESH.GIF',
+        // If present, show this while processing
+        debug: false  // If true, show error messages;if false, run silent
       }, options);
-      var displayName = '';
-      var displayNames = {};
-      var nameCount = opt.columnStaticNames.length > 0 ? opt.columnStaticNames.length : 1;
-      $().SPServices({
-        operation: 'GetList',
-        async: false,
-        cacheXML: true,
-        webURL: opt.webURL,
-        listName: opt.listName,
-        completefunc: function (xData) {
-          if (nameCount > 1) {
-            for (var i = 0; i < nameCount; i++) {
-              displayNames[opt.columnStaticNames[i]] = $(xData.responseXML).find('Field[StaticName=\'' + opt.columnStaticNames[i] + '\']').attr('DisplayName');
-            }
-          } else {
-            displayName = $(xData.responseXML).find('Field[StaticName=\'' + opt.columnStaticName + '\']').attr('DisplayName');
+      var matchNum;
+      // Find the input control for the column and save some of its attributes
+      var columnObj = utils.findFormField(opt.columnName).find('input[Title^=\'' + opt.columnName + '\']');
+      columnObj.css('position', '');
+      var columnObjColor = columnObj.css('color');
+      var columnObjWidth = columnObj.css('width');
+      if (columnObj.html() === null && opt.debug) {
+        utils.errBox('SPServices.SPAutocomplete', 'columnName: ' + opt.columnName, 'Column is not an input control or is not found on page');
+        return;
+      }
+      // Remove the <br/> which isn't needed and messes up the formatting
+      columnObj.closest('span').find('br').remove();
+      columnObj.wrap('<div>');
+      // Create a div to contain the matching values and add it to the DOM
+      var containerId = utils.genContainerId('SPAutocomplete', opt.columnName, opt.listName);
+      columnObj.after('<div><ul id=\'' + containerId + '\' style=\'width:' + columnObjWidth + ';display:none;padding:2px;border:1px solid #2A1FAA;background-color:#FFF;position:absolute;z-index:40;margin:0\'></div>');
+      // Set the width to match the width of the input control
+      var containerObj = $('#' + containerId);
+      containerObj.css('width', columnObjWidth);
+      // Handle keypresses
+      $(columnObj).keyup(function () {
+        // Get the column's value
+        var columnValue = $(this).val();
+        // Hide the container while we're working on it
+        containerObj.hide();
+        // Have enough characters been typed yet?
+        if (columnValue.length < opt.numChars) {
+          return false;
+        }
+        // Show the the processingIndicator as a background image in the input element
+        columnObj.css({
+          'background-image': 'url(' + opt.processingIndicator + ')',
+          'background-position': 'right',
+          'background-repeat': 'no-repeat'
+        });
+        // Array to hold the matched values
+        var matchArray = [];
+        // Build the appropriate CAMLQuery
+        var camlQuery = '<Query><OrderBy><FieldRef Name=\'' + opt.sourceColumn + '\'/></OrderBy><Where>';
+        if (opt.CAMLQuery.length > 0) {
+          camlQuery += '<And>';
+        }
+        camlQuery += '<' + opt.filterType + '><FieldRef Name=\'' + opt.sourceColumn + '\'/><Value Type=\'Text\'>' + columnValue + '</Value></' + opt.filterType + '>';
+        if (opt.CAMLQuery.length > 0) {
+          camlQuery += opt.CAMLQuery + '</And>';
+        }
+        camlQuery += '</Where></Query>';
+        // Call GetListItems to find all of the potential values
+        $().SPServices({
+          operation: 'GetListItems',
+          async: false,
+          webURL: opt.WebURL,
+          listName: opt.sourceList,
+          CAMLQuery: camlQuery,
+          CAMLQueryOptions: opt.CAMLQueryOptions,
+          CAMLViewFields: '<ViewFields><FieldRef Name=\'' + opt.sourceColumn + '\' /></ViewFields>',
+          CAMLRowLimit: opt.CAMLRowLimit,
+          completefunc: function (xData) {
+            // Handle upper/lower case if ignoreCase = true
+            var testValue = opt.ignoreCase ? columnValue.toUpperCase() : columnValue;
+            // See which values match and add the ones that do to matchArray
+            $(xData.responseXML).SPFilterNode('z:row').each(function () {
+              var thisValue = $(this).attr('ows_' + opt.sourceColumn);
+              var thisValueTest = opt.ignoreCase ? $(this).attr('ows_' + opt.sourceColumn).toUpperCase() : $(this).attr('ows_' + opt.sourceColumn);
+              // Make sure we have a match...
+              if (opt.filterType === 'Contains') {
+                var firstMatch = thisValueTest.indexOf(testValue);
+                if (firstMatch >= 0 && (!opt.uniqueVals || $.inArray(thisValue, matchArray) === -1)) {
+                  matchArray.push($(this).attr('ows_' + opt.sourceColumn));
+                }
+              } else {
+                // Handles normal case, which is BeginsWith and and other unknown values
+                if (testValue === thisValueTest.substr(0, testValue.length) && (!opt.uniqueVals || $.inArray(thisValue, matchArray) === -1)) {
+                  matchArray.push($(this).attr('ows_' + opt.sourceColumn));
+                }
+              }
+            });
           }
-        }
-      });
-      return nameCount > 1 ? displayNames : displayName;
-    };
-    // End $.fn.SPServices.SPGetDisplayFromStatic
-    return $;
-  }(jquery);
-  src_utils_SPGetStaticFromDisplay = function ($) {
-    // This function returns the StaticName for a column based on the DisplayName.
-    $.fn.SPServices.SPGetStaticFromDisplay = function (options) {
-      var opt = $.extend({}, {
-        webURL: '',
-        // URL of the target Web.  If not specified, the current Web is used.
-        listName: '',
-        // The name or GUID of the list
-        columnDisplayName: '',
-        // DisplayName of the column
-        columnDisplayNames: {}  // DisplayNames of the columns - added in v0.7.2 to allow multiple columns
-      }, options);
-      var staticName = '';
-      var staticNames = {};
-      var nameCount = opt.columnDisplayNames.length > 0 ? opt.columnDisplayNames.length : 1;
-      $().SPServices({
-        operation: 'GetList',
-        async: false,
-        cacheXML: true,
-        webURL: opt.webURL,
-        listName: opt.listName,
-        completefunc: function (xData) {
-          if (nameCount > 1) {
-            for (var i = 0; i < nameCount; i++) {
-              staticNames[opt.columnDisplayNames[i]] = $(xData.responseXML).find('Field[DisplayName=\'' + opt.columnDisplayNames[i] + '\']').attr('StaticName');
+        });
+        // Build out the set of list elements to contain the available values
+        var out = '';
+        for (var i = 0; i < matchArray.length; i++) {
+          // If a highlightClass has been supplied, wrap a span around each match
+          if (opt.highlightClass.length > 0) {
+            // Set up Regex based on whether we want to ignore case
+            var thisRegex = new RegExp(columnValue, opt.ignoreCase ? 'gi' : 'g');
+            // Look for all occurrences
+            var matches = matchArray[i].match(thisRegex);
+            var startLoc = 0;
+            // Loop for each occurrence, wrapping each in a span with the highlightClass CSS class
+            for (matchNum = 0; matchNum < matches.length; matchNum++) {
+              var thisPos = matchArray[i].indexOf(matches[matchNum], startLoc);
+              var endPos = thisPos + matches[matchNum].length;
+              var thisSpan = '<span class=\'' + opt.highlightClass + '\'>' + matches[matchNum] + '</span>';
+              matchArray[i] = matchArray[i].substr(0, thisPos) + thisSpan + matchArray[i].substr(endPos);
+              startLoc = thisPos + thisSpan.length;
             }
-          } else {
-            staticName = $(xData.responseXML).find('Field[DisplayName=\'' + opt.columnDisplayName + '\']').attr('StaticName');
           }
+          // Add the value to the markup for the container
+          out += '<li style=\'display: block;position: relative;cursor: pointer;\'>' + matchArray[i] + '</li>';
         }
-      });
-      return nameCount > 1 ? staticNames : staticName;
-    };
-    // End $.fn.SPServices.SPGetStaticFromDisplay
-    return $;
-  }(jquery);
-  src_utils_SPGetLastItemId = function ($) {
-    // Function to return the ID of the last item created on a list by a specific user. Useful for maintaining parent/child relationships
-    // between list forms
-    $.fn.SPServices.SPGetLastItemId = function (options) {
-      var opt = $.extend({}, {
-        webURL: '',
-        // URL of the target Web.  If not specified, the current Web is used.
-        listName: '',
-        // The name or GUID of the list
-        userAccount: '',
-        // The account for the user in DOMAIN\username format. If not specified, the current user is used.
-        CAMLQuery: ''  // [Optional] For power users, this CAML fragment will be Anded with the default query on the relatedList
-      }, options);
-      var userId;
-      var lastId = 0;
-      $().SPServices({
-        operation: 'GetUserInfo',
-        webURL: opt.webURL,
-        async: false,
-        userLoginName: opt.userAccount !== '' ? opt.userAccount : $().SPServices.SPGetCurrentUser(),
-        completefunc: function (xData) {
-          $(xData.responseXML).find('User').each(function () {
-            userId = $(this).attr('ID');
-          });
+        // Add all the list elements to the containerId container
+        containerObj.html(out);
+        // Set up hehavior for the available values in the list element
+        $('#' + containerId + ' li').click(function () {
+          $('#' + containerId).fadeOut(opt.slideUpSpeed);
+          columnObj.val($(this).text());
+        }).mouseover(function () {
+          var mouseoverCss = {
+            'cursor': 'hand',
+            'color': '#ffffff',
+            'background': '#3399ff'
+          };
+          $(this).css(mouseoverCss);
+        }).mouseout(function () {
+          var mouseoutCss = {
+            'cursor': 'inherit',
+            'color': columnObjColor,
+            'background': 'transparent'
+          };
+          $(this).css(mouseoutCss);
+        });
+        // If we've got some values to show, then show 'em!
+        if (matchArray.length > 0) {
+          $('#' + containerId).slideDown(opt.slideDownSpeed);
         }
+        // Remove the processing indicator
+        columnObj.css('background-image', '');
       });
-      // Get the list items for the user, sorted by Created, descending. If the CAMLQuery option has been specified, And it with
-      // the existing Where clause
-      var camlQuery = '<Query><Where>';
-      if (opt.CAMLQuery.length > 0) {
-        camlQuery += '<And>';
-      }
-      camlQuery += '<Eq><FieldRef Name=\'Author\' LookupId=\'TRUE\'/><Value Type=\'Integer\'>' + userId + '</Value></Eq>';
-      if (opt.CAMLQuery.length > 0) {
-        camlQuery += opt.CAMLQuery + '</And>';
-      }
-      camlQuery += '</Where><OrderBy><FieldRef Name=\'Created_x0020_Date\' Ascending=\'FALSE\'/></OrderBy></Query>';
-      $().SPServices({
-        operation: 'GetListItems',
-        async: false,
-        webURL: opt.webURL,
-        listName: opt.listName,
-        CAMLQuery: camlQuery,
-        CAMLViewFields: '<ViewFields><FieldRef Name=\'ID\'/></ViewFields>',
-        CAMLRowLimit: 1,
-        CAMLQueryOptions: '<QueryOptions><ViewAttributes Scope=\'Recursive\' /></QueryOptions>',
-        completefunc: function (xData) {
-          $(xData.responseXML).SPFilterNode('z:row').each(function () {
-            lastId = $(this).attr('ows_ID');
-          });
-        }
-      });
-      return lastId;
     };
-    // End $.fn.SPServices.SPGetLastItemId
+    // End $.fn.SPServices.SPAutocomplete
     return $;
-  }(jquery);
-  src_utils_SPGetQueryString = function ($) {
-    // Get the Query String parameters and their values and return in an array
-    // Includes code from http://www.developerdrive.com/2013/08/turning-the-querystring-into-a-json-object-using-javascript/
-    // Simplified in 2014.01 using this code
-    $.fn.SPServices.SPGetQueryString = function (options) {
-      var opt = $.extend({}, {
-        lowercase: false  // If true, parameter names will be converted to lowercase
-      }, options);
-      var queryStringVals = {};
-      var qs = location.search.slice(1).split('&');
-      for (var i = 0; i < qs.length; i++) {
-        var param = qs[i].split('=');
-        var paramName = opt.lowercase ? param[0].toLowerCase() : param[0];
-        queryStringVals[paramName] = decodeURIComponent(param[1] || '');
-      }
-      return queryStringVals;
-    };
-    // End $.fn.SPServices.SPGetQueryString
-    return $;
-  }(jquery);
-  src_utils_SPListNameFromUrl = function ($, utils, constants) {
-    // Get the current list's GUID (ID) from the current URL.  Use of this function only makes sense if we're in a list's context,
-    // and we assume that we are calling it from an aspx page which is a form or view for the list.
-    $.fn.SPServices.SPListNameFromUrl = function (options) {
-      var opt = $.extend({}, {
-        listName: ''  // [Optional] Pass in the name or GUID of a list if you are not in its context. e.g., on a Web Part pages in the Pages library
-      }, options);
-      // Has the list name or GUID been passed in?
-      if (opt.listName.length > 0) {
-        utils.currentContext.thisList = opt.listName;
-        return utils.currentContext.thisList;  // Do we already know the current list?
-      } else if (utils.currentContext.thisList !== undefined && utils.currentContext.thisList.length > 0) {
-        return utils.currentContext.thisList;
-      }
-      // Parse out the list's root URL from the current location or the passed url
-      var thisPage = location.href;
-      var thisPageBaseName = thisPage.substring(0, thisPage.indexOf('.aspx'));
-      var listPath = decodeURIComponent(thisPageBaseName.substring(0, thisPageBaseName.lastIndexOf(constants.SLASH) + 1)).toUpperCase();
-      // Call GetListCollection and loop through the results to find a match with the list's URL to get the list's GUID
-      $().SPServices({
-        operation: 'GetListCollection',
-        async: false,
-        completefunc: function (xData) {
-          $(xData.responseXML).find('List').each(function () {
-            var defaultViewUrl = $(this).attr('DefaultViewUrl');
-            var listCollList = defaultViewUrl.substring(0, defaultViewUrl.lastIndexOf(constants.SLASH) + 1).toUpperCase();
-            if (listPath.indexOf(listCollList) > 0) {
-              utils.currentContext.thisList = $(this).attr('ID');
-              return false;
-            }
-          });
-        }
-      });
-      // Return the list GUID (ID)
-      return utils.currentContext.thisList;
-    };
-    // End $.fn.SPServices.SPListNameFromUrl
-    return $;
-  }(jquery, src_core_SPServicesutilsjs, src_utils_constants);
+  }(jquery, src_core_SPServicesutils);
   src_value_added_SPCascadeDropdowns = function ($, constants, utils) {
     // Function to set up cascading dropdowns on a SharePoint form
     // (Newform.aspx, EditForm.aspx, or any other customized form.)
@@ -4040,7 +4357,66 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
     // End cascadeDropdown
     return $;
   }(jquery, src_utils_constants, src_core_SPServicesutils);
-  src_value_added_SPUpdateMultipleListItems = function ($, utils, constants) {
+  src_value_added_SPComplexToSimpleDropdown = function ($, constants, utils) {
+    // function to convert complex dropdowns to simple dropdowns
+    $.fn.SPServices.SPComplexToSimpleDropdown = function (options) {
+      var opt = $.extend({}, {
+        listName: $().SPServices.SPListNameFromUrl(),
+        // The list the form is working with. This is useful if the form is not in the list context.
+        columnName: '',
+        // The display name of the column in the form
+        completefunc: null,
+        // Function to call on completion of rendering the change.
+        debug: false  // If true, show error messages;if false, run silent
+      }, options);
+      // Find the column's select (dropdown)
+      var columnSelect = $().SPServices.SPDropdownCtl({ displayName: opt.columnName });
+      if (columnSelect.Obj.html() === null && opt.debug) {
+        utils.errBox('SPServices.SPComplexToSimpleDropdown', 'columnName: ' + opt.columnName, constants.TXTColumnNotFound);
+        return;
+      }
+      // If we don't have a complex dropdown, then there is nothing to do
+      if (columnSelect.Type !== constants.dropdownType.complex) {
+        return;
+      }
+      // The available options are stored in the choices attribute of the complex dropdown's input element...
+      var choices = $(columnSelect.Obj).attr('choices').split('|');
+      // We need to know which option is selected already, if any
+      var complexSelectSelectedId = columnSelect.optHid.val();
+      // Build up the simple dropdown, giving it an easy to select id
+      var simpleSelectId = utils.genContainerId('SPComplexToSimpleDropdown', columnSelect.Obj.attr('title'), opt.listName);
+      var simpleSelect = '<select id=\'' + simpleSelectId + '\' title=\'' + opt.columnName + '\'>';
+      for (var i = 0; i < choices.length; i = i + 2) {
+        var simpleSelectSelected = choices[i + 1] === complexSelectSelectedId ? ' selected=\'selected\' ' : ' ';
+        simpleSelect += '<option' + simpleSelectSelected + 'value=\'' + choices[i + 1] + '\'>' + choices[i] + '</option>';
+      }
+      simpleSelect += '</select>';
+      // Append the new simple select to the form
+      columnSelect.Obj.closest('td').prepend(simpleSelect);
+      var simpleSelectObj = $('#' + simpleSelectId);
+      // Remove the complex dropdown functionality since we don't need it anymore...
+      columnSelect.Obj.closest('span').find('img').remove();
+      // ...and hide the input element
+      columnSelect.Obj.closest('span').find('input').hide();
+      // When the simple select changes...
+      simpleSelectObj.change(function () {
+        var thisVal = $(this).val();
+        // ...set the optHid input element's value to the valus of the selected option...
+        columnSelect.optHid.val(thisVal);
+        // ...and save the selected value as the hidden input's value only if the value is not equal to "0" (None)
+        $(columnSelect.Obj).val($(this).find('option[value=\'' + (thisVal !== '0' ? thisVal : '') + '\']').html());
+      });
+      // Trigger a change to ensure that the selected value registers in the complex dropdown
+      simpleSelectObj.trigger('change');
+      // If present, call completefunc when all else is done
+      if (opt.completefunc !== null) {
+        opt.completefunc();
+      }
+    };
+    // End $.fn.SPServices.SPConvertToSimpleDropdown
+    return $;
+  }(jquery, src_utils_constants, src_core_SPServicesutils);
+  src_value_added_SPUpdateMultipleListItems = function ($, constants, utils) {
     // SPUpdateMultipleListItems allows you to update multiple items in a list based upon some common characteristic or metadata criteria.
     $.fn.SPServices.SPUpdateMultipleListItems = function (options) {
       var opt = $.extend({}, {
@@ -4109,7 +4485,7 @@ var src_utils_constants, src_core_SPServicesutilsjs, src_core_SPServicescore, sr
     };
     // End $.fn.SPServices.SPUpdateMultipleListItems
     return $;
-  }(jquery, src_core_SPServicesutilsjs, src_utils_constants);
+  }(jquery, src_utils_constants, src_core_SPServicesutils);
   src_SPServices = function ($) {
     return $;
   }(jquery);

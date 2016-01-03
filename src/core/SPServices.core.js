@@ -1,26 +1,25 @@
 /**
- * Original SPServices modules... Will be broken down into individual modules.
+ * Original SPServices core modules...
  */
 define([
     "jquery",
-    "../core/SPServices.utils",
-    "../utils/constants"
+    "../utils/constants",
+    "../core/SPServices.utils"
 ], function (
     $,
-    utils,
-    constants
+    constants,
+    utils
 ) {
 
     /* jshint undef: true */
 
     "use strict";
 
-    var SOAPAction;
-    // Set up SOAP envelope
+    var SOAPAction = "";
     var SOAPEnvelope = {
         header: "<soap:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'><soap:Body>",
-            footer: "</soap:Body></soap:Envelope>",
-            payload: ""
+        footer: "</soap:Body></soap:Envelope>",
+        payload: ""
     };
 
     // Caching
@@ -341,6 +340,9 @@ define([
 
         // Put together operation header and SOAPAction for the SOAP call based on which Web Service we're calling
         SOAPEnvelope.opheader = "<" + opt.operation + " ";
+
+
+
         switch (WSops[opt.operation][0]) {
             case webServices.ALERTS:
                 SOAPEnvelope.opheader += "xmlns='" + constants.SCHEMASharePoint + "/soap/2002/1/alerts/' >";
@@ -439,21 +441,21 @@ define([
             case "Mode":
                 break;
             case "Login":
-                utils.addToPayload(opt, ["username", "password"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["username", "password"]);
                 break;
 
             // COPY OPERATIONS
             case "CopyIntoItems":
-                utils.addToPayload(opt, ["SourceUrl"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["SourceUrl"]);
                 SOAPEnvelope.payload += "<DestinationUrls>";
                 for (i = 0; i < opt.DestinationUrls.length; i++) {
                     SOAPEnvelope.payload += utils.wrapNode("string", opt.DestinationUrls[i]);
                 }
                 SOAPEnvelope.payload += "</DestinationUrls>";
-                utils.addToPayload(opt, ["Fields", "Stream", "Results"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["Fields", "Stream", "Results"]);
                 break;
             case "CopyIntoItemsLocal":
-                utils.addToPayload(opt, ["SourceUrl"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["SourceUrl"]);
                 SOAPEnvelope.payload += "<DestinationUrls>";
                 for (i = 0; i < opt.DestinationUrls.length; i++) {
                     SOAPEnvelope.payload += utils.wrapNode("string", opt.DestinationUrls[i]);
@@ -461,83 +463,83 @@ define([
                 SOAPEnvelope.payload += "</DestinationUrls>";
                 break;
             case "GetItem":
-                utils.addToPayload(opt, ["Url", "Fields", "Stream"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["Url", "Fields", "Stream"]);
                 break;
 
             // FORM OPERATIONS
             case "GetForm":
-                utils.addToPayload(opt, ["listName", "formUrl"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "formUrl"]);
                 break;
             case "GetFormCollection":
-                utils.addToPayload(opt, ["listName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName"]);
                 break;
 
             // LIST OPERATIONS
             case "AddAttachment":
-                utils.addToPayload(opt, ["listName", "listItemID", "fileName", "attachment"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "listItemID", "fileName", "attachment"]);
                 break;
             case "AddDiscussionBoardItem":
-                utils.addToPayload(opt, ["listName", "message"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "message"]);
                 break;
             case "AddList":
-                utils.addToPayload(opt, ["listName", "description", "templateID"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "description", "templateID"]);
                 break;
             case "AddListFromFeature":
-                utils.addToPayload(opt, ["listName", "description", "featureID", "templateID"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "description", "featureID", "templateID"]);
                 break;
             case "ApplyContentTypeToList":
-                utils.addToPayload(opt, ["webUrl", "contentTypeId", "listName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["webUrl", "contentTypeId", "listName"]);
                 break;
             case "CheckInFile":
-                utils.addToPayload(opt, ["pageUrl", "comment", "CheckinType"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["pageUrl", "comment", "CheckinType"]);
                 break;
             case "CheckOutFile":
-                utils.addToPayload(opt, ["pageUrl", "checkoutToLocal", "lastmodified"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["pageUrl", "checkoutToLocal", "lastmodified"]);
                 break;
             case "CreateContentType":
-                utils.addToPayload(opt, ["listName", "displayName", "parentType", "fields", "contentTypeProperties", "addToView"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "displayName", "parentType", "fields", "contentTypeProperties", "addToView"]);
                 break;
             case "DeleteAttachment":
-                utils.addToPayload(opt, ["listName", "listItemID", "url"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "listItemID", "url"]);
                 break;
             case "DeleteContentType":
-                utils.addToPayload(opt, ["listName", "contentTypeId"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "contentTypeId"]);
                 break;
             case "DeleteContentTypeXmlDocument":
-                utils.addToPayload(opt, ["listName", "contentTypeId", "documentUri"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "contentTypeId", "documentUri"]);
                 break;
             case "DeleteList":
-                utils.addToPayload(opt, ["listName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName"]);
                 break;
             case "GetAttachmentCollection":
-                utils.addToPayload(opt, ["listName", ["listItemID", "ID"]]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", ["listItemID", "ID"]]);
                 break;
             case "GetList":
-                utils.addToPayload(opt, ["listName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName"]);
                 break;
             case "GetListAndView":
-                utils.addToPayload(opt, ["listName", "viewName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "viewName"]);
                 break;
             case "GetListCollection":
                 break;
             case "GetListContentType":
-                utils.addToPayload(opt, ["listName", "contentTypeId"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "contentTypeId"]);
                 break;
             case "GetListContentTypes":
-                utils.addToPayload(opt, ["listName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName"]);
                 break;
             case "GetListItems":
-                utils.addToPayload(opt, ["listName", "viewName", ["query", "CAMLQuery"],
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "viewName", ["query", "CAMLQuery"],
                     ["viewFields", "CAMLViewFields"],
                     ["rowLimit", "CAMLRowLimit"],
                     ["queryOptions", "CAMLQueryOptions"]
                 ]);
                 break;
             case "GetListItemChanges":
-                utils.addToPayload(opt, ["listName", "viewFields", "since", "contains"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "viewFields", "since", "contains"]);
                 break;
             case "GetListItemChangesSinceToken":
-                utils.addToPayload(opt, ["listName", "viewName", ["query", "CAMLQuery"],
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "viewName", ["query", "CAMLQuery"],
                     ["viewFields", "CAMLViewFields"],
                     ["rowLimit", "CAMLRowLimit"],
                     ["queryOptions", "CAMLQueryOptions"], {
@@ -550,27 +552,27 @@ define([
                 ]);
                 break;
             case "GetVersionCollection":
-                utils.addToPayload(opt, ["strlistID", "strlistItemID", "strFieldName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["strlistID", "strlistItemID", "strFieldName"]);
                 break;
             case "UndoCheckOut":
-                utils.addToPayload(opt, ["pageUrl"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["pageUrl"]);
                 break;
             case "UpdateContentType":
-                utils.addToPayload(opt, ["listName", "contentTypeId", "contentTypeProperties", "newFields", "updateFields", "deleteFields", "addToView"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "contentTypeId", "contentTypeProperties", "newFields", "updateFields", "deleteFields", "addToView"]);
                 break;
             case "UpdateContentTypesXmlDocument":
-                utils.addToPayload(opt, ["listName", "newDocument"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "newDocument"]);
                 break;
             case "UpdateContentTypeXmlDocument":
-                utils.addToPayload(opt, ["listName", "contentTypeId", "newDocument"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "contentTypeId", "newDocument"]);
                 break;
             case "UpdateList":
-                utils.addToPayload(opt, ["listName", "listProperties", "newFields", "updateFields", "deleteFields", "listVersion"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "listProperties", "newFields", "updateFields", "deleteFields", "listVersion"]);
                 break;
             case "UpdateListItems":
-                utils.addToPayload(opt, ["listName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName"]);
                 if (typeof opt.updates !== "undefined" && opt.updates.length > 0) {
-                    utils.addToPayload(opt, ["updates"]);
+                    utils.addToPayload(opt, SOAPEnvelope, ["updates"]);
                 } else {
                     SOAPEnvelope.payload += "<updates><Batch OnError='Continue'><Method ID='1' Cmd='" + opt.batchCmd + "'>";
                     for (i = 0; i < opt.valuepairs.length; i++) {
@@ -585,57 +587,57 @@ define([
 
             // MEETINGS OPERATIONS
             case "AddMeeting":
-                utils.addToPayload(opt, ["organizerEmail", "uid", "sequence", "utcDateStamp", "title", "location", "utcDateStart", "utcDateEnd", "nonGregorian"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["organizerEmail", "uid", "sequence", "utcDateStamp", "title", "location", "utcDateStart", "utcDateEnd", "nonGregorian"]);
                 break;
             case "CreateWorkspace":
-                utils.addToPayload(opt, ["title", "templateName", "lcid", "timeZoneInformation"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["title", "templateName", "lcid", "timeZoneInformation"]);
                 break;
             case "RemoveMeeting":
-                utils.addToPayload(opt, ["recurrenceId", "uid", "sequence", "utcDateStamp", "cancelMeeting"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["recurrenceId", "uid", "sequence", "utcDateStamp", "cancelMeeting"]);
                 break;
             case "SetWorkspaceTitle":
-                utils.addToPayload(opt, ["title"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["title"]);
                 break;
 
             // OFFICIALFILE OPERATIONS
             case "GetRecordRouting":
-                utils.addToPayload(opt, ["recordRouting"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["recordRouting"]);
                 break;
             case "GetRecordRoutingCollection":
                 break;
             case "GetServerInfo":
                 break;
             case "SubmitFile":
-                utils.addToPayload(opt, ["fileToSubmit"], ["properties"], ["recordRouting"], ["sourceUrl"], ["userName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["fileToSubmit"], ["properties"], ["recordRouting"], ["sourceUrl"], ["userName"]);
                 break;
 
 
             // PEOPLE OPERATIONS
             case "ResolvePrincipals":
-                utils.addToPayload(opt, ["principalKeys", "principalType", "addToUserInfoList"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["principalKeys", "principalType", "addToUserInfoList"]);
                 break;
             case "SearchPrincipals":
-                utils.addToPayload(opt, ["searchText", "maxResults", "principalType"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["searchText", "maxResults", "principalType"]);
                 break;
 
             // PERMISSION OPERATIONS
             case "AddPermission":
-                utils.addToPayload(opt, ["objectName", "objectType", "permissionIdentifier", "permissionType", "permissionMask"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["objectName", "objectType", "permissionIdentifier", "permissionType", "permissionMask"]);
                 break;
             case "AddPermissionCollection":
-                utils.addToPayload(opt, ["objectName", "objectType", "permissionsInfoXml"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["objectName", "objectType", "permissionsInfoXml"]);
                 break;
             case "GetPermissionCollection":
-                utils.addToPayload(opt, ["objectName", "objectType"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["objectName", "objectType"]);
                 break;
             case "RemovePermission":
-                utils.addToPayload(opt, ["objectName", "objectType", "permissionIdentifier", "permissionType"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["objectName", "objectType", "permissionIdentifier", "permissionType"]);
                 break;
             case "RemovePermissionCollection":
-                utils.addToPayload(opt, ["objectName", "objectType", "memberIdsXml"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["objectName", "objectType", "memberIdsXml"]);
                 break;
             case "UpdatePermission":
-                utils.addToPayload(opt, ["objectName", "objectType", "permissionIdentifier", "permissionType", "permissionMask"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["objectName", "objectType", "permissionIdentifier", "permissionType", "permissionMask"]);
                 break;
 
             // PUBLISHEDLINKSSERVICE OPERATIONS
@@ -672,18 +674,18 @@ define([
 
             // SHAREPOINTDIAGNOSTICS OPERATIONS
             case "SendClientScriptErrorReport":
-                utils.addToPayload(opt, ["message", "file", "line", "client", "stack", "team", "originalFile"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["message", "file", "line", "client", "stack", "team", "originalFile"]);
                 break;
 
             // SITEDATA OPERATIONS
             case "EnumerateFolder":
-                utils.addToPayload(opt, ["strFolderUrl"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["strFolderUrl"]);
                 break;
             case "GetAttachments":
-                utils.addToPayload(opt, ["strListName", "strItemId"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["strListName", "strItemId"]);
                 break;
             case "SiteDataGetList":
-                utils.addToPayload(opt, ["strListName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["strListName"]);
                 // Because this operation has a name which duplicates the Lists WS, need to handle
                 SOAPEnvelope = constants.siteDataFixSOAPEnvelope(SOAPEnvelope, opt.operation);
                 break;
@@ -696,7 +698,7 @@ define([
                 SOAPEnvelope = constants.siteDataFixSOAPEnvelope(SOAPEnvelope, opt.operation);
                 break;
             case "SiteDataGetSiteUrl":
-                utils.addToPayload(opt, ["Url"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["Url"]);
                 // Because this operation has a name which duplicates the Lists WS, need to handle
                 SOAPEnvelope = constants.siteDataFixSOAPEnvelope(SOAPEnvelope, opt.operation);
                 break;
@@ -707,345 +709,345 @@ define([
 
             // SITES OPERATIONS
             case "CreateWeb":
-                utils.addToPayload(opt, ["url", "title", "description", "templateName", "language", "languageSpecified",
+                utils.addToPayload(opt, SOAPEnvelope, ["url", "title", "description", "templateName", "language", "languageSpecified",
                     "locale", "localeSpecified", "collationLocale", "collationLocaleSpecified", "uniquePermissions",
                     "uniquePermissionsSpecified", "anonymous", "anonymousSpecified", "presence", "presenceSpecified"
                 ]);
                 break;
             case "DeleteWeb":
-                utils.addToPayload(opt, ["url"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url"]);
                 break;
             case "GetSite":
-                utils.addToPayload(opt, ["SiteUrl"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["SiteUrl"]);
                 break;
             case "GetSiteTemplates":
-                utils.addToPayload(opt, ["LCID", "TemplateList"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["LCID", "TemplateList"]);
                 break;
 
             // SOCIALDATASERVICE OPERATIONS
             case "AddComment":
-                utils.addToPayload(opt, ["url", "comment", "isHighPriority", "title"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url", "comment", "isHighPriority", "title"]);
                 break;
             case "AddTag":
-                utils.addToPayload(opt, ["url", "termID", "title", "isPrivate"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url", "termID", "title", "isPrivate"]);
                 break;
             case "AddTagByKeyword":
-                utils.addToPayload(opt, ["url", "keyword", "title", "isPrivate"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url", "keyword", "title", "isPrivate"]);
                 break;
             case "CountCommentsOfUser":
-                utils.addToPayload(opt, ["userAccountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userAccountName"]);
                 break;
             case "CountCommentsOfUserOnUrl":
-                utils.addToPayload(opt, ["userAccountName", "url"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userAccountName", "url"]);
                 break;
             case "CountCommentsOnUrl":
-                utils.addToPayload(opt, ["url"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url"]);
                 break;
             case "CountRatingsOnUrl":
-                utils.addToPayload(opt, ["url"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url"]);
                 break;
             case "CountTagsOfUser":
-                utils.addToPayload(opt, ["userAccountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userAccountName"]);
                 break;
             case "DeleteComment":
-                utils.addToPayload(opt, ["url", "lastModifiedTime"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url", "lastModifiedTime"]);
                 break;
             case "DeleteRating":
-                utils.addToPayload(opt, ["url"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url"]);
                 break;
             case "DeleteTag":
-                utils.addToPayload(opt, ["url", "termID"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url", "termID"]);
                 break;
             case "DeleteTagByKeyword":
-                utils.addToPayload(opt, ["url", "keyword"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url", "keyword"]);
                 break;
             case "DeleteTags":
-                utils.addToPayload(opt, ["url"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url"]);
                 break;
             case "GetAllTagTerms":
-                utils.addToPayload(opt, ["maximumItemsToReturn"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["maximumItemsToReturn"]);
                 break;
             case "GetAllTagTermsForUrlFolder":
-                utils.addToPayload(opt, ["urlFolder", "maximumItemsToReturn"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["urlFolder", "maximumItemsToReturn"]);
                 break;
             case "GetAllTagUrls":
-                utils.addToPayload(opt, ["termID"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["termID"]);
                 break;
             case "GetAllTagUrlsByKeyword":
-                utils.addToPayload(opt, ["keyword"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["keyword"]);
                 break;
             case "GetCommentsOfUser":
-                utils.addToPayload(opt, ["userAccountName", "maximumItemsToReturn", "startIndex"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userAccountName", "maximumItemsToReturn", "startIndex"]);
                 break;
             case "GetCommentsOfUserOnUrl":
-                utils.addToPayload(opt, ["userAccountName", "url"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userAccountName", "url"]);
                 break;
             case "GetCommentsOnUrl":
-                utils.addToPayload(opt, ["url", "maximumItemsToReturn", "startIndex"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url", "maximumItemsToReturn", "startIndex"]);
                 if (typeof opt.excludeItemsTime !== "undefined" && opt.excludeItemsTime.length > 0) {
                     SOAPEnvelope.payload += utils.wrapNode("excludeItemsTime", opt.excludeItemsTime);
                 }
                 break;
             case "GetRatingAverageOnUrl":
-                utils.addToPayload(opt, ["url"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url"]);
                 break;
             case "GetRatingOfUserOnUrl":
-                utils.addToPayload(opt, ["userAccountName", "url"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userAccountName", "url"]);
                 break;
             case "GetRatingOnUrl":
-                utils.addToPayload(opt, ["url"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url"]);
                 break;
             case "GetRatingsOfUser":
-                utils.addToPayload(opt, ["userAccountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userAccountName"]);
                 break;
             case "GetRatingsOnUrl":
-                utils.addToPayload(opt, ["url"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url"]);
                 break;
             case "GetSocialDataForFullReplication":
-                utils.addToPayload(opt, ["userAccountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userAccountName"]);
                 break;
             case "GetTags":
-                utils.addToPayload(opt, ["url"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url"]);
                 break;
             case "GetTagsOfUser":
-                utils.addToPayload(opt, ["userAccountName", "maximumItemsToReturn", "startIndex"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userAccountName", "maximumItemsToReturn", "startIndex"]);
                 break;
             case "GetTagTerms":
-                utils.addToPayload(opt, ["maximumItemsToReturn"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["maximumItemsToReturn"]);
                 break;
             case "GetTagTermsOfUser":
-                utils.addToPayload(opt, ["userAccountName", "maximumItemsToReturn"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userAccountName", "maximumItemsToReturn"]);
                 break;
             case "GetTagTermsOnUrl":
-                utils.addToPayload(opt, ["url", "maximumItemsToReturn"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url", "maximumItemsToReturn"]);
                 break;
             case "GetTagUrls":
-                utils.addToPayload(opt, ["termID"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["termID"]);
                 break;
             case "GetTagUrlsByKeyword":
-                utils.addToPayload(opt, ["keyword"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["keyword"]);
                 break;
             case "GetTagUrlsOfUser":
-                utils.addToPayload(opt, ["termID", "userAccountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["termID", "userAccountName"]);
                 break;
             case "GetTagUrlsOfUserByKeyword":
-                utils.addToPayload(opt, ["keyword", "userAccountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["keyword", "userAccountName"]);
                 break;
             case "SetRating":
-                utils.addToPayload(opt, ["url", "rating", "title", "analysisDataEntry"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url", "rating", "title", "analysisDataEntry"]);
                 break;
             case "UpdateComment":
-                utils.addToPayload(opt, ["url", "lastModifiedTime", "comment", "isHighPriority"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["url", "lastModifiedTime", "comment", "isHighPriority"]);
                 break;
 
             // SPELLCHECK OPERATIONS
             case "SpellCheck":
-                utils.addToPayload(opt, ["chunksToSpell", "declaredLanguage", "useLad"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["chunksToSpell", "declaredLanguage", "useLad"]);
                 break;
 
             // TAXONOMY OPERATIONS
             case "AddTerms":
-                utils.addToPayload(opt, ["sharedServiceId", "termSetId", "lcid", "newTerms"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["sharedServiceId", "termSetId", "lcid", "newTerms"]);
                 break;
             case "GetChildTermsInTerm":
-                utils.addToPayload(opt, ["sspId", "lcid", "termId", "termSetId"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["sspId", "lcid", "termId", "termSetId"]);
                 break;
             case "GetChildTermsInTermSet":
-                utils.addToPayload(opt, ["sspId", "lcid", "termSetId"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["sspId", "lcid", "termSetId"]);
                 break;
             case "GetKeywordTermsByGuids":
-                utils.addToPayload(opt, ["termIds", "lcid"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["termIds", "lcid"]);
                 break;
             case "GetTermsByLabel":
-                utils.addToPayload(opt, ["label", "lcid", "matchOption", "resultCollectionSize", "termIds", "addIfNotFound"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["label", "lcid", "matchOption", "resultCollectionSize", "termIds", "addIfNotFound"]);
                 break;
             case "GetTermSets":
-                utils.addToPayload(opt, ["sharedServiceIds", "termSetIds", "lcid", "clientTimeStamps", "clientVersions"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["sharedServiceIds", "termSetIds", "lcid", "clientTimeStamps", "clientVersions"]);
                 break;
 
             // USERS AND GROUPS OPERATIONS
             case "AddGroup":
-                utils.addToPayload(opt, ["groupName", "ownerIdentifier", "ownerType", "defaultUserLoginName", "description"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["groupName", "ownerIdentifier", "ownerType", "defaultUserLoginName", "description"]);
                 break;
             case "AddGroupToRole":
-                utils.addToPayload(opt, ["groupName", "roleName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["groupName", "roleName"]);
                 break;
             case "AddRole":
-                utils.addToPayload(opt, ["roleName", "description", "permissionMask"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["roleName", "description", "permissionMask"]);
                 break;
             case "AddRoleDef":
-                utils.addToPayload(opt, ["roleName", "description", "permissionMask"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["roleName", "description", "permissionMask"]);
                 break;
             case "AddUserCollectionToGroup":
-                utils.addToPayload(opt, ["groupName", "usersInfoXml"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["groupName", "usersInfoXml"]);
                 break;
             case "AddUserCollectionToRole":
-                utils.addToPayload(opt, ["roleName", "usersInfoXml"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["roleName", "usersInfoXml"]);
                 break;
             case "AddUserToGroup":
-                utils.addToPayload(opt, ["groupName", "userName", "userLoginName", "userEmail", "userNotes"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["groupName", "userName", "userLoginName", "userEmail", "userNotes"]);
                 break;
             case "AddUserToRole":
-                utils.addToPayload(opt, ["roleName", "userName", "userLoginName", "userEmail", "userNotes"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["roleName", "userName", "userLoginName", "userEmail", "userNotes"]);
                 break;
             case "GetAllUserCollectionFromWeb":
                 break;
             case "GetGroupCollection":
-                utils.addToPayload(opt, ["groupNamesXml"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["groupNamesXml"]);
                 break;
             case "GetGroupCollectionFromRole":
-                utils.addToPayload(opt, ["roleName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["roleName"]);
                 break;
             case "GetGroupCollectionFromSite":
                 break;
             case "GetGroupCollectionFromUser":
-                utils.addToPayload(opt, ["userLoginName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userLoginName"]);
                 break;
             case "GetGroupCollectionFromWeb":
                 break;
             case "GetGroupInfo":
-                utils.addToPayload(opt, ["groupName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["groupName"]);
                 break;
             case "GetRoleCollection":
-                utils.addToPayload(opt, ["roleNamesXml"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["roleNamesXml"]);
                 break;
             case "GetRoleCollectionFromGroup":
-                utils.addToPayload(opt, ["groupName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["groupName"]);
                 break;
             case "GetRoleCollectionFromUser":
-                utils.addToPayload(opt, ["userLoginName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userLoginName"]);
                 break;
             case "GetRoleCollectionFromWeb":
                 break;
             case "GetRoleInfo":
-                utils.addToPayload(opt, ["roleName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["roleName"]);
                 break;
             case "GetRolesAndPermissionsForCurrentUser":
                 break;
             case "GetRolesAndPermissionsForSite":
                 break;
             case "GetUserCollection":
-                utils.addToPayload(opt, ["userLoginNamesXml"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userLoginNamesXml"]);
                 break;
             case "GetUserCollectionFromGroup":
-                utils.addToPayload(opt, ["groupName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["groupName"]);
                 break;
             case "GetUserCollectionFromRole":
-                utils.addToPayload(opt, ["roleName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["roleName"]);
                 break;
             case "GetUserCollectionFromSite":
                 break;
             case "GetUserCollectionFromWeb":
                 break;
             case "GetUserInfo":
-                utils.addToPayload(opt, ["userLoginName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userLoginName"]);
                 break;
             case "GetUserLoginFromEmail":
-                utils.addToPayload(opt, ["emailXml"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["emailXml"]);
                 break;
             case "RemoveGroup":
-                utils.addToPayload(opt, ["groupName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["groupName"]);
                 break;
             case "RemoveGroupFromRole":
-                utils.addToPayload(opt, ["roleName", "groupName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["roleName", "groupName"]);
                 break;
             case "RemoveRole":
-                utils.addToPayload(opt, ["roleName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["roleName"]);
                 break;
             case "RemoveUserCollectionFromGroup":
-                utils.addToPayload(opt, ["groupName", "userLoginNamesXml"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["groupName", "userLoginNamesXml"]);
                 break;
             case "RemoveUserCollectionFromRole":
-                utils.addToPayload(opt, ["roleName", "userLoginNamesXml"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["roleName", "userLoginNamesXml"]);
                 break;
             case "RemoveUserCollectionFromSite":
-                utils.addToPayload(opt, ["userLoginNamesXml"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userLoginNamesXml"]);
                 break;
             case "RemoveUserFromGroup":
-                utils.addToPayload(opt, ["groupName", "userLoginName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["groupName", "userLoginName"]);
                 break;
             case "RemoveUserFromRole":
-                utils.addToPayload(opt, ["roleName", "userLoginName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["roleName", "userLoginName"]);
                 break;
             case "RemoveUserFromSite":
-                utils.addToPayload(opt, ["userLoginName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userLoginName"]);
                 break;
             case "RemoveUserFromWeb":
-                utils.addToPayload(opt, ["userLoginName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userLoginName"]);
                 break;
             case "UpdateGroupInfo":
-                utils.addToPayload(opt, ["oldGroupName", "groupName", "ownerIdentifier", "ownerType", "description"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["oldGroupName", "groupName", "ownerIdentifier", "ownerType", "description"]);
                 break;
             case "UpdateRoleDefInfo":
-                utils.addToPayload(opt, ["oldRoleName", "roleName", "description", "permissionMask"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["oldRoleName", "roleName", "description", "permissionMask"]);
                 break;
             case "UpdateRoleInfo":
-                utils.addToPayload(opt, ["oldRoleName", "roleName", "description", "permissionMask"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["oldRoleName", "roleName", "description", "permissionMask"]);
                 break;
             case "UpdateUserInfo":
-                utils.addToPayload(opt, ["userLoginName", "userName", "userEmail", "userNotes"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["userLoginName", "userName", "userEmail", "userNotes"]);
                 break;
 
             // USERPROFILESERVICE OPERATIONS
             case "AddColleague":
-                utils.addToPayload(opt, ["accountName", "colleagueAccountName", "group", "privacy", "isInWorkGroup"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName", "colleagueAccountName", "group", "privacy", "isInWorkGroup"]);
                 break;
             case "AddLink":
-                utils.addToPayload(opt, ["accountName", "name", "url", "group", "privacy"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName", "name", "url", "group", "privacy"]);
                 break;
             case "AddMembership":
-                utils.addToPayload(opt, ["accountName", "membershipInfo", "group", "privacy"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName", "membershipInfo", "group", "privacy"]);
                 break;
             case "AddPinnedLink":
-                utils.addToPayload(opt, ["accountName", "name", "url"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName", "name", "url"]);
                 break;
             case "CreateMemberGroup":
-                utils.addToPayload(opt, ["membershipInfo"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["membershipInfo"]);
                 break;
             case "CreateUserProfileByAccountName":
-                utils.addToPayload(opt, ["accountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName"]);
                 break;
             case "GetCommonColleagues":
-                utils.addToPayload(opt, ["accountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName"]);
                 break;
             case "GetCommonManager":
-                utils.addToPayload(opt, ["accountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName"]);
                 break;
             case "GetCommonMemberships":
-                utils.addToPayload(opt, ["accountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName"]);
                 break;
             case "GetInCommon":
-                utils.addToPayload(opt, ["accountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName"]);
                 break;
             case "GetPropertyChoiceList":
-                utils.addToPayload(opt, ["propertyName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["propertyName"]);
                 break;
             case "GetUserColleagues":
-                utils.addToPayload(opt, ["accountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName"]);
                 break;
             case "GetUserLinks":
-                utils.addToPayload(opt, ["accountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName"]);
                 break;
             case "GetUserMemberships":
-                utils.addToPayload(opt, ["accountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName"]);
                 break;
             case "GetUserPinnedLinks":
-                utils.addToPayload(opt, ["accountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName"]);
                 break;
             case "GetUserProfileByGuid":
-                utils.addToPayload(opt, ["guid"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["guid"]);
                 break;
             case "GetUserProfileByIndex":
-                utils.addToPayload(opt, ["index"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["index"]);
                 break;
             case "GetUserProfileByName":
                 // Note that this operation is inconsistent with the others, using AccountName rather than accountName
                 if (typeof opt.accountName !== "undefined" && opt.accountName.length > 0) {
-                    utils.addToPayload(opt, [
+                    utils.addToPayload(opt, SOAPEnvelope, [
                         ["AccountName", "accountName"]
                     ]);
                 } else {
-                    utils.addToPayload(opt, ["AccountName"]);
+                    utils.addToPayload(opt, SOAPEnvelope, ["AccountName"]);
                 }
                 break;
             case "GetUserProfileCount":
@@ -1053,135 +1055,135 @@ define([
             case "GetUserProfileSchema":
                 break;
             case "GetUserPropertyByAccountName":
-                utils.addToPayload(opt, ["accountName", "propertyName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName", "propertyName"]);
                 break;
             case "ModifyUserPropertyByAccountName":
-                utils.addToPayload(opt, ["accountName", "newData"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName", "newData"]);
                 break;
             case "RemoveAllColleagues":
-                utils.addToPayload(opt, ["accountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName"]);
                 break;
             case "RemoveAllLinks":
-                utils.addToPayload(opt, ["accountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName"]);
                 break;
             case "RemoveAllMemberships":
-                utils.addToPayload(opt, ["accountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName"]);
                 break;
             case "RemoveAllPinnedLinks":
-                utils.addToPayload(opt, ["accountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName"]);
                 break;
             case "RemoveColleague":
-                utils.addToPayload(opt, ["accountName", "colleagueAccountName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName", "colleagueAccountName"]);
                 break;
             case "RemoveLink":
-                utils.addToPayload(opt, ["accountName", "id"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName", "id"]);
                 break;
             case "RemoveMembership":
-                utils.addToPayload(opt, ["accountName", "sourceInternal", "sourceReference"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName", "sourceInternal", "sourceReference"]);
                 break;
             case "RemovePinnedLink":
-                utils.addToPayload(opt, ["accountName", "id"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName", "id"]);
                 break;
             case "UpdateColleaguePrivacy":
-                utils.addToPayload(opt, ["accountName", "colleagueAccountName", "newPrivacy"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName", "colleagueAccountName", "newPrivacy"]);
                 break;
             case "UpdateLink":
-                utils.addToPayload(opt, ["accountName", "data"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName", "data"]);
                 break;
             case "UpdateMembershipPrivacy":
-                utils.addToPayload(opt, ["accountName", "sourceInternal", "sourceReference", "newPrivacy"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName", "sourceInternal", "sourceReference", "newPrivacy"]);
                 break;
             case "UpdatePinnedLink ":
-                utils.addToPayload(opt, ["accountName", "data"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["accountName", "data"]);
                 break;
 
             // VERSIONS OPERATIONS
             case "DeleteAllVersions":
-                utils.addToPayload(opt, ["fileName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["fileName"]);
                 break;
             case "DeleteVersion":
-                utils.addToPayload(opt, ["fileName", "fileVersion"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["fileName", "fileVersion"]);
                 break;
             case "GetVersions":
-                utils.addToPayload(opt, ["fileName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["fileName"]);
                 break;
             case "RestoreVersion":
-                utils.addToPayload(opt, ["fileName", "fileVersion"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["fileName", "fileVersion"]);
                 break;
 
             // VIEW OPERATIONS
             case "AddView":
-                utils.addToPayload(opt, ["listName", "viewName", "viewFields", "query", "rowLimit", "type", "makeViewDefault"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "viewName", "viewFields", "query", "rowLimit", "type", "makeViewDefault"]);
                 break;
             case "DeleteView":
-                utils.addToPayload(opt, ["listName", "viewName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "viewName"]);
                 break;
             case "GetView":
-                utils.addToPayload(opt, ["listName", "viewName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "viewName"]);
                 break;
             case "GetViewCollection":
-                utils.addToPayload(opt, ["listName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName"]);
                 break;
             case "GetViewHtml":
-                utils.addToPayload(opt, ["listName", "viewName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "viewName"]);
                 break;
             case "UpdateView":
-                utils.addToPayload(opt, ["listName", "viewName", "viewProperties", "query", "viewFields", "aggregations", "formats", "rowLimit"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "viewName", "viewProperties", "query", "viewFields", "aggregations", "formats", "rowLimit"]);
                 break;
             case "UpdateViewHtml":
-                utils.addToPayload(opt, ["listName", "viewName", "viewProperties", "toolbar", "viewHeader", "viewBody", "viewFooter", "viewEmpty", "rowLimitExceeded",
+                utils.addToPayload(opt, SOAPEnvelope, ["listName", "viewName", "viewProperties", "toolbar", "viewHeader", "viewBody", "viewFooter", "viewEmpty", "rowLimitExceeded",
                     "query", "viewFields", "aggregations", "formats", "rowLimit"
                 ]);
                 break;
 
             // WEBPARTPAGES OPERATIONS
             case "AddWebPart":
-                utils.addToPayload(opt, ["pageUrl", "webPartXml", "storage"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["pageUrl", "webPartXml", "storage"]);
                 break;
             case "AddWebPartToZone":
-                utils.addToPayload(opt, ["pageUrl", "webPartXml", "storage", "zoneId", "zoneIndex"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["pageUrl", "webPartXml", "storage", "zoneId", "zoneIndex"]);
                 break;
             case "DeleteWebPart":
-                utils.addToPayload(opt, ["pageUrl", "storageKey", "storage"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["pageUrl", "storageKey", "storage"]);
                 break;
             case "GetWebPart2":
-                utils.addToPayload(opt, ["pageUrl", "storageKey", "storage", "behavior"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["pageUrl", "storageKey", "storage", "behavior"]);
                 break;
             case "GetWebPartPage":
-                utils.addToPayload(opt, ["documentName", "behavior"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["documentName", "behavior"]);
                 break;
             case "GetWebPartProperties":
-                utils.addToPayload(opt, ["pageUrl", "storage"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["pageUrl", "storage"]);
                 break;
             case "GetWebPartProperties2":
-                utils.addToPayload(opt, ["pageUrl", "storage", "behavior"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["pageUrl", "storage", "behavior"]);
                 break;
             case "SaveWebPart2":
-                utils.addToPayload(opt, ["pageUrl", "storageKey", "webPartXml", "storage", "allowTypeChange"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["pageUrl", "storageKey", "webPartXml", "storage", "allowTypeChange"]);
                 break;
 
             // WEBS OPERATIONS
             case "WebsCreateContentType":
-                utils.addToPayload(opt, ["displayName", "parentType", "newFields", "contentTypeProperties"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["displayName", "parentType", "newFields", "contentTypeProperties"]);
                 break;
             case "GetColumns":
-                utils.addToPayload(opt, ["webUrl"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["webUrl"]);
                 break;
             case "GetContentType":
-                utils.addToPayload(opt, ["contentTypeId"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["contentTypeId"]);
                 break;
             case "GetContentTypes":
                 break;
             case "GetCustomizedPageStatus":
-                utils.addToPayload(opt, ["fileUrl"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["fileUrl"]);
                 break;
             case "GetListTemplates":
                 break;
             case "GetObjectIdFromUrl":
-                utils.addToPayload(opt, ["objectUrl"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["objectUrl"]);
                 break;
             case "GetWeb":
-                utils.addToPayload(opt, [
+                utils.addToPayload(opt, SOAPEnvelope, [
                     ["webUrl", "webURL"]
                 ]);
                 break;
@@ -1190,38 +1192,38 @@ define([
             case "GetAllSubWebCollection":
                 break;
             case "UpdateColumns":
-                utils.addToPayload(opt, ["newFields", "updateFields", "deleteFields"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["newFields", "updateFields", "deleteFields"]);
                 break;
             case "WebsUpdateContentType":
-                utils.addToPayload(opt, ["contentTypeId", "contentTypeProperties", "newFields", "updateFields", "deleteFields"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["contentTypeId", "contentTypeProperties", "newFields", "updateFields", "deleteFields"]);
                 break;
             case "WebUrlFromPageUrl":
-                utils.addToPayload(opt, [
+                utils.addToPayload(opt, SOAPEnvelope, [
                     ["pageUrl", "pageURL"]
                 ]);
                 break;
 
             // WORKFLOW OPERATIONS
             case "AlterToDo":
-                utils.addToPayload(opt, ["item", "todoId", "todoListId", "taskData"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["item", "todoId", "todoListId", "taskData"]);
                 break;
             case "ClaimReleaseTask":
-                utils.addToPayload(opt, ["item", "taskId", "listId", "fClaim"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["item", "taskId", "listId", "fClaim"]);
                 break;
             case "GetTemplatesForItem":
-                utils.addToPayload(opt, ["item"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["item"]);
                 break;
             case "GetToDosForItem":
-                utils.addToPayload(opt, ["item"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["item"]);
                 break;
             case "GetWorkflowDataForItem":
-                utils.addToPayload(opt, ["item"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["item"]);
                 break;
             case "GetWorkflowTaskData":
-                utils.addToPayload(opt, ["item", "listId", "taskId"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["item", "listId", "taskId"]);
                 break;
             case "StartWorkflow":
-                utils.addToPayload(opt, ["item", "templateId", "workflowParameters"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["item", "templateId", "workflowParameters"]);
                 break;
 
             default:

@@ -1,10 +1,12 @@
 define([
     'jquery',
-    '../core/SPServices.utils',
-    "../utils/constants"
-], function ($,
-             utils,
-             constants) {
+    '../utils/constants',
+    '../core/SPServices.utils'
+], function (
+    $,
+    constants,
+    utils
+) {
 
     "use strict";
 

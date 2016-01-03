@@ -1,34 +1,34 @@
 define([
     'jquery',
-    '../core/SPServices.utils.js',
-    "../utils/constants",
+    '../utils/constants',
+    '../core/SPServices.utils',
     //---------------------------
     // We don't need local variables for these dependencies
     // because they are added to the jQuery namespace.
     '../core/SPServices.core'
 ], function (
     $,
-    utils,
-    constants
+    constants,
+    utils
 ) {
 
     "use strict";
 
-    // Get the current list's GUID (ID) from the current URL.  Use of this function only makes sense if we're in a list's context,
-    // and we assume that we are calling it from an aspx page which is a form or view for the list.
     $.fn.SPServices.SPListNameFromUrl = function (options) {
 
         var opt = $.extend({}, {
             listName: "" // [Optional] Pass in the name or GUID of a list if you are not in its context. e.g., on a Web Part pages in the Pages library
         }, options);
 
+        var currentContext = utils.SPServicesContext();
+
         // Has the list name or GUID been passed in?
         if (opt.listName.length > 0) {
-            utils.currentContext.thisList = opt.listName;
-            return utils.currentContext.thisList;
+// TODO            currentContext({ listName: opt.listName });
+            return opt.listName;
             // Do we already know the current list?
-        } else if (utils.currentContext.thisList !== undefined && utils.currentContext.thisList.length > 0) {
-            return utils.currentContext.thisList;
+        } else if (currentContext.thisList !== undefined && currentContext.thisList.length > 0) {
+            return currentContext.thisList;
         }
 
         // Parse out the list's root URL from the current location or the passed url
@@ -45,7 +45,7 @@ define([
                     var defaultViewUrl = $(this).attr("DefaultViewUrl");
                     var listCollList = defaultViewUrl.substring(0, defaultViewUrl.lastIndexOf(constants.SLASH) + 1).toUpperCase();
                     if (listPath.indexOf(listCollList) > 0) {
-                        utils.currentContext.thisList = $(this).attr("ID");
+                        currentContext.thisList = $(this).attr("ID");
                         return false;
                     }
                 });
@@ -53,7 +53,7 @@ define([
         });
 
         // Return the list GUID (ID)
-        return utils.currentContext.thisList;
+        return currentContext.thisList;
 
     }; // End $.fn.SPServices.SPListNameFromUrl
 

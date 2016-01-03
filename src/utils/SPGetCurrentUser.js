@@ -1,6 +1,10 @@
 define([
     'jquery',
-    '../core/SPServices.utils'
+    '../core/SPServices.utils',
+    //---------------------------
+    // We don't need local variables for these dependencies
+    // because they are added to the jQuery namespace.
+    '../core/SPServices.core'
 ], function (
     $,
     utils
@@ -18,9 +22,11 @@ define([
             debug: false // If true, show error messages; if false, run silent
         }, options);
 
+        var currentContext = utils.SPServicesContext();
+
         // The current user's ID is reliably available in an existing JavaScript variable
-        if (opt.fieldName === "ID" && typeof utils.SPServicesContext().thisUserId !== "undefined") {
-            return utils.SPServicesContext().thisUserId;
+        if (opt.fieldName === "ID" && typeof currentContext.thisUserId !== "undefined") {
+            return currentContext.thisUserId;
         }
 
         var thisField = "";
@@ -45,7 +51,7 @@ define([
 
             // The current user's ID is reliably available in an existing JavaScript variable
             if (opt.fieldNames[i] === "ID") {
-                thisField = utils.SPServicesContext().thisUserId;
+                thisField = currentContext.thisUserId;
             } else {
                 var thisTextValue;
                 if (fieldCount > 1) {

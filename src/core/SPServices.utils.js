@@ -5,7 +5,7 @@
  */
 define([
     "jquery",
-    "./../utils/constants"
+    '../utils/constants',
 ], function(
     $,
     constants
@@ -16,25 +16,29 @@ define([
 
         // Get the current context (as much as we can) on startup
         // See: http://johnliu.net/blog/2012/2/3/sharepoint-javascript-current-page-context-info.html
-        SPServicesContext: function () {
+        SPServicesContext: function(options) {
+
+            var opt = $.extend({}, {
+                listName: $().SPServices.SPListNameFromUrl() // The list the form is working with. This is useful if the form is not in the list context.
+            }, options);
 
             // The SharePoint variables only give us a relative path. to match the result from WebUrlFromPageUrl, we need to add the protocol, host, and (if present) port.
             var siteRoot = location.protocol + "//" + location.host; // + (location.port !== "" ? location.port : "");
 
-            var temp = {};
+            var thisContext = {};
             // SharePoint 2010+ gives us a context variable
             if (typeof _spPageContextInfo !== "undefined") {
-                temp.thisSite = siteRoot + _spPageContextInfo.webServerRelativeUrl;
-                temp.thisList = _spPageContextInfo.pageListId;
-                temp.thisUserId = _spPageContextInfo.userId;
+                thisContext.thisSite = siteRoot + _spPageContextInfo.webServerRelativeUrl;
+                thisContext.thisList = opt.listName ? opt.listName : _spPageContextInfo.pageListId;
+                thisContext.thisUserId = _spPageContextInfo.userId;
                 // In SharePoint 2007, we know the UserID only
             } else {
-                temp.thisSite = (typeof L_Menu_BaseUrl !== "undefined") ? siteRoot + L_Menu_BaseUrl : "";
-                temp.thisList = "";
-                temp.thisUserId = (typeof _spUserId !== "undefined") ? _spUserId : undefined;
+                thisContext.thisSite = (typeof L_Menu_BaseUrl !== "undefined") ? siteRoot + L_Menu_BaseUrl : "";
+                thisContext.thisList = opt.listName ? opt.listName : "";
+                thisContext.thisUserId = (typeof _spUserId !== "undefined") ? _spUserId : undefined;
             }
 
-            return temp;
+            return thisContext;
 
         }, // End of function SPServicesContext
 
@@ -213,26 +217,27 @@ define([
             return out;
         }, // End of function showAttrs
 
-        // Add the option values to the constants.SOAPEnvelope.payload for the operation
+        // Add the option values to the SPServices.SOAPEnvelope.payload for the operation
         //  opt = options for the call
+        //  SOAPEnvelope = envelope to add to
         //  paramArray = an array of option names to add to the payload
         //      "paramName" if the parameter name and the option name match
         //      ["paramName", "optionName"] if the parameter name and the option name are different (this handles early "wrappings" with inconsistent naming)
         //      {name: "paramName", sendNull: false} indicates the element is marked as "add to payload only if non-null"
-        addToPayload: function(opt, paramArray) {
+        addToPayload: function(opt, SOAPEnvelope, paramArray) {
 
             var i;
 
             for (i = 0; i < paramArray.length; i++) {
                 // the parameter name and the option name match
                 if (typeof paramArray[i] === "string") {
-                    constants.SOAPEnvelope.payload += utils.wrapNode(paramArray[i], opt[paramArray[i]]);
+                    SOAPEnvelope.payload += utils.wrapNode(paramArray[i], opt[paramArray[i]]);
                     // the parameter name and the option name are different
                 } else if ($.isArray(paramArray[i]) && paramArray[i].length === 2) {
-                    constants.SOAPEnvelope.payload += utils.wrapNode(paramArray[i][0], opt[paramArray[i][1]]);
+                    SOAPEnvelope.payload += utils.wrapNode(paramArray[i][0], opt[paramArray[i][1]]);
                     // the element not a string or an array and is marked as "add to payload only if non-null"
                 } else if ((typeof paramArray[i] === "object") && (paramArray[i].sendNull !== undefined)) {
-                    constants.SOAPEnvelope.payload += ((opt[paramArray[i].name] === undefined) || (opt[paramArray[i].name].length === 0)) ? "" : utils.wrapNode(paramArray[i].name, opt[paramArray[i].name]);
+                    SOAPEnvelope.payload += ((opt[paramArray[i].name] === undefined) || (opt[paramArray[i].name].length === 0)) ? "" : utils.wrapNode(paramArray[i].name, opt[paramArray[i].name]);
                     // something isn't right, so report it
                 } else {
                     utils.errBox(opt.operation, "paramArray[" + i + "]: " + paramArray[i], "Invalid paramArray element passed to addToPayload()");
@@ -242,7 +247,7 @@ define([
 
 
         // The SiteData operations have the same names as other Web Service operations. To make them easy to call and unique, I'm using
-        // the SiteData prefix on their names. This function replaces that name with the right name in the utils.SOAPEnvelope.
+        // the SiteData prefix on their names. This function replaces that name with the right name in the SPServices.SOAPEnvelope.
         siteDataFixSOAPEnvelope: function(SOAPEnvelope, siteDataOperation) {
             var siteDataOp = siteDataOperation.substring(8);
             SOAPEnvelope.opheader = SOAPEnvelope.opheader.replace(siteDataOperation, siteDataOp);

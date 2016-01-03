@@ -43,7 +43,7 @@ define([
     WSops.UpdateList = [webServices.LISTS, true];
     WSops.UpdateListItems = [webServices.LISTS, true];
 */
-    utils.utils.SOAPEnvelope.opheader += "xmlns='" + constants.SCHEMASharePoint + "/soap/'>";
+    SPServices.SOAPEnvelope.opheader += "xmlns='" + constants.SCHEMASharePoint + "/soap/'>";
     SPServices.SOAP.Action = constants.SCHEMASharePoint + "/soap/";
 
 
@@ -149,14 +149,14 @@ define([
                 if (typeof opt.updates !== "undefined" && opt.updates.length > 0) {
                     utils.addToPayload(opt, ["updates"]);
                 } else {
-                    utils.utils.SOAPEnvelope.payload += "<updates><Batch OnError='Continue'><Method ID='1' Cmd='" + opt.batchCmd + "'>";
+                    SPServices.SOAPEnvelope.payload += "<updates><Batch OnError='Continue'><Method ID='1' Cmd='" + opt.batchCmd + "'>";
                     for (i = 0; i < opt.valuepairs.length; i++) {
-                        utils.utils.SOAPEnvelope.payload += "<Field Name='" + opt.valuepairs[i][0] + "'>" + utils.escapeColumnValue(opt.valuepairs[i][1]) + "</Field>";
+                        SPServices.SOAPEnvelope.payload += "<Field Name='" + opt.valuepairs[i][0] + "'>" + utils.escapeColumnValue(opt.valuepairs[i][1]) + "</Field>";
                     }
                     if (opt.batchCmd !== "New") {
-                        utils.utils.SOAPEnvelope.payload += "<Field Name='ID'>" + opt.ID + "</Field>";
+                        SPServices.SOAPEnvelope.payload += "<Field Name='ID'>" + opt.ID + "</Field>";
                     }
-                    utils.utils.SOAPEnvelope.payload += "</Method></Batch></updates>";
+                    SPServices.SOAPEnvelope.payload += "</Method></Batch></updates>";
                 }
                 break;
 */
