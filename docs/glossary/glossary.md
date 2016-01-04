@@ -28,7 +28,9 @@ From Wikipedia: [Minification](http://en.wikipedia.org/wiki/Minify) (very often 
 
 ## <a name="StaticName"></a> StaticName
 StaticName (as opposed to [DisplayName](#DisplayName)) means the underlying column name, e.g., `Region_x0020_Name`. This is also sometimes called the 'InternalName' for the column. The DisplayName would be `Region Name`, i.e., the name of the column which is shown on forms and as the header in list views. Probably the easiest way to determine the StaticName if you don't know it is to go to List Settings and click on the column name link. When you get to the column properties page, check the URL. It will end in something like this:
+
 `/_layouts/FldEdit.aspx?List=%7B37920121%2D19B2%2D4C77%2D92FF%2D8B3E07853114%7D&amp;Field=Potential%5Fx0020%5FValue`
+
 The StaticName is the value for the Field parameter at the end. This is a little tricky because some of the characters are further encoded. Any occurrences of '%5F' need to be replaced with an underscore '_'. Examples:</p>
 
 * `Potential%5Fx0020%5FValue` -> `Potential_x0020_Value`
