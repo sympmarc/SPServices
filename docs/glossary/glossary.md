@@ -21,12 +21,15 @@ When debug mode is enabled, you will receive messages like this if there is an i
 ![](/docs/_images/debugmode.png)
 
 ## DisplayName <a name="DisplayName"></a>
-DisplayName (as opposed to <a href="/wikipage?title=Glossary&amp;referringTitle=Glossary&amp;ANCHOR#StaticName"> StaticName</a>) means the name of the column which is shown on forms and as the header in list views, e.g., <span class="codeInline">Region Name</span>. The StaticName would be <span class="codeInline"> Region_x0020_Name</span>, i.e., the underlying column name.</p>
-<h4><a name="minified"></a><em>minified</em></h4>
-<p>From Wikipedia: <a href="http://en.wikipedia.org/wiki/Minify">Minification</a> (very often just minify, and sometimes also minimisation or minimization), in computer programming languages and especially JavaScript, is the process of removing all unnecessary characters from source code, without changing its functionality. These unnecessary characters usually include white space characters, new line characters, comments and sometimes block delimiters; which are used to add readability to the code, but are not required for it to execute.</p>
-<h4><a name="StaticName"></a><em>StaticName</em></h4>
-<p>StaticName (as opposed to <a href="/wikipage?title=Glossary&amp;referringTitle=Glossary&amp;ANCHOR#DisplayName"> DisplayName</a>) means the underlying column name, e.g., <span class="codeInline"> Region_x0020_Name</span>. This is also sometimes called the 'internal name' for the column. The DisplayName would be <span class="codeInline">Region Name</span>, i.e., the name of the column which is shown on forms and as the header in list views. Probably the easiest way to determine the StaticName if you don't know it is to go to List Settings and click on the column name link. When you get to the column properties page, check the URL. It will end in something like this:<br /> <span class="codeInline">/_layouts/FldEdit.aspx?List=%7B37920121%2D19B2%2D4C77%2D92FF%2D8B3E07853114%7D&amp;Field=Potential%5Fx0020%5FValue</span><br /> The StaticName is the value for the Field parameter at the end. This is a little tricky because some of the characters are further encoded. Any occurrences of '%5F' need to be replaced with an underscore '_'. Examples:</p>
-<ul>
-<li><strong><span class="codeInline">Potential%5Fx0020%5FValue</span></strong> -&gt; <strong><span class="codeInline">Potential_x0020_Value</span></strong></li>
-<li><strong><span class="codeInline">Child%5Fx0020%5FSite%5Fx0020%5FName</span></strong> -&gt; <strong><span class="codeInline">Child_x0020_Site_x0020_Name</span></strong></li>
-</ul>
+DisplayName (as opposed to [StaticName](#StaticName)) means the name of the column which is shown on forms and as the header in list views, e.g., `Region Name`. The StaticName would be `Region_x0020_Name`, i.e., the underlying column name.
+
+## <a name="minified"></a>minified
+From Wikipedia: [Minification](http://en.wikipedia.org/wiki/Minify) (very often just minify, and sometimes also minimisation or minimization), in computer programming languages and especially JavaScript, is the process of removing all unnecessary characters from source code, without changing its functionality. These unnecessary characters usually include white space characters, new line characters, comments and sometimes block delimiters; which are used to add readability to the code, but are not required for it to execute.</p>
+
+## <a name="StaticName"></a> StaticName
+StaticName (as opposed to [DisplayName](#DisplayName)) means the underlying column name, e.g., `Region_x0020_Name`. This is also sometimes called the 'InternalName' for the column. The DisplayName would be `Region Name`, i.e., the name of the column which is shown on forms and as the header in list views. Probably the easiest way to determine the StaticName if you don't know it is to go to List Settings and click on the column name link. When you get to the column properties page, check the URL. It will end in something like this:
+`/_layouts/FldEdit.aspx?List=%7B37920121%2D19B2%2D4C77%2D92FF%2D8B3E07853114%7D&amp;Field=Potential%5Fx0020%5FValue`
+The StaticName is the value for the Field parameter at the end. This is a little tricky because some of the characters are further encoded. Any occurrences of '%5F' need to be replaced with an underscore '_'. Examples:</p>
+
+* `Potential%5Fx0020%5FValue` -> `Potential_x0020_Value`
+* `Child%5Fx0020%5FSite%5Fx0020%5FName` -> `Child_x0020_Site_x0020_Name`
