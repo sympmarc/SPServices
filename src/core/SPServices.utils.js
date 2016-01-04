@@ -5,7 +5,7 @@
  */
 define([
     "jquery",
-    '../utils/constants',
+    '../utils/constants'
 ], function(
     $,
     constants
@@ -19,7 +19,8 @@ define([
         SPServicesContext: function(options) {
 
             var opt = $.extend({}, {
-                listName: $().SPServices.SPListNameFromUrl() // The list the form is working with. This is useful if the form is not in the list context.
+                listName: "", // The list the form is working with. This is useful if the form is not in the list context.
+                thisUserId: "" // The current user's id in the site Collection.
             }, options);
 
             // The SharePoint variables only give us a relative path. to match the result from WebUrlFromPageUrl, we need to add the protocol, host, and (if present) port.
@@ -30,12 +31,12 @@ define([
             if (typeof _spPageContextInfo !== "undefined") {
                 thisContext.thisSite = siteRoot + _spPageContextInfo.webServerRelativeUrl;
                 thisContext.thisList = opt.listName ? opt.listName : _spPageContextInfo.pageListId;
-                thisContext.thisUserId = _spPageContextInfo.userId;
+                thisContext.thisUserId = opt.thisUserId ? opt.thisUserId : _spPageContextInfo.userId;
                 // In SharePoint 2007, we know the UserID only
             } else {
                 thisContext.thisSite = (typeof L_Menu_BaseUrl !== "undefined") ? siteRoot + L_Menu_BaseUrl : "";
                 thisContext.thisList = opt.listName ? opt.listName : "";
-                thisContext.thisUserId = (typeof _spUserId !== "undefined") ? _spUserId : undefined;
+                thisContext.thisUserId = opt.thisUserId ? opt.thisUserId : ((typeof _spUserId !== "undefined") ? _spUserId : undefined);
             }
 
             return thisContext;

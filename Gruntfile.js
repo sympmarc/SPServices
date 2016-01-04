@@ -51,7 +51,7 @@ module.exports = function(grunt) {
      *      The config object from copy task.
      * @param {String} timestampFile
      *      A timestamp file. Will be used instead of accessing the
-     *      destination file when detemining if file should be copied.
+     *      destination file when determining if file should be copied.
      *
      * @return {Boolean}
      *      True - yes, its new

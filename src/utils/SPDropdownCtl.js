@@ -88,8 +88,8 @@ define([
             columnObj.MultiLookupPickerdata = columnObj.container.find("input[id$='" + utils.multiLookupPrefix + "_data'], input[id$='" + utils.multiLookupPrefix2013 + "_data']");
             var addButtonId = columnObj.container.find("[id$='AddButton']").attr("id");
             columnObj.master =
-                window[addButtonId.replace(/AddButton/, utils.multiLookupPrefix + "_m")] || // SharePoint 2007
-                window[addButtonId.replace(/AddButton/, utils.multiLookupPrefix2013 + "_m")]; // SharePoint 2013
+                window[addButtonId.replace(/AddButton/, constants.multiLookupPrefix + "_m")] || // SharePoint 2007
+                window[addButtonId.replace(/AddButton/, constants.multiLookupPrefix2013 + "_m")]; // SharePoint 2013
         }
 
         return columnObj;

@@ -37,7 +37,14 @@ define([
     "./value-added/SPAutocomplete",
     "./value-added/SPCascadeDropdowns",
     "./value-added/SPComplexToSimpleDropdown",
+    "./value-added/SPDisplayRelatedInfo",
+    "./value-added/SPFilterDropdown",
+    "./value-added/SPFindPeoplePicker",
+    "./value-added/SPRequireUnique",
+    "./value-added/SPRedirectWithID",
+    "./value-added/SPSetMultiSelectSizes",
     "./value-added/SPUpdateMultipleListItems"
+
 ], function($){
     return $;
 });

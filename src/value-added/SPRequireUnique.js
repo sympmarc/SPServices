@@ -1,6 +1,6 @@
 define([
     'jquery',
-    '../src/core/SPServices.utils',
+    '../core/SPServices.utils',
     //---------------------------
     // We don't need local variables for these dependencies
     // because they are added to the jQuery namespace.
@@ -30,7 +30,7 @@ define([
         // Get the current item's ID from the Query String
         var queryStringVals = $().SPServices.SPGetQueryString();
         var thisID = queryStringVals.ID;
-        utils.currentContext.thisList = $().SPServices.SPListNameFromUrl();
+        var thisList = $().SPServices.SPListNameFromUrl();
 
         // Set the messages based on the options provided
         var msg = "<span id='SPRequireUnique" + opt.columnStaticName + "' class='{0}'>{1}</span><br/>";
@@ -38,7 +38,7 @@ define([
 
         // We need the DisplayName
         var columnDisplayName = $().SPServices.SPGetDisplayFromStatic({
-            listName: utils.currentContext.thisList,
+            listName: thisList,
             columnStaticName: opt.columnStaticName
         });
         var columnObj = utils.findFormField(columnDisplayName).find("input[Title^='" + columnDisplayName + "']");
@@ -56,7 +56,7 @@ define([
             $().SPServices({
                 operation: "GetListItems",
                 async: false,
-                listName: utils.currentContext.thisList,
+                listName: thisList,
                 // Make sure we get all the items, ignoring any filters on the default view.
                 CAMLQuery: "<Query><Where><IsNotNull><FieldRef Name='" + opt.columnStaticName + "'/></IsNotNull></Where></Query>",
                 // Filter based on columnStaticName's value
