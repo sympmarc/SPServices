@@ -17,12 +17,20 @@ _*Until otherwise announced, this is not a fully functional version of SPService
 * 2015-12-06 Began adding modules back in to build up a "full build" of existing SPService functionality.
 * 2015-12-05 Initial tests using QUnit are in place. Instructions below.
 * 2015-12-01 The monolithic SPServices file is not broken out into modules, one per major function.
+* 2016-01-04 SPServices 2.0 is now building and operational - pre-alpha.
 
 For full documentation, please visit http://spservices.codeplex.com/documentation
 
 Contribute
 -----------
-Would you like to contribute to the next generation of SPServices? Do you have ideas for functionality that you wish was in SPServices? Please let me know by adding questions or comments in the [Issues](https://github.com/sympmarc/SPServices/issues) here.
+Would you like to contribute to the next generation of SPServices?
+
+* Test the "pre-alpha" builds of SPServices 2.0. If you're familiar enough with the library to drop builds into your test environments, that would be a great help. I've tested using the same lists and pages I always use, but more real-world testing would be good. Report any issues you find using GitHub issues.
+* Write some tests. I've started writing tests with QUnit, but I've only scratched the surface. Writing good tests here is difficult, as we have to be sitting on top of SharePoint; in greenfield development, we can test anywhere. You'll find some instructions for how to use the existing tests on the GitHub pages.
+* Migrate the documentation from Codeplex to GitHub - Since Codeplex is falling apart, there's no reason to leave the documentation there, either. There are a few dozen pages (I can't actually count the pages on Codeplex easily) of documentation, and it's probably easiest just to move the over to GitHub manually.
+* Move the discussions off Codeplex - This one is hardest, I think. IMO, one of the big values to SPServices is the historical discussions about how to use it. But those discussions have covered many other things as well, and I'd hate to lose any of it. I'm not sure how to go about this, so if anyone has some experience moving forums like this, I'm all ears.
+* Propose improvements - I ask the community for suggestions all the time, but I don't get a lot of them. If you've solved some gnarly SharePoint UI problem and would be willing to submit your code or just wish that someone would fix the darn _____, then let me know in the GitHub issues. Consider the issues our own UserVoice for SPServices.
+
 
 Development
 -----------
