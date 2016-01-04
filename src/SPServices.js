@@ -40,6 +40,7 @@ define([
     "./value-added/SPDisplayRelatedInfo",
     "./value-added/SPFilterDropdown",
     "./value-added/SPFindPeoplePicker",
+    "./value-added/SPLookupAddNew",
     "./value-added/SPRequireUnique",
     "./value-added/SPRedirectWithID",
     "./value-added/SPSetMultiSelectSizes",
