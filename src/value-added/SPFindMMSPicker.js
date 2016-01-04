@@ -3,7 +3,7 @@ define([
     //---------------------------
     // We don't need local variables for these dependencies
     // because they are added to the jQuery namespace.
-    '../src/core/SPServices.core.js'
+    '../core/SPServices.core.js'
 ], function (
     $
 ) {
