@@ -1,139 +1,47 @@
-### Function
+### Web Service
 
-**$().SPServices**
+**Lists**
 
 ### Certification
 
-[![Certified for SharePoint 2007](http://www.sympraxisconsulting.com/SPServices/sp2007-cert.jpg "Certified for SharePoint 2007")](http://spservices.codeplex.com/wikipage?title=Glossary#Certification) [![Works with Caveats with SharePoint 2010](http://www.sympraxisconsulting.com/SPServices/sp2010-works.jpg "Works with Caveats with SharePoint 2010")](http://spservices.codeplex.com/wikipage?title=Glossary#Certification)
-See individual Web Services pages for certification specifics.
+[![Certified for SharePoint 2007](http://www.sympraxisconsulting.com/SPServices/sp2007-cert.jpg "Certified for SharePoint 2007")](http://spservices.codeplex.com/wikipage?title=Glossary#Certification) [![Works with Caveats with SharePoint 2010](http://www.sympraxisconsulting.com/SPServices/sp2010-works.jpg "Works with Caveats with SharePoint 2010")](http://spservices.codeplex.com/wikipage?title=Glossary#Certification) See individual operations below.
 
-### Notes
+### Supported Operations
 
-As of version 2013.01, all calls return a [jQuery deferred object](http://api.jquery.com/category/deferred-object/) aka a promise.
+**Notes**
 
-As of v0.7.2, the core `$().SPServices()` function allows for simple caching of the XML results using jQuery promises in a similar manner to that outlined in Scot Hillier's excellent post [Utilizing Promises in SharePoint 2013 Apps](http://www.shillier.com/archive/2012/11/29/utilizing-promises-in-sharepoint-2013-apps.aspx). See the [Caching](/wikipage?title=Caching) page for more details.
+*   Many of the operations here accept a webURL option. This allows you to change the context for the Web Service operation to a different site. For instance, you may want to GetListItems from a list in another farm or UpdateListItems in a list in a different site. Using a GUID for the listName does NOT change the context as it does with the Object Model, so you need to use the webURL option as well if you need the context to be a different site.
+*   Links in the Operation column will show you more details for the operation, including examples, if available. Links in the MSDN Documentation column will take you to the SDK on MSDN for that operation.
 
-### Supported Web Services
+| Operation | Options | MSDN Documentation | Introduced |
+| AddAttachment | <span class="codeInline">[webURL], listName, listItemID, fileName, attachment</span> | [Lists.AddAttachment Method](http://msdn.microsoft.com/en-us/library/lists.lists.addattachment(v=office.12).aspx) | [0.5.5](http://spservices.codeplex.com/releases/view/43225) |
+| AddDiscussionBoardItem | <span class="codeInline">[webURL], listName, message</span> | [Lists.AddDiscussionBoardItem Method](http://msdn.microsoft.com/en-us/library/lists.lists.adddiscussionboarditem(v=office.12).aspx) | [0.7.2](http://spservices.codeplex.com/releases/view/81401) |
+| AddList | <span class="codeInline">[webURL], listName, description, templateID</span> | [Lists.AddList Method](http://msdn.microsoft.com/en-us/library/lists.lists.addlist.aspx) | [0.2.9](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32341) |
+| AddListFromFeature | <span class="codeInline">[webURL], listName, description, featureID, templateID</span> | [Lists.AddListFromFeature Method](http://msdn.microsoft.com/en-us/library/lists.lists.addlistfromfeature(v=office.12)) | [0.7.2](http://spservices.codeplex.com/releases/view/81401) |
+| [CheckInFile](/wikipage?title=CheckInFile&referringTitle=Lists) | <span class="codeInline">pageUrl, comment, CheckinType</span> | [Lists.CheckInFile Method](http://msdn.microsoft.com/en-us/library/lists.lists.checkinfile.aspx) | [0.4.0](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=34458) |
+| ApplyContentTypeToList | <span class="codeInline">webUrl, contentTypeId, listName</span> | [Lists.ApplyContentTypeToList Method](http://msdn.microsoft.com/en-us/library/lists.lists.applycontenttypetolist(v=office.12).aspx) | [0.7.1](http://spservices.codeplex.com/releases/view/77486 "0.7.1") |
+| [CheckOutFile](/wikipage?title=CheckOutFile&referringTitle=Lists) | <span class="codeInline">pageUrl, checkoutToLocal, lastmodified</span> | [Lists.CheckOutFile Method](http://msdn.microsoft.com/en-us/library/lists.lists.checkoutfile.aspx) | [0.4.0](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=34458) |
+| CreateContentType | <span class="codeInline">[webURL],</span> <span class="codeInline">listName, displayName, parentType, fields, ContentTypeProperties, addToView</span> | [Lists.CreateContentType Method](http://msdn.microsoft.com/en-us/library/lists.lists.createcontenttype(v=office.12).aspx) | [0.7.1](http://spservices.codeplex.com/releases/view/77486 "0.7.1") |
+| DeleteAttachment | <span class="codeInline">[webURL], listName, listItemID, url</span> | [Lists.DeleteAttachment Method](http://msdn.microsoft.com/en-us/library/websvclists.lists.deleteattachment.aspx) | [0.7.0](http://spservices.codeplex.com/releases/view/68781) |
+| DeleteContentType | <span class="codeInline">[webURL],</span> <span class="codeInline">listName, contentTypeId</span> | [Lists.DeleteContentType Method](http://msdn.microsoft.com/en-us/library/lists.lists.deletecontenttype(v=office.12).aspx) | [0.7.1](http://spservices.codeplex.com/releases/view/77486 "0.7.1") |
+| DeleteContentTypeXmlDocument | <span class="codeInline">[webURL], listName, contentTypeId, documentUri</span> | [Lists.DeleteContentTypeXmlDocument Method](http://msdn.microsoft.com/en-us/library/lists.lists.deletecontenttypexmldocument(v=office.12).aspx) | [0.7.2](http://spservices.codeplex.com/releases/view/81401) |
+| DeleteList | <span class="codeInline">[webURL], listName</span> | [Lists.DeleteList Method](http://msdn.microsoft.com/en-us/library/lists.lists.deletelist.aspx) | [0.2.9](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32341) |
+| [GetAttachmentCollection](/wikipage?title=GetAttachmentCollection) | <span class="codeInline">[webURL], listName, ID</span> | [Lists.GetAttachmentCollection Method](http://msdn.microsoft.com/en-us/library/lists.lists.getattachmentcollection.aspx) | [0.2.6](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=31946) |
+| [GetList](/wikipage?title=GetList) | <span class="codeInline">[webURL], listName</span> | [Lists.GetList Method](http://msdn.microsoft.com/en-us/library/lists.lists.getlist.aspx) | [0.2.3](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=31744) |
+| GetListAndView | <span class="codeInline">[webURL], listName, viewName</span> | [Lists.GetListAndView Method](http://msdn.microsoft.com/en-us/library/lists.lists.getlistandview.aspx) | [0.2.9](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32341) |
+| GetListCollection | <span class="codeInline">[webURL]</span> | [Lists.GetListCollection Method](http://msdn.microsoft.com/en-us/library/lists.lists.getlistcollection.aspx) | [0.2.3](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=31744) |
+| GetListContentType | <span class="codeInline">[webURL], listName, contentTypeId</span> | [Lists.GetListContentType Method](http://msdn.microsoft.com/en-us/library/lists.lists.getlistcontenttype.aspx) | [0.4.8](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=37505) |
+| [GetListContentTypes](/wikipage?title=GetListContentTypes&referringTitle=Lists) | <span class="codeInline">[webURL], listName</span>* | [Lists.GetListContentTypes Method](http://msdn.microsoft.com/en-us/library/lists.lists.getlistcontenttypes.aspx) | [0.4.8](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=37505) |
+| GetListItemChanges | <span class="codeInline">[webURL],</span> <span class="codeInline">listName, viewFields, since, contains</span> | [Lists.GetListItemChanges Method](http://msdn.microsoft.com/en-us/library/lists.lists.getlistitemchanges(v=office.12).aspx) | [0.7.1](http://spservices.codeplex.com/releases/view/77486 "0.7.1") |
+| GetListItemChangesSinceToken | <span class="codeInline">[webURL], listName, viewName, CAMLQuery, <span class="codeInline">CAMLViewFields,</span> CAMLRowLimit, CAMLQueryOptions<span class="codeInline">, changeToken, contains</span></span> | [Lists.GetListItemChangesSinceToken Method](http://msdn.microsoft.com/en-us/library/lists.lists.getlistitemchangessincetoken(v=office.12).aspx) | [0.7.2](http://spservices.codeplex.com/releases/view/81401) |
+| [GetListItems](/wikipage?title=GetListItems&referringTitle=Lists) | <span class="codeInline">[webURL], listName, viewName, CAMLViewFields, CAMLQuery, CAMLRowLimit, CAMLQueryOptions</span> | [Lists.GetListItems Method](http://msdn.microsoft.com/en-us/library/lists.lists.getlistitems.aspx) | [0.2.3](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=31744) |
+| GetVersionCollection | <span class="codeInline">strlistID, strlistItemID, strFieldName</span> | [Lists.GetVersionCollection Method](http://msdn.microsoft.com/en-us/library/lists.lists.getversioncollection(v=office.12).aspx) | [0.7.1](http://spservices.codeplex.com/releases/view/77486 "0.7.1") |
+| UndoCheckOut | <span class="codeInline">pageUrl</span> | [Lists.UndoCheckOut Method](http://msdn.microsoft.com/en-us/library/lists.lists.undocheckout(v=office.12).aspx) | [0.7.1](http://spservices.codeplex.com/releases/view/77486 "0.7.1") |
+| UpdateContentType | <span class="codeInline">[webURL],</span> <span class="codeInline">listName, contentTypeId, contentTypeProperties, newFields, updateFields, deleteFields, addToView</span> | [Lists.UpdateContentType Method](http://msdn.microsoft.com/en-us/library/lists.lists.updatecontenttype(v=office.12).aspx) | [0.7.1](http://spservices.codeplex.com/releases/view/77486 "0.7.1") |
+| UpdateContentTypesXmlDocument | <span class="codeInline">[webURL], listName, newDocument</span> | [Lists.UpdateContentTypesXmlDocument Method](http://msdn.microsoft.com/en-us/library/lists.lists.updatecontenttypesxmldocument(v=office.12).aspx) | [0.7.2](http://spservices.codeplex.com/releases/view/81401) |
+| UpdateContentTypeXmlDocument | <span class="codeInline">[webURL], listName, contentTypeId<span class="codeInline">, newDocument</span></span> | [Lists.UpdateContentTypeXmlDocument Method](http://msdn.microsoft.com/en-us/library/lists.lists.updatecontenttypexmldocument(v=office.12).aspx) | [0.7.2](http://spservices.codeplex.com/releases/view/81401) |
+| [UpdateList](/wikipage?title=UpdateList&referringTitle=Lists) | <span class="codeInline">[webURL],</span> <span class="codeInline">listName, listProperties, newFields, updateFields, deleteFields, listVersion</span> | [Lists.UpdateList Method](http://msdn.microsoft.com/en-us/library/lists.lists.updatelist.aspx) | [0.4.6](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=35830) |
+| [UpdateListItems](/wikipage?title=UpdateListItems&referringTitle=Lists) | <span class="codeInline">[webURL], listName, updates, [batchCmd, valuepairs, ID]</span> | [Lists.UpdateListItems Method](http://msdn.microsoft.com/en-us/library/lists.lists.updatelistitems.aspx) | [0.2.3](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=31744) |
 
-The table below shows the Web Services for which we have implemented at least one operation (or have operations coming in planned releases) with a link to more detailed documentation, indicators for whether the Web Service is available in WSS 3.0 and/or MOSS, and links to the MSDN documentation pages. Note that there are some [general syntax instructions](/wikipage?title=%24%28%29.SPServices&ANCHOR#GeneralSyntax) below the table.
-
- SharePoint 2007 | SharePoint 2010 |
-| Web Service | WSS 3.0 | MOSS | MSDN Documentation | Foundation | SP2010 |
-| **[Alerts](/wikipage?title=Alerts)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Alerts Web Service](http://msdn.microsoft.com/en-us/library/alerts.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Authentication](/wikipage?title=Authentication)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Authentication Web Service](http://msdn.microsoft.com/en-us/library/authentication.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Copy](/wikipage?title=Copy)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Copy Web Service](http://msdn.microsoft.com/en-us/library/copy.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Forms](/wikipage?title=Forms)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Forms Web Service](http://msdn.microsoft.com/en-us/library/forms.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Lists](/wikipage?title=Lists)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Lists Web Service](http://msdn.microsoft.com/en-us/library/lists.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Meetings](/wikipage?title=Meetings)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Meetings Web Service](http://msdn.microsoft.com/en-us/library/ms774629.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[People](/wikipage?title=People)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [People Web Service](http://msdn.microsoft.com/en-us/library/people.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Permissions](/wikipage?title=Permissions)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Permissions Web Service](http://msdn.microsoft.com/en-us/library/permissions.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[SiteData](/wikipage?title=SiteData)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [SiteData Web Service](http://msdn.microsoft.com/en-us/library/ms774821(v=office.12).aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Sites](/wikipage?title=Sites)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | Sites Web Service [2007](http://msdn.microsoft.com/en-us/library/ms774847(v=office.12).aspx) [2010](http://msdn.microsoft.com/en-us/library/bb250173.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Users and Groups](/wikipage?title=Users%20and%20Groups)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Users and Groups Web Service](http://msdn.microsoft.com/en-us/library/ms772647.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Versions](/wikipage?title=Versions)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Versions Web Service](http://msdn.microsoft.com/en-us/library/ms772545.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Views](/wikipage?title=Views)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Views Web Service](http://msdn.microsoft.com/en-us/library/views.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[WebPartPages](/wikipage?title=WebPartPages)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Web Part Pages Web Service](http://msdn.microsoft.com/en-us/library/ms774569.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Webs](/wikipage?title=Webs)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Webs Web Service](http://msdn.microsoft.com/en-us/library/webs.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[PublishedLinksService](/wikipage?title=PublishedLinksService)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [PublishedLinksService Web Service](http://msdn.microsoft.com/en-us/library/aa981003.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| [**Official File (Records Repository)**](/wikipage?title=OfficialFile) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Official File Web Service](http://msdn.microsoft.com/en-us/library/aa981147(v=office.12).aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Search](/wikipage?title=Search)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Search Web Service](http://msdn.microsoft.com/en-us/library/search.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[SpellChecker](/wikipage?title=SpellChecker)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [SpellChecker Web Service](http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.publishing.spellchecker.spellcheck.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[UserProfileService](/wikipage?title=UserProfileService)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [User Profile Web Service](http://msdn.microsoft.com/en-us/library/aa981571.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Workflow](/wikipage?title=Workflow)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Workflow Web Service](http://msdn.microsoft.com/en-us/library/aa981383.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Diagnostics](/wikipage?title=Diagnostics)** | [Diagnostics Web Service](http://msdn.microsoft.com/en-us/library/ee551419.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[SocialDataService](http://spservices.codeplex.com/wikipage?title=SocialDataService)** | [SocialDataService Web Service](http://msdn.microsoft.com/en-us/library/ee590294.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[TaxonomyClientService](http://spservices.codeplex.com/wikipage?title=TaxonomyClientService)** | [TaxonomyClientService Web Service](http://msdn.microsoft.com/en-us/library/ee586638.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-
-### General Syntax
-
-<div style="color: black; background-color: white;">
-
-<pre>$().SPServices({
-	operation: <span style="color: #a31515;">"operationname"</span>,
-	[webURL: <span style="color: #a31515;">"/sitepath"</span>,]
-	[option1: value1,]
-	[option2: value2,]
-	[async: <span style="color: blue;">false</span>,]
-	completefunc: <span style="color: blue;">function</span> (xData, Status) {
-		...<span style="color: blue;">do</span> stuff...
-	}
-});</pre>
-
-</div>
-
-**_operation_**
-The name of the Web Service operation (see the SDK documentation links above). Because the Web Services operations are named uniquely, you only need to specify the operation.
-
-_webURL_
-For Web Service operations where it makes sense, you can pass in a webURL to change the context for the AJAX call. By default, the current site (as determined by [$().SPServices.SPGetCurrentSite](/wikipage?title=%24%28%29.SPServices.SPGetCurrentSite)) is used.
-
-_options_
-The options vary based on which Web Service and operation you are calling. In all instances, the options will take the same names as those described in the SDK.
-
-_async_
-By default, all of the Web Service operations are called asynchronously with AJAX. Generally, this will be the desired approach, but to force synchronicity, add the async: false option.
-
-_cacheXML_
-If set to true, the result's raw XML will be cached using jQuery promises in a similar manner to that outlined in Scot Hillier's excellent post [Utilizing Promises in SharePoint 2013 Apps](http://www.shillier.com/archive/2012/11/29/utilizing-promises-in-sharepoint-2013-apps.aspx). See more about how this works on the [Caching](/wikipage?title=Caching) page.
-
-_completefunc_
-A function to call on completion of the AJAX call to the Web Service:
-
-<div style="color: black; background-color: white;">
-
-<pre>completefunc: <span style="color: blue;">function</span>(xData, Status) {
-  ...<span style="color: blue;">do</span> something...
-},</pre>
-
-</div>
-
-### Example
-
-Example call for GetListItems. This example is taken directly from SPCascadeDropdowns:
-
-<div style="color: black; background-color: white;">
-
-<pre>$().SPServices({
-	operation: <span style="color: #a31515;">"GetListItems"</span>,
-	<span style="color: green;">// Force sync so that we have the right values for the child column onchange trigger</span>
-	async: <span style="color: blue;">false</span>,
-	webURL: opt.relationshipWebURL,
-	listName: opt.relationshipList,
-	<span style="color: green;">// Filter based on the currently selected parent column's value</span>
-	CAMLQuery: camlQuery,
-	<span style="color: green;">// Only get the parent and child columns</span>
-	CAMLViewFields: <span style="color: #a31515;">"<ViewFields><FieldRef Name='"</span> + opt.relationshipListParentColumn + <span style="color: #a31515;">"' /><FieldRef Name='"</span> + opt.relationshipListChildColumn + <span style="color: #a31515;">"' /></ViewFields>"</span>,
-	<span style="color: green;">// Override the default view rowlimit and get all appropriate rows</span>
-	CAMLRowLimit: 0,
-	completefunc: <span style="color: blue;">function</span>(xData, Status) {
-		...
-	}</pre>
-
-</div>
-
-Example call for GetUserInfo:
-
-<div style="color: black; background-color: white;">
-
-<pre>waitMessage = <span style="color: #a31515;">"<table width='100%' align='center'><tr><td align='center'><img src='/_layouts/images/gears_an.gif'/></td></tr></table>"</span>;
-
-$(<span style="color: #a31515;">"#WSOutput"</span>).html(waitMessage).SPServices({
-	operation: <span style="color: #a31515;">"GetUserInfo"</span>,
-	userLoginName: <span style="color: #a31515;">"SHARE1\\demouser"</span>,
-	completefunc: <span style="color: blue;">function</span> (xData, Status) {
-		$(<span style="color: #a31515;">"#WSOutput"</span>).html(<span style="color: #a31515;">""</span>).append(<span style="color: #a31515;">"<b>This is the output from the GetUserInfo operation:</b>"</span>);
-		$(xData.responseXML).find(<span style="color: #a31515;">"User"</span>).each(<span style="color: blue;">function</span>() {
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>ID: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"ID"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>Sid: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"Sid"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>Name: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"Name"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>LoginName: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"LoginName"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>Email: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"Email"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>Notes: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"Notes"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>IsSiteAdmin: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"IsSiteAdmin"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>IsDomainGroup: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"IsDomainGroup"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<hr/>"</span>);
-		});
-	}
-});</pre>
-
-</div>
+<span class="codeInline">*</span> Note that the SDK says that <span class="codeInline">contentTypeId</span> is a required parameter for <span class="codeInline">GetListContentTypes</span>. It is not, and in fact it is ignored if present.
+** Attested by Mark Rackley.
