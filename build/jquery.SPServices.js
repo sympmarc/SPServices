@@ -15,10 +15,10 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2016-01-04 11:01:25
+* @build SPServices 2.0.0 2016-01-04 11:16:32
 */
 ;(function() {
-var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, src_core_Version, src_utils_SPConvertDateToISO, src_utils_SPDropdownCtl, src_utils_SPFilterNode, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPGetDisplayFromStatic, src_utils_SPGetLastItemId, src_utils_SPGetListItemsJson, src_utils_SPGetQueryString, src_utils_SPGetStaticFromDisplay, src_utils_SPListNameFromUrl, src_utils_SPXmlToJson, src_value_added_SPArrangeChoices, src_value_added_SPAutocomplete, src_value_added_SPCascadeDropdowns, src_value_added_SPComplexToSimpleDropdown, src_value_added_SPDisplayRelatedInfo, src_value_added_SPFilterDropdown, src_value_added_SPFindPeoplePicker, src_value_added_SPLookupAddNew, src_value_added_SPRequireUnique, src_value_added_SPRedirectWithID, src_value_added_SPSetMultiSelectSizes, src_value_added_SPUpdateMultipleListItems, src_SPServices;
+var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, src_core_Version, src_utils_SPConvertDateToISO, src_utils_SPDebugXMLHttpResult, src_utils_SPDropdownCtl, src_utils_SPFilterNode, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPGetDisplayFromStatic, src_utils_SPGetLastItemId, src_utils_SPGetListItemsJson, src_utils_SPGetQueryString, src_utils_SPGetStaticFromDisplay, src_utils_SPListNameFromUrl, src_utils_SPXmlToJson, src_value_added_SPArrangeChoices, src_value_added_SPAutocomplete, src_value_added_SPCascadeDropdowns, src_value_added_SPComplexToSimpleDropdown, src_value_added_SPDisplayRelatedInfo, src_value_added_SPFilterDropdown, src_value_added_SPFindMMSPicker, src_value_added_SPFindPeoplePicker, src_value_added_SPLookupAddNew, src_value_added_SPRedirectWithID, src_value_added_SPRequireUnique, src_value_added_SPScriptAudit, src_value_added_SPSetMultiSelectSizes, src_value_added_SPUpdateMultipleListItems, src_SPServices;
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
     define(['jquery'], factory);
@@ -2994,6 +2994,54 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, sr
     // End $.fn.SPServices.SPConvertDateToISO
     return $;
   }(jquery, src_utils_constants, src_core_SPServicesutils);
+  src_utils_SPDebugXMLHttpResult = function ($, utils) {
+    // Utility function to show the results of a Web Service call formatted well in the browser.
+    $.fn.SPServices.SPDebugXMLHttpResult = function (options) {
+      var opt = $.extend({}, {
+        node: null,
+        // An XMLHttpResult object from an ajax call
+        indent: 0  // Number of indents
+      }, options);
+      var i;
+      var NODE_TEXT = 3;
+      var NODE_CDATA_SECTION = 4;
+      var outString = '';
+      // For each new subnode, begin rendering a new TABLE
+      outString += '<table class=\'ms-vb\' style=\'margin-left:' + opt.indent * 3 + 'px;\' width=\'100%\'>';
+      // DisplayPatterns are a bit unique, so let's handle them differently
+      if (opt.node.nodeName === 'DisplayPattern') {
+        outString += '<tr><td width=\'100px\' style=\'font-weight:bold;\'>' + opt.node.nodeName + '</td><td><textarea readonly=\'readonly\' rows=\'5\' cols=\'50\'>' + opt.node.xml + '</textarea></td></tr>';  // A node which has no children
+      } else if (!opt.node.hasChildNodes()) {
+        outString += '<tr><td width=\'100px\' style=\'font-weight:bold;\'>' + opt.node.nodeName + '</td><td>' + (opt.node.nodeValue !== null ? utils.checkLink(opt.node.nodeValue) : '&nbsp;') + '</td></tr>';
+        if (opt.node.attributes) {
+          outString += '<tr><td colspan=\'99\'>' + utils.showAttrs(opt.node) + '</td></tr>';
+        }  // A CDATA_SECTION node
+      } else if (opt.node.hasChildNodes() && opt.node.firstChild.nodeType === NODE_CDATA_SECTION) {
+        outString += '<tr><td width=\'100px\' style=\'font-weight:bold;\'>' + opt.node.nodeName + '</td><td><textarea readonly=\'readonly\' rows=\'5\' cols=\'50\'>' + opt.node.parentNode.text + '</textarea></td></tr>';  // A TEXT node
+      } else if (opt.node.hasChildNodes() && opt.node.firstChild.nodeType === NODE_TEXT) {
+        outString += '<tr><td width=\'100px\' style=\'font-weight:bold;\'>' + opt.node.nodeName + '</td><td>' + utils.checkLink(opt.node.firstChild.nodeValue) + '</td></tr>';  // Handle child nodes
+      } else {
+        outString += '<tr><td width=\'100px\' style=\'font-weight:bold;\' colspan=\'99\'>' + opt.node.nodeName + '</td></tr>';
+        if (opt.node.attributes) {
+          outString += '<tr><td colspan=\'99\'>' + utils.showAttrs(opt.node) + '</td></tr>';
+        }
+        // Since the node has child nodes, recurse
+        outString += '<tr><td>';
+        for (i = 0; i < opt.node.childNodes.length; i++) {
+          outString += $().SPServices.SPDebugXMLHttpResult({
+            node: opt.node.childNodes.item(i),
+            indent: opt.indent + 1
+          });
+        }
+        outString += '</td></tr>';
+      }
+      outString += '</table>';
+      // Return the HTML which we have built up
+      return outString;
+    };
+    // End $.fn.SPServices.SPDebugXMLHttpResult
+    return $;
+  }(jquery, src_core_SPServicesutils);
   src_utils_SPDropdownCtl = function ($, utils, constants) {
     // Find a dropdown (or multi-select) in the DOM. Returns the dropdown object and its type:
     // S = Simple (select)
@@ -4948,6 +4996,31 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, sr
     // End $.fn.SPServices.SPFilterDropdown
     return $;
   }(jquery, src_utils_constants, src_core_SPServicesutils);
+  src_value_added_SPFindMMSPicker = function ($) {
+    // Find an MMS Picker in the page
+    // Returns references to:
+    //   terms - The aaray of terms as value/guid pairs
+    $.fn.SPServices.SPFindMMSPicker = function (options) {
+      var opt = $.extend({}, {
+        MMSDisplayName: ''  // The displayName of the MMS Picker on the form
+      }, options);
+      var thisTerms = [];
+      // Find the div for the column which contains the entered data values
+      var thisDiv = $('div[title=\'' + opt.MMSDisplayName + '\']');
+      var thisHiddenInput = thisDiv.closest('td').find('input[type=\'hidden\']');
+      var thisTermArray = thisHiddenInput.val().split(';');
+      for (var i = 0; i < thisTermArray.length; i++) {
+        var thisOne = thisTermArray[i].split('|');
+        thisTerms.push({
+          value: thisOne[0],
+          guid: thisOne[1]
+        });
+      }
+      return { terms: thisTerms };
+    };
+    // End $.fn.SPServices.SPFindMMSPicker
+    return $;
+  }(jquery);
   src_value_added_SPFindPeoplePicker = function ($) {
     // Find a People Picker in the page
     // Returns references to:
@@ -5113,6 +5186,62 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, sr
     // End $.fn.SPServices.SPLookupAddNew
     return $;
   }(jquery, src_utils_constants, src_core_SPServicesutils);
+  src_value_added_SPRedirectWithID = function ($) {
+    // This function allows you to redirect to a another page from a new item form with the new
+    // item's ID. This allows chaining of forms from item creation onward.
+    $.fn.SPServices.SPRedirectWithID = function (options) {
+      var opt = $.extend({}, {
+        redirectUrl: '',
+        // Page for the redirect
+        qsParamName: 'ID'  // In some cases, you may want to pass the newly created item's ID with a different
+              // parameter name than ID. Specify that name here, if needed.
+      }, options);
+      var thisList = $().SPServices.SPListNameFromUrl();
+      var queryStringVals = $().SPServices.SPGetQueryString();
+      var lastID = queryStringVals.ID;
+      var QSList = queryStringVals.List;
+      var QSRootFolder = queryStringVals.RootFolder;
+      var QSContentTypeId = queryStringVals.ContentTypeId;
+      // On first load, change the form actions to redirect back to this page with the current lastID for this user and the
+      // original Source.
+      if (typeof queryStringVals.ID === 'undefined') {
+        lastID = $().SPServices.SPGetLastItemId({ listName: thisList });
+        $('form[id=\'aspnetForm\']').each(function () {
+          // This page...
+          var thisUrl = location.href.indexOf('?') > 0 ? location.href.substring(0, location.href.indexOf('?')) : location.href;
+          // ... plus the Source if it exists
+          var thisSource = typeof queryStringVals.Source === 'string' ? 'Source=' + queryStringVals.Source.replace(/\//g, '%2f').replace(/:/g, '%3a') : '';
+          var newQS = [];
+          if (typeof QSList !== 'undefined') {
+            newQS.push('List=' + QSList);
+          }
+          if (typeof QSRootFolder !== 'undefined') {
+            newQS.push('RootFolder=' + QSRootFolder);
+          }
+          if (typeof QSContentTypeId !== 'undefined') {
+            newQS.push('ContentTypeId=' + QSContentTypeId);
+          }
+          var newAction = thisUrl + (newQS.length > 0 ? '?' + newQS.join('&') + '&' : '?') + // Set the Source to point back to this page with the lastID this user has added
+          'Source=' + thisUrl + '?ID=' + lastID + (thisSource.length > 0 ? '%26RealSource=' + queryStringVals.Source : '') + (typeof queryStringVals.RedirectURL === 'string' ? '%26RedirectURL=' + queryStringVals.RedirectURL : '');
+          // Set the new form action
+          setTimeout(function () {
+            document.forms.aspnetForm.action = newAction;
+          }, 0);
+        });  // If this is the load after the item is saved, wait until the new item has been saved (commits are asynchronous),
+             // then do the redirect to redirectUrl with the new lastID, passing along the original Source.
+      } else {
+        while (queryStringVals.ID === lastID) {
+          lastID = $().SPServices.SPGetLastItemId({ listName: thisList });
+        }
+        // If there is a RedirectURL parameter on the Query String, then redirect there instead of the value
+        // specified in the options (opt.redirectUrl)
+        var thisRedirectUrl = typeof queryStringVals.RedirectURL === 'string' ? queryStringVals.RedirectURL : opt.redirectUrl;
+        location.href = thisRedirectUrl + '?' + opt.qsParamName + '=' + lastID + (typeof queryStringVals.RealSource === 'string' ? '&Source=' + queryStringVals.RealSource : '');
+      }
+    };
+    // End $.fn.SPServices.SPRedirectWithID
+    return $;
+  }(jquery);
   src_value_added_SPRequireUnique = function ($, utils) {
     // Function which checks to see if the value for a column on the form is unique in the list.
     $.fn.SPServices.SPRequireUnique = function (options) {
@@ -5209,62 +5338,246 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, sr
     // End $.fn.SPServices.SPRequireUnique
     return $;
   }(jquery, src_core_SPServicesutils);
-  src_value_added_SPRedirectWithID = function ($) {
-    // This function allows you to redirect to a another page from a new item form with the new
-    // item's ID. This allows chaining of forms from item creation onward.
-    $.fn.SPServices.SPRedirectWithID = function (options) {
+  src_value_added_SPScriptAudit = function ($, constants, utils) {
+    // Does an audit of a site's list forms to show where script is in use.
+    $.fn.SPServices.SPScriptAudit = function (options) {
       var opt = $.extend({}, {
-        redirectUrl: '',
-        // Page for the redirect
-        qsParamName: 'ID'  // In some cases, you may want to pass the newly created item's ID with a different
-              // parameter name than ID. Specify that name here, if needed.
+        webURL: '',
+        // [Optional] The name of the Web (site) to audit
+        listName: '',
+        // [Optional] The name of a specific list to audit. If not present, all lists in the site are audited.
+        outputId: '',
+        // The id of the DOM object for output
+        auditForms: true,
+        // Audit the form pages
+        auditViews: true,
+        // Audit the view pages
+        auditPages: true,
+        // Audit the Pages Document Library
+        auditPagesListName: 'Pages',
+        // The Pages Document Library(ies), if desired. Either a single string or an array of strings.
+        showHiddenLists: false,
+        // Show output for hidden lists
+        showNoScript: false,
+        // Show output for lists with no scripts (effectively "verbose")
+        showSrc: true  // Show the source location for included scripts
       }, options);
-      var thisList = $().SPServices.SPListNameFromUrl();
-      var queryStringVals = $().SPServices.SPGetQueryString();
-      var lastID = queryStringVals.ID;
-      var QSList = queryStringVals.List;
-      var QSRootFolder = queryStringVals.RootFolder;
-      var QSContentTypeId = queryStringVals.ContentTypeId;
-      // On first load, change the form actions to redirect back to this page with the current lastID for this user and the
-      // original Source.
-      if (typeof queryStringVals.ID === 'undefined') {
-        lastID = $().SPServices.SPGetLastItemId({ listName: thisList });
-        $('form[id=\'aspnetForm\']').each(function () {
-          // This page...
-          var thisUrl = location.href.indexOf('?') > 0 ? location.href.substring(0, location.href.indexOf('?')) : location.href;
-          // ... plus the Source if it exists
-          var thisSource = typeof queryStringVals.Source === 'string' ? 'Source=' + queryStringVals.Source.replace(/\//g, '%2f').replace(/:/g, '%3a') : '';
-          var newQS = [];
-          if (typeof QSList !== 'undefined') {
-            newQS.push('List=' + QSList);
+      var formTypes = [
+        [
+          'New',
+          'NewForm.aspx',
+          false
+        ],
+        [
+          'Display',
+          'DispForm.aspx',
+          false
+        ],
+        [
+          'Edit',
+          'EditForm.aspx',
+          false
+        ]
+      ];
+      var listXml;
+      // Build the table to contain the results
+      $('#' + opt.outputId).append('<table id=\'SPScriptAudit\' width=\'100%\' style=\'border-collapse: collapse;\' border=0 cellSpacing=0 cellPadding=1>' + '<tr>' + '<th></th>' + '<th>List</th>' + '<th>Page Class</th>' + '<th>Page Type</th>' + '<th>Page</th>' + (opt.showSrc ? '<th>Script References</th>' : '') + '</tr>' + '</table>');
+      // Apply the CSS class to the headers
+      var scriptAuditContainer = $('#SPScriptAudit');
+      scriptAuditContainer.find('th').attr('class', 'ms-vh2-nofilter');
+      // Don't bother with the lists if the options don't require them
+      if (opt.auditForms || opt.auditViews) {
+        // First, get all of the lists within the site
+        $().SPServices({
+          operation: 'GetListCollection',
+          webURL: opt.webURL,
+          async: false,
+          // Need this to be synchronous so we're assured of a valid value
+          completefunc: function (xData) {
+            $(xData.responseXML).find('List').each(function () {
+              listXml = $(this);
+              // If listName has been specified, then only return results for that list
+              if (opt.listName.length === 0 || listXml.attr('Title') === opt.listName) {
+                // Don't work with hidden lists unless we're asked to
+                if (opt.showHiddenLists && listXml.attr('Hidden') === 'False' || !opt.showHiddenLists) {
+                  // Audit the list's forms
+                  if (opt.auditForms) {
+                    // Get the list's Content Types, therefore the form pages
+                    $().SPServices({
+                      operation: 'GetListContentTypes',
+                      webURL: opt.webURL,
+                      listName: listXml.attr('ID'),
+                      async: false,
+                      // Need this to be synchronous so we're assured of a valid value
+                      completefunc: function (xData) {
+                        $(xData.responseXML).find('ContentType').each(function () {
+                          // Don't deal with folders
+                          if ($(this).attr('ID').substring(0, 6) !== '0x0120') {
+                            var formUrls = $(this).find('FormUrls');
+                            for (var i = 0; i < formTypes.length; i++) {
+                              // Look for a customized form...
+                              $(formUrls).find(formTypes[i][0]).each(function () {
+                                SPScriptAuditPage(opt, listXml, 'Form', this.nodeName, (opt.webURL.length > 0 ? opt.webURL : $().SPServices.SPGetCurrentSite()) + constants.SLASH + $(this).text());
+                                formTypes[i][2] = true;
+                              });
+                              // ...else the uncustomized form
+                              if (!formTypes[i][2]) {
+                                var defaultViewUrl = listXml.attr('DefaultViewUrl');
+                                SPScriptAuditPage(opt, listXml, 'Form', formTypes[i][0], defaultViewUrl.substring(0, defaultViewUrl.lastIndexOf(constants.SLASH) + 1) + formTypes[i][1]);
+                              }
+                            }
+                            // Reset the form types
+                            for (i = 0; i < formTypes.length; i++) {
+                              formTypes[i][2] = false;
+                            }
+                          }
+                        });
+                      }
+                    });
+                  }
+                  // Audit the list's views
+                  if (opt.auditViews) {
+                    // Get the list's Views
+                    $().SPServices({
+                      operation: 'GetViewCollection',
+                      webURL: opt.webURL,
+                      listName: listXml.attr('ID'),
+                      async: false,
+                      // Need this to be synchronous so we're assured of a valid value
+                      completefunc: function (xData) {
+                        $(xData.responseXML).find('View').each(function () {
+                          SPScriptAuditPage(opt, listXml, 'View', $(this).attr('DisplayName'), $(this).attr('Url'));
+                        });
+                      }
+                    });
+                  }
+                }
+              }
+            });
           }
-          if (typeof QSRootFolder !== 'undefined') {
-            newQS.push('RootFolder=' + QSRootFolder);
-          }
-          if (typeof QSContentTypeId !== 'undefined') {
-            newQS.push('ContentTypeId=' + QSContentTypeId);
-          }
-          var newAction = thisUrl + (newQS.length > 0 ? '?' + newQS.join('&') + '&' : '?') + // Set the Source to point back to this page with the lastID this user has added
-          'Source=' + thisUrl + '?ID=' + lastID + (thisSource.length > 0 ? '%26RealSource=' + queryStringVals.Source : '') + (typeof queryStringVals.RedirectURL === 'string' ? '%26RedirectURL=' + queryStringVals.RedirectURL : '');
-          // Set the new form action
-          setTimeout(function () {
-            document.forms.aspnetForm.action = newAction;
-          }, 0);
-        });  // If this is the load after the item is saved, wait until the new item has been saved (commits are asynchronous),
-             // then do the redirect to redirectUrl with the new lastID, passing along the original Source.
-      } else {
-        while (queryStringVals.ID === lastID) {
-          lastID = $().SPServices.SPGetLastItemId({ listName: thisList });
-        }
-        // If there is a RedirectURL parameter on the Query String, then redirect there instead of the value
-        // specified in the options (opt.redirectUrl)
-        var thisRedirectUrl = typeof queryStringVals.RedirectURL === 'string' ? queryStringVals.RedirectURL : opt.redirectUrl;
-        location.href = thisRedirectUrl + '?' + opt.qsParamName + '=' + lastID + (typeof queryStringVals.RealSource === 'string' ? '&Source=' + queryStringVals.RealSource : '');
+        });
       }
+      // Don't bother with auditing pages if the options don't require it
+      var numLists = 0;
+      var listsArray = [];
+      if (typeof opt.auditPagesListName === 'string') {
+        numLists = 1;
+        listsArray.push(opt.auditPagesListName);
+      } else {
+        numLists = opt.auditPagesListName.length;
+        listsArray = opt.auditPagesListName;
+      }
+      if (opt.auditPages) {
+        for (var i = 0; i < numLists; i++) {
+          $().SPServices({
+            operation: 'GetList',
+            async: false,
+            cacheXML: true,
+            webURL: opt.webURL,
+            listName: listsArray[i],
+            completefunc: function (xData) {
+              $(xData.responseXML).find('List').each(function () {
+                listXml = $(this);
+              });
+            }
+          });
+          // Get all of the items from the Document Library
+          $().SPServices({
+            operation: 'GetListItems',
+            async: false,
+            webURL: opt.webURL,
+            listName: listsArray[i],
+            CAMLQuery: '<Query><Where><Neq><FieldRef Name=\'ContentType\'/><Value Type=\'Text\'>Folder</Value></Neq></Where></Query>',
+            CAMLViewFields: '<ViewFields><FieldRef Name=\'Title\'/><FieldRef Name=\'FileRef\'/></ViewFields>',
+            CAMLRowLimit: 0,
+            completefunc: function (xData) {
+              $(xData.responseXML).SPFilterNode('z:row').each(function () {
+                var thisPageUrl = $(this).attr('ows_FileRef').split(constants.spDelim)[1];
+                var thisTitle = $(this).attr('ows_Title');
+                var thisPageType = typeof thisTitle !== 'undefined' ? thisTitle : '';
+                if (thisPageUrl.indexOf('.aspx') > 0) {
+                  SPScriptAuditPage(opt, listXml, 'Page', thisPageType, constants.SLASH + thisPageUrl);
+                }
+              });
+            }
+          });
+        }
+      }
+      // Remove progress indicator and make the output pretty by cleaning up the ms-alternating CSS class
+      scriptAuditContainer.find('tr[class=\'ms-alternating\']:even').removeAttr('class');
     };
-    // End $.fn.SPServices.SPRedirectWithID
+    // End $.fn.SPServices.SPScriptAudit
+    // Displays the usage of scripts in a site
+    function SPScriptAuditPage(opt, listXml, pageClass, pageType, pageUrl) {
+      var jQueryPage = 0;
+      var pageScriptSrc = {};
+      pageScriptSrc.type = [];
+      pageScriptSrc.src = [];
+      pageScriptSrc.script = [];
+      var scriptRegex = RegExp('<script[\\s\\S]*?/script>', 'gi');
+      // Fetch the page
+      $.ajax({
+        type: 'GET',
+        url: pageUrl,
+        dataType: 'text',
+        async: false,
+        success: function (xData) {
+          var scriptMatch;
+          while (scriptMatch = scriptRegex.exec(xData)) {
+            var scriptLanguage = getScriptAttribute(scriptMatch, 'language');
+            var scriptType = getScriptAttribute(scriptMatch, 'type');
+            var scriptSrc = getScriptAttribute(scriptMatch, 'src');
+            if (scriptSrc !== null && scriptSrc.length > 0 && !coreScript(scriptSrc)) {
+              pageScriptSrc.type.push(scriptLanguage !== null && scriptLanguage.length > 0 ? scriptLanguage : scriptType);
+              pageScriptSrc.src.push(scriptSrc);
+              jQueryPage++;
+            }
+          }
+          // Only show pages without script if we've been asked to do so.
+          if (!opt.showNoScript && pageScriptSrc.type.length > 0 || opt.showNoScript) {
+            var pagePath = pageUrl.substring(0, pageUrl.lastIndexOf(constants.SLASH) + 1);
+            var out = '<tr class=ms-alternating>' + '<td class=ms-vb-icon><a href=\'' + listXml.attr('DefaultViewUrl') + '\'><IMG border=0 src=\'' + listXml.attr('ImageUrl') + '\'width=16 height=16></A></TD>' + '<td class=ms-vb2><a href=\'' + listXml.attr('DefaultViewUrl') + '\'>' + listXml.attr('Title') + (listXml.attr('Hidden') === 'True' ? '(Hidden)' : '') + '</td>' + '<td class=ms-vb2>' + pageClass + '</td>' + '<td class=ms-vb2>' + pageType + '</td>' + '<td class=ms-vb2><a href=\'' + pageUrl + '\'>' + utils.fileName(pageUrl) + '</td>';
+            if (opt.showSrc) {
+              var thisSrcPath;
+              out += '<td valign=\'top\'><table width=\'100%\' style=\'border-collapse: collapse;\' border=0 cellSpacing=0 cellPadding=1>';
+              for (var i = 0; i < pageScriptSrc.type.length; i++) {
+                thisSrcPath = pageScriptSrc.src[i].substr(0, 1) !== constants.SLASH ? pagePath + pageScriptSrc.src[i] : pageScriptSrc.src[i];
+                out += '<tr><td class=ms-vb2 width=\'30%\'>' + pageScriptSrc.type[i] + '</td>';
+                out += '<td class=ms-vb2 width=\'70%\'><a href=\'' + thisSrcPath + '\'>' + utils.fileName(pageScriptSrc.src[i]) + '</td></tr>';
+              }
+              out += '</table></td>';
+            }
+            $('#SPScriptAudit').append(out);
+          }
+        }
+      });
+    }
+    // End of function SPScriptAuditPage
+    function getScriptAttribute(source, attribute) {
+      var matches;
+      var regex = RegExp(attribute + '=("([^"]*)")|(\'([^\']*)\')', 'gi');
+      if (matches = regex.exec(source)) {
+        return matches[2];
+      }
+      return null;
+    }
+    // End of function getScriptAttribute
+    // Check to see if the script reference is part of SharePoint core so that we can ignore it
+    function coreScript(src) {
+      var coreScriptLocations = [
+        'WebResource.axd',
+        '_layouts'
+      ];
+      for (var i = 0; i < coreScriptLocations.length; i++) {
+        if (src.indexOf(coreScriptLocations[i]) > -1) {
+          return true;
+        }
+      }
+      return false;
+    }
+    // End of function coreScript
     return $;
-  }(jquery);
+  }(jquery, src_utils_constants, src_core_SPServicesutils);
   src_value_added_SPSetMultiSelectSizes = function ($, constants, utils) {
     // The SPSetMultiSelectSizes function sets the sizes of the multi-select boxes for a column on a form automagically
     // based on the values they contain. The function takes into account the fontSize, fontFamily, fontWeight, etc., in its algorithm.

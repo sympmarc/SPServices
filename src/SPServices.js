@@ -22,6 +22,7 @@ define([
     "./core/SPServices.core",
     "./core/Version",
     "./utils/SPConvertDateToISO",
+    "./utils/SPDebugXMLHttpResult",
     "./utils/SPDropdownCtl",
     "./utils/SPFilterNode",
     "./utils/SPGetCurrentSite",
@@ -39,10 +40,12 @@ define([
     "./value-added/SPComplexToSimpleDropdown",
     "./value-added/SPDisplayRelatedInfo",
     "./value-added/SPFilterDropdown",
+    "./value-added/SPFindMMSPicker",
     "./value-added/SPFindPeoplePicker",
     "./value-added/SPLookupAddNew",
-    "./value-added/SPRequireUnique",
     "./value-added/SPRedirectWithID",
+    "./value-added/SPRequireUnique",
+    "./value-added/SPScriptAudit",
     "./value-added/SPSetMultiSelectSizes",
     "./value-added/SPUpdateMultipleListItems"
 
