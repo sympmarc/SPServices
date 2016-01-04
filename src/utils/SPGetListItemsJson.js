@@ -49,7 +49,7 @@ define([
             contains: opt.contains
         });
 
-        thisData.done(function () {
+        thisData.then(function () {
 
             var mappingKey = "SPGetListItemsJson" + opt.webURL + opt.listName;
 
@@ -113,6 +113,9 @@ define([
 
             result.resolveWith(thisResult);
 
+        },
+        function (err) { 
+            result.rejectWith(err);
         });
 
         return result.promise();
