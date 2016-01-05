@@ -49,7 +49,8 @@ The table below shows the Web Services for which we have implemented at least on
 
 ### General Syntax
 
-`$().SPServices({
+```javascript
+$().SPServices({
 	operation: "operationname",
 	[webURL: "/sitepath",]
 	[option1: value1,]
@@ -58,14 +59,14 @@ The table below shows the Web Services for which we have implemented at least on
 	completefunc: function (xData, Status) {
 		//...do stuff...
 	}
-});`
-
+});
+```
 
 _operation_
 The name of the Web Service operation (see the SDK documentation links above). Because the Web Services operations are named uniquely, you only need to specify the operation.
 
 _webURL_
-For Web Service operations where it makes sense, you can pass in a webURL to change the context for the AJAX call. By default, the current site (as determined by [$().SPServices.SPGetCurrentSite](/wikipage?title=%24%28%29.SPServices.SPGetCurrentSite)) is used.
+For Web Service operations where it makes sense, you can pass in a webURL to change the context for the AJAX call. By default, the current site (as determined by [$().SPServices.SPGetCurrentSite](/docs/utilities/SPGetCurrentSite.md)) is used.
 
 _options_
 The options vary based on which Web Service and operation you are calling. In all instances, the options will take the same names as those described in the SDK.
@@ -79,49 +80,55 @@ If set to true, the result's raw XML will be cached using jQuery promises in a s
 _completefunc_
 A function to call on completion of the AJAX call to the Web Service:
 
-`completefunc: function(xData, Status) {
+```javascript
+completefunc: function(xData, Status) {
   //...do something...
-},`
+},
+```
 
 ### Example
 
 Example call for GetListItems. This example is taken directly from SPCascadeDropdowns:
 
-`$().SPServices({
-	operation: <span style="color: #a31515;">"GetListItems"</span>,
-	<span style="color: green;">// Force sync so that we have the right values for the child column onchange trigger</span>
-	async: <span style="color: blue;">false</span>,
+```javascript
+$().SPServices({
+	operation: "GetListItems",
+	// Force sync so that we have the right values for the child column onchange trigger
+	async: false,
 	webURL: opt.relationshipWebURL,
 	listName: opt.relationshipList,
-	<span style="color: green;">// Filter based on the currently selected parent column's value</span>
+	// Filter based on the currently selected parent column's value
 	CAMLQuery: camlQuery,
-	<span style="color: green;">// Only get the parent and child columns</span>
-	CAMLViewFields: <span style="color: #a31515;">"<ViewFields><FieldRef Name='"</span> + opt.relationshipListParentColumn + <span style="color: #a31515;">"' /><FieldRef Name='"</span> + opt.relationshipListChildColumn + <span style="color: #a31515;">"' /></ViewFields>"</span>,
-	<span style="color: green;">// Override the default view rowlimit and get all appropriate rows</span>
+	// Only get the parent and child columns
+	CAMLViewFields: "<ViewFields><FieldRef Name='" + opt.relationshipListParentColumn + "' /><FieldRef Name='" + opt.relationshipListChildColumn + "' /></ViewFields>",
+	// Override the default view rowlimit and get all appropriate rows
 	CAMLRowLimit: 0,
-	completefunc: <span style="color: blue;">function</span>(xData, Status) {
-		...
-	}`
+	completefunc: function(xData, Status) {
+		// ...
+	}
+});
+```
 
 Example call for GetUserInfo:
+```javascript
+waitMessage = "<table width='100%' align='center'><tr><td align='center'><img src='/_layouts/images/gears_an.gif'/></td></tr></table>";
 
-`waitMessage = <span style="color: #a31515;">"<table width='100%' align='center'><tr><td align='center'><img src='/_layouts/images/gears_an.gif'/></td></tr></table>"</span>;
-
-$(<span style="color: #a31515;">"#WSOutput"</span>).html(waitMessage).SPServices({
-	operation: <span style="color: #a31515;">"GetUserInfo"</span>,
-	userLoginName: <span style="color: #a31515;">"SHARE1\\demouser"</span>,
-	completefunc: <span style="color: blue;">function</span> (xData, Status) {
-		$(<span style="color: #a31515;">"#WSOutput"</span>).html(<span style="color: #a31515;">""</span>).append(<span style="color: #a31515;">"<b>This is the output from the GetUserInfo operation:</b>"</span>);
-		$(xData.responseXML).find(<span style="color: #a31515;">"User"</span>).each(<span style="color: blue;">function</span>() {
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>ID: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"ID"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>Sid: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"Sid"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>Name: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"Name"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>LoginName: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"LoginName"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>Email: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"Email"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>Notes: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"Notes"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>IsSiteAdmin: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"IsSiteAdmin"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<li>IsDomainGroup: "</span> + $(<span style="color: blue;">this</span>).attr(<span style="color: #a31515;">"IsDomainGroup"</span>) + <span style="color: #a31515;">"</li>"</span>);
-			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<hr/>"</span>);
+$("#WSOutput").html(waitMessage).SPServices({
+	operation: "GetUserInfo",
+	userLoginName: "SHARE1\\demouser",
+	completefunc: function (xData, Status) {
+		$("#WSOutput").html("").append("<b>This is the output from the GetUserInfo operation:</b>");
+		$(xData.responseXML).find("User").each(function() {
+			$("#WSOutput").append("<li>ID: " + $(this).attr("ID") + "</li>");
+			$("#WSOutput").append("<li>Sid: " + $(this).attr("Sid") + "</li>");
+			$("#WSOutput").append("<li>Name: " + $(this).attr("Name") + "</li>");
+			$("#WSOutput").append("<li>LoginName: " + $(this).attr("LoginName") + "</li>");
+			$("#WSOutput").append("<li>Email: " + $(this).attr("Email") + "</li>");
+			$("#WSOutput").append("<li>Notes: " + $(this).attr("Notes") + "</li>");
+			$("#WSOutput").append("<li>IsSiteAdmin: " + $(this).attr("IsSiteAdmin") + "</li>");
+			$("#WSOutput").append("<li>IsDomainGroup: " + $(this).attr("IsDomainGroup") + "</li>");
+			$("#WSOutput").append("<hr/>");
 		});
 	}
-});`
+});
+```
