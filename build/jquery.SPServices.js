@@ -15,7 +15,7 @@
 * @name SPServices
 * @category Plugins/SPServices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2016-01-04 11:16:32
+* @build SPServices 2.0.0 2016-01-05 08:28:58
 */
 ;(function() {
 var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, src_core_Version, src_utils_SPConvertDateToISO, src_utils_SPDebugXMLHttpResult, src_utils_SPDropdownCtl, src_utils_SPFilterNode, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPGetDisplayFromStatic, src_utils_SPGetLastItemId, src_utils_SPGetListItemsJson, src_utils_SPGetQueryString, src_utils_SPGetStaticFromDisplay, src_utils_SPListNameFromUrl, src_utils_SPXmlToJson, src_value_added_SPArrangeChoices, src_value_added_SPAutocomplete, src_value_added_SPCascadeDropdowns, src_value_added_SPComplexToSimpleDropdown, src_value_added_SPDisplayRelatedInfo, src_value_added_SPFilterDropdown, src_value_added_SPFindMMSPicker, src_value_added_SPFindPeoplePicker, src_value_added_SPLookupAddNew, src_value_added_SPRedirectWithID, src_value_added_SPRequireUnique, src_value_added_SPScriptAudit, src_value_added_SPSetMultiSelectSizes, src_value_added_SPUpdateMultipleListItems, src_SPServices;
@@ -3364,7 +3364,7 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, sr
         changeToken: opt.changeToken,
         contains: opt.contains
       });
-      thisData.done(function () {
+      thisData.then(function () {
         var mappingKey = 'SPGetListItemsJson' + opt.webURL + opt.listName;
         // We're going to use this multiple times
         var responseXml = $(thisData.responseXML);
@@ -3415,6 +3415,8 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, sr
           deletedIds: deletedIds
         };
         result.resolveWith(thisResult);
+      }, function (err) {
+        result.rejectWith(err);
       });
       return result.promise();
     };

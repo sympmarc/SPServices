@@ -30,5 +30,10 @@
     "build/license.txt",
     "build/<%= pkg.filename %>.js",
     "build/<%= pkg.filename %>.min.js"
-  ]
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sympmarc/spservices"
+  }
 }
