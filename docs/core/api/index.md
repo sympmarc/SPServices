@@ -38,14 +38,14 @@ The table below shows the Web Services for which we have implemented at least on
 | [WebPartPages](/docs/api/WebPartPages.md) | ![](/docs/img/checkmark.gif) | ![](/docs/img/checkmark.gif) | [Web Part Pages Web Service](http://msdn.microsoft.com/en-us/library/ms774569.aspx) | ![](/docs/img/checkmark.gif) | ![](/docs/img/checkmark.gif) |
 | [Webs](/docs/api/Webs.md) | ![](/docs/img/checkmark.gif) | ![](/docs/img/checkmark.gif) | [Webs Web Service](http://msdn.microsoft.com/en-us/library/webs.aspx) | ![](/docs/img/checkmark.gif) | ![](/docs/img/checkmark.gif) |
 | [PublishedLinksService](/docs/api/PublishedLinksService.md) | ![](/docs/img/checkmark.gif) | [PublishedLinksService Web Service](http://msdn.microsoft.com/en-us/library/aa981003.aspx) | ![](/docs/img/checkmark.gif) |
-| [Official File (Records Repository)](/docs/api/OfficialFile.md) | ![](/docs/img/checkmark.gif) | [Official File Web Service](http://msdn.microsoft.com/en-us/library/aa981147(v=office.12).aspx) | ![](/docs/img/checkmark.gif) |
-| [Search](/docs/api/Search.md) | ![](/docs/img/checkmark.gif) | [Search Web Service](http://msdn.microsoft.com/en-us/library/search.aspx) | ![](/docs/img/checkmark.gif) |
-| [SpellChecker](/docs/api/SpellChecker.md) | ![](/docs/img/checkmark.gif) | [SpellChecker Web Service](http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.publishing.spellchecker.spellcheck.aspx) | ![](/docs/img/checkmark.gif) |
-| [UserProfileService](/docs/api/UserProfileService.md) | ![](/docs/img/checkmark.gif) | [User Profile Web Service](http://msdn.microsoft.com/en-us/library/aa981571.aspx) | ![](/docs/img/checkmark.gif) |
-| [Workflow](/docs/api/Workflow.md) | ![](/docs/img/checkmark.gif) | [Workflow Web Service](http://msdn.microsoft.com/en-us/library/aa981383.aspx) | ![](/docs/img/checkmark.gif) |
-| [Diagnostics](/docs/api/Diagnostics.md) | | [Diagnostics Web Service](http://msdn.microsoft.com/en-us/library/ee551419.aspx) | ![](/docs/img/checkmark.gif) | ![](/docs/img/checkmark.gif) |
-| [SocialDataService](/docs/api/SocialDataService) | | [SocialDataService Web Service](http://msdn.microsoft.com/en-us/library/ee590294.aspx) | ![](/docs/img/checkmark.gif) |
-| [TaxonomyClientService](/docs/api/TaxonomyClientService) | | [TaxonomyClientService Web Service](http://msdn.microsoft.com/en-us/library/ee586638.aspx) | ![](/docs/img/checkmark.gif) |
+| [Official File (Records Repository)](/docs/api/OfficialFile.md) | | ![](/docs/img/checkmark.gif) | [Official File Web Service](http://msdn.microsoft.com/en-us/library/aa981147(v=office.12).aspx) | ![](/docs/img/checkmark.gif) |
+| [Search](/docs/api/Search.md) | ![](/docs/img/checkmark.gif) | | [Search Web Service](http://msdn.microsoft.com/en-us/library/search.aspx) | ![](/docs/img/checkmark.gif) |
+| [SpellChecker](/docs/api/SpellChecker.md) | | ![](/docs/img/checkmark.gif) | [SpellChecker Web Service](http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.publishing.spellchecker.spellcheck.aspx) | ![](/docs/img/checkmark.gif) |
+| [UserProfileService](/docs/api/UserProfileService.md) | | ![](/docs/img/checkmark.gif) | [User Profile Web Service](http://msdn.microsoft.com/en-us/library/aa981571.aspx) | ![](/docs/img/checkmark.gif) |
+| [Workflow](/docs/api/Workflow.md) | | ![](/docs/img/checkmark.gif) | [Workflow Web Service](http://msdn.microsoft.com/en-us/library/aa981383.aspx) | ![](/docs/img/checkmark.gif) |
+| [Diagnostics](/docs/api/Diagnostics.md) | | | [Diagnostics Web Service](http://msdn.microsoft.com/en-us/library/ee551419.aspx) | ![](/docs/img/checkmark.gif) | ![](/docs/img/checkmark.gif) |
+| [SocialDataService](/docs/api/SocialDataService) | | | [SocialDataService Web Service](http://msdn.microsoft.com/en-us/library/ee590294.aspx) | ![](/docs/img/checkmark.gif) |
+| [TaxonomyClientService](/docs/api/TaxonomyClientService) | | | [TaxonomyClientService Web Service](http://msdn.microsoft.com/en-us/library/ee586638.aspx) | ![](/docs/img/checkmark.gif) |
 
 ### General Syntax
 
