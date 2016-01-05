@@ -4,7 +4,9 @@
 
 ### Certification
 
-[![Certified for SharePoint 2007](http://www.sympraxisconsulting.com/SPServices/sp2007-cert.jpg "Certified for SharePoint 2007")](http://spservices.codeplex.com/wikipage?title=Glossary#Certification) [![Works with Caveats with SharePoint 2010](http://www.sympraxisconsulting.com/SPServices/sp2010-works.jpg "Works with Caveats with SharePoint 2010")](http://spservices.codeplex.com/wikipage?title=Glossary#Certification) See individual operations below.
+[![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg)](/docs/glossary/index.md#Certification) [![Works with Caveats with SharePoint 2010](/docs/img/sp2010-works.jpg)](/docs/glossary/index.md#Certification)
+
+See individual operations below.
 
 ### Supported Operations
 
