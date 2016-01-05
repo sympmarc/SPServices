@@ -1,6 +1,6 @@
 ### Function
 
-**$().SPServices**
+$().SPServices
 
 ### Certification
 
@@ -18,50 +18,49 @@ As of v0.7.2, the core `$().SPServices()` function allows for simple caching of 
 The table below shows the Web Services for which we have implemented at least one operation (or have operations coming in planned releases) with a link to more detailed documentation, indicators for whether the Web Service is available in WSS 3.0 and/or MOSS, and links to the MSDN documentation pages. Note that there are some [general syntax instructions](/wikipage?title=%24%28%29.SPServices&ANCHOR#GeneralSyntax) below the table.
 
 | SharePoint 2007 | SharePoint 2010 |
+| --------------- | --------------- |
 | Web Service | WSS 3.0 | MOSS | MSDN Documentation | Foundation | SP2010 |
-| **[Alerts](/wikipage?title=Alerts)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Alerts Web Service](http://msdn.microsoft.com/en-us/library/alerts.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Authentication](/wikipage?title=Authentication)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Authentication Web Service](http://msdn.microsoft.com/en-us/library/authentication.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Copy](/wikipage?title=Copy)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Copy Web Service](http://msdn.microsoft.com/en-us/library/copy.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Forms](/wikipage?title=Forms)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Forms Web Service](http://msdn.microsoft.com/en-us/library/forms.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Lists](/wikipage?title=Lists)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Lists Web Service](http://msdn.microsoft.com/en-us/library/lists.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Meetings](/wikipage?title=Meetings)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Meetings Web Service](http://msdn.microsoft.com/en-us/library/ms774629.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[People](/wikipage?title=People)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [People Web Service](http://msdn.microsoft.com/en-us/library/people.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Permissions](/wikipage?title=Permissions)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Permissions Web Service](http://msdn.microsoft.com/en-us/library/permissions.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[SiteData](/wikipage?title=SiteData)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [SiteData Web Service](http://msdn.microsoft.com/en-us/library/ms774821(v=office.12).aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Sites](/wikipage?title=Sites)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | Sites Web Service [2007](http://msdn.microsoft.com/en-us/library/ms774847(v=office.12).aspx) [2010](http://msdn.microsoft.com/en-us/library/bb250173.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Users and Groups](/wikipage?title=Users%20and%20Groups)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Users and Groups Web Service](http://msdn.microsoft.com/en-us/library/ms772647.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Versions](/wikipage?title=Versions)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Versions Web Service](http://msdn.microsoft.com/en-us/library/ms772545.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Views](/wikipage?title=Views)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Views Web Service](http://msdn.microsoft.com/en-us/library/views.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[WebPartPages](/wikipage?title=WebPartPages)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Web Part Pages Web Service](http://msdn.microsoft.com/en-us/library/ms774569.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Webs](/wikipage?title=Webs)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Webs Web Service](http://msdn.microsoft.com/en-us/library/webs.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[PublishedLinksService](/wikipage?title=PublishedLinksService)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [PublishedLinksService Web Service](http://msdn.microsoft.com/en-us/library/aa981003.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| [**Official File (Records Repository)**](/wikipage?title=OfficialFile) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Official File Web Service](http://msdn.microsoft.com/en-us/library/aa981147(v=office.12).aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Search](/wikipage?title=Search)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Search Web Service](http://msdn.microsoft.com/en-us/library/search.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[SpellChecker](/wikipage?title=SpellChecker)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [SpellChecker Web Service](http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.publishing.spellchecker.spellcheck.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[UserProfileService](/wikipage?title=UserProfileService)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [User Profile Web Service](http://msdn.microsoft.com/en-us/library/aa981571.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Workflow](/wikipage?title=Workflow)** | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Workflow Web Service](http://msdn.microsoft.com/en-us/library/aa981383.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[Diagnostics](/wikipage?title=Diagnostics)** | [Diagnostics Web Service](http://msdn.microsoft.com/en-us/library/ee551419.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[SocialDataService](http://spservices.codeplex.com/wikipage?title=SocialDataService)** | [SocialDataService Web Service](http://msdn.microsoft.com/en-us/library/ee590294.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
-| **[TaxonomyClientService](http://spservices.codeplex.com/wikipage?title=TaxonomyClientService)** | [TaxonomyClientService Web Service](http://msdn.microsoft.com/en-us/library/ee586638.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| --------- | ------- | ------------------ | ---------- |
+| [Alerts](/wikipage?title=Alerts) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Alerts Web Service](http://msdn.microsoft.com/en-us/library/alerts.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [Authentication](/wikipage?title=Authentication) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Authentication Web Service](http://msdn.microsoft.com/en-us/library/authentication.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [Copy](/wikipage?title=Copy) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Copy Web Service](http://msdn.microsoft.com/en-us/library/copy.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [Forms](/wikipage?title=Forms) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Forms Web Service](http://msdn.microsoft.com/en-us/library/forms.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [Lists](/wikipage?title=Lists) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Lists Web Service](http://msdn.microsoft.com/en-us/library/lists.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [Meetings](/wikipage?title=Meetings) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Meetings Web Service](http://msdn.microsoft.com/en-us/library/ms774629.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [People](/wikipage?title=People) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [People Web Service](http://msdn.microsoft.com/en-us/library/people.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [Permissions](/wikipage?title=Permissions) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Permissions Web Service](http://msdn.microsoft.com/en-us/library/permissions.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [SiteData](/wikipage?title=SiteData) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [SiteData Web Service](http://msdn.microsoft.com/en-us/library/ms774821(v=office.12).aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [Sites](/wikipage?title=Sites) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | Sites Web Service [2007](http://msdn.microsoft.com/en-us/library/ms774847(v=office.12).aspx) [2010](http://msdn.microsoft.com/en-us/library/bb250173.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [Users and Groups](/wikipage?title=Users%20and%20Groups) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Users and Groups Web Service](http://msdn.microsoft.com/en-us/library/ms772647.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [Versions](/wikipage?title=Versions) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Versions Web Service](http://msdn.microsoft.com/en-us/library/ms772545.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [Views](/wikipage?title=Views) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Views Web Service](http://msdn.microsoft.com/en-us/library/views.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [WebPartPages](/wikipage?title=WebPartPages) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Web Part Pages Web Service](http://msdn.microsoft.com/en-us/library/ms774569.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [Webs](/wikipage?title=Webs) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Webs Web Service](http://msdn.microsoft.com/en-us/library/webs.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [PublishedLinksService](/wikipage?title=PublishedLinksService) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [PublishedLinksService Web Service](http://msdn.microsoft.com/en-us/library/aa981003.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [Official File (Records Repository)](/wikipage?title=OfficialFile) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Official File Web Service](http://msdn.microsoft.com/en-us/library/aa981147(v=office.12).aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [Search](/wikipage?title=Search) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Search Web Service](http://msdn.microsoft.com/en-us/library/search.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [SpellChecker](/wikipage?title=SpellChecker) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [SpellChecker Web Service](http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.publishing.spellchecker.spellcheck.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [UserProfileService](/wikipage?title=UserProfileService) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [User Profile Web Service](http://msdn.microsoft.com/en-us/library/aa981571.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [Workflow](/wikipage?title=Workflow) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | [Workflow Web Service](http://msdn.microsoft.com/en-us/library/aa981383.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [Diagnostics](/wikipage?title=Diagnostics) | [Diagnostics Web Service](http://msdn.microsoft.com/en-us/library/ee551419.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [SocialDataService](http://spservices.codeplex.com/wikipage?title=SocialDataService) | [SocialDataService Web Service](http://msdn.microsoft.com/en-us/library/ee590294.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
+| [TaxonomyClientService](http://spservices.codeplex.com/wikipage?title=TaxonomyClientService) | [TaxonomyClientService Web Service](http://msdn.microsoft.com/en-us/library/ee586638.aspx) | ![Available](http://download-codeplex.sec.s-msft.com/Download?ProjectName=spservices&DownloadId=758301) |
 
 ### General Syntax
 
-<div style="color: black; background-color: white;">
-
-<pre>$().SPServices({
-	operation: <span style="color: #a31515;">"operationname"</span>,
-	[webURL: <span style="color: #a31515;">"/sitepath"</span>,]
+`$().SPServices({
+	operation: "operationname",
+	[webURL: "/sitepath",]
 	[option1: value1,]
 	[option2: value2,]
-	[async: <span style="color: blue;">false</span>,]
-	completefunc: <span style="color: blue;">function</span> (xData, Status) {
-		...<span style="color: blue;">do</span> stuff...
+	[async: false,]
+	completefunc: function (xData, Status) {
+		//...do stuff...
 	}
-});</pre>
+});`
 
-</div>
 
-**_operation_**
+_operation_
 The name of the Web Service operation (see the SDK documentation links above). Because the Web Services operations are named uniquely, you only need to specify the operation.
 
 _webURL_
@@ -79,21 +78,15 @@ If set to true, the result's raw XML will be cached using jQuery promises in a s
 _completefunc_
 A function to call on completion of the AJAX call to the Web Service:
 
-<div style="color: black; background-color: white;">
-
-<pre>completefunc: <span style="color: blue;">function</span>(xData, Status) {
-  ...<span style="color: blue;">do</span> something...
-},</pre>
-
-</div>
+`completefunc: function(xData, Status) {
+  //...do something...
+},`
 
 ### Example
 
 Example call for GetListItems. This example is taken directly from SPCascadeDropdowns:
 
-<div style="color: black; background-color: white;">
-
-<pre>$().SPServices({
+`$().SPServices({
 	operation: <span style="color: #a31515;">"GetListItems"</span>,
 	<span style="color: green;">// Force sync so that we have the right values for the child column onchange trigger</span>
 	async: <span style="color: blue;">false</span>,
@@ -107,15 +100,11 @@ Example call for GetListItems. This example is taken directly from SPCascadeDrop
 	CAMLRowLimit: 0,
 	completefunc: <span style="color: blue;">function</span>(xData, Status) {
 		...
-	}</pre>
-
-</div>
+	}`
 
 Example call for GetUserInfo:
 
-<div style="color: black; background-color: white;">
-
-<pre>waitMessage = <span style="color: #a31515;">"<table width='100%' align='center'><tr><td align='center'><img src='/_layouts/images/gears_an.gif'/></td></tr></table>"</span>;
+`waitMessage = <span style="color: #a31515;">"<table width='100%' align='center'><tr><td align='center'><img src='/_layouts/images/gears_an.gif'/></td></tr></table>"</span>;
 
 $(<span style="color: #a31515;">"#WSOutput"</span>).html(waitMessage).SPServices({
 	operation: <span style="color: #a31515;">"GetUserInfo"</span>,
@@ -134,6 +123,4 @@ $(<span style="color: #a31515;">"#WSOutput"</span>).html(waitMessage).SPServices
 			$(<span style="color: #a31515;">"#WSOutput"</span>).append(<span style="color: #a31515;">"<hr/>"</span>);
 		});
 	}
-});</pre>
-
-</div>
+});`
