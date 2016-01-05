@@ -14,6 +14,7 @@
 *   Links in the Operation column will show you more details for the operation, including examples, if available. Links in the MSDN Documentation column will take you to the SDK on MSDN for that operation.
 
 | Operation | Options | MSDN Documentation | Introduced |
+| --------- | ------- | ------------------ | ---------- |
 | AddAttachment | <span class="codeInline">[webURL], listName, listItemID, fileName, attachment</span> | [Lists.AddAttachment Method](http://msdn.microsoft.com/en-us/library/lists.lists.addattachment(v=office.12).aspx) | [0.5.5](http://spservices.codeplex.com/releases/view/43225) |
 | AddDiscussionBoardItem | <span class="codeInline">[webURL], listName, message</span> | [Lists.AddDiscussionBoardItem Method](http://msdn.microsoft.com/en-us/library/lists.lists.adddiscussionboarditem(v=office.12).aspx) | [0.7.2](http://spservices.codeplex.com/releases/view/81401) |
 | AddList | <span class="codeInline">[webURL], listName, description, templateID</span> | [Lists.AddList Method](http://msdn.microsoft.com/en-us/library/lists.lists.addlist.aspx) | [0.2.9](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32341) |
@@ -43,5 +44,5 @@
 | [UpdateList](/wikipage?title=UpdateList&referringTitle=Lists) | <span class="codeInline">[webURL],</span> <span class="codeInline">listName, listProperties, newFields, updateFields, deleteFields, listVersion</span> | [Lists.UpdateList Method](http://msdn.microsoft.com/en-us/library/lists.lists.updatelist.aspx) | [0.4.6](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=35830) |
 | [UpdateListItems](/wikipage?title=UpdateListItems&referringTitle=Lists) | <span class="codeInline">[webURL], listName, updates, [batchCmd, valuepairs, ID]</span> | [Lists.UpdateListItems Method](http://msdn.microsoft.com/en-us/library/lists.lists.updatelistitems.aspx) | [0.2.3](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=31744) |
 
-<span class="codeInline">*</span> Note that the SDK says that <span class="codeInline">contentTypeId</span> is a required parameter for <span class="codeInline">GetListContentTypes</span>. It is not, and in fact it is ignored if present.
-** Attested by Mark Rackley.
+`*` Note that the SDK says that `contentTypeId` is a required parameter for `GetListContentTypes`. It is not, and in fact it is ignored if present.
+`**` Attested by Mark Rackley.
