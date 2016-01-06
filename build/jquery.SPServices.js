@@ -1,9 +1,9 @@
 /*
-* SPServices - Work with SharePoint's Web Services using jQuery
-* Version 2.0.0
+* spservices - Work with SharePoint's Web Services using jQuery
+* Version 2.0.0-pre-alpha
 * @requires jQuery v1.8 or greater - jQuery 1.10.x+ recommended
 *
-* Copyright (c) 2009-2015 Sympraxis Consulting LLC
+* Copyright (c) 2009-2016 Sympraxis Consulting LLC
 * Examples and docs at:
 * http://spservices.codeplex.com/
 * Licensed under the MIT license:
@@ -12,10 +12,10 @@
 /*
 * @description SPServices is a jQuery library which abstracts SharePoint's Web Services and makes them easier to use. It also includes functions which use the various Web Service operations to provide more useful (and cool) capabilities. It works entirely client side and requires no server install.
 * @type jQuery
-* @name SPServices
-* @category Plugins/SPServices
+* @name spservices
+* @category Plugins/spservices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build SPServices 2.0.0 2016-01-05 08:28:58
+* @build spservices 2.0.0-pre-alpha 2016-01-06 11:58:01
 */
 ;(function() {
 var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, src_core_Version, src_utils_SPConvertDateToISO, src_utils_SPDebugXMLHttpResult, src_utils_SPDropdownCtl, src_utils_SPFilterNode, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPGetDisplayFromStatic, src_utils_SPGetLastItemId, src_utils_SPGetListItemsJson, src_utils_SPGetQueryString, src_utils_SPGetStaticFromDisplay, src_utils_SPListNameFromUrl, src_utils_SPXmlToJson, src_value_added_SPArrangeChoices, src_value_added_SPAutocomplete, src_value_added_SPCascadeDropdowns, src_value_added_SPComplexToSimpleDropdown, src_value_added_SPDisplayRelatedInfo, src_value_added_SPFilterDropdown, src_value_added_SPFindMMSPicker, src_value_added_SPFindPeoplePicker, src_value_added_SPLookupAddNew, src_value_added_SPRedirectWithID, src_value_added_SPRequireUnique, src_value_added_SPScriptAudit, src_value_added_SPSetMultiSelectSizes, src_value_added_SPUpdateMultipleListItems, src_SPServices;
@@ -35,7 +35,7 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, sr
      */
     var constants = {
       // Version info
-      VERSION: '2.0.0',
+      VERSION: '2.0.0-pre-alpha',
       // update it in package.json... build takes care of the rest
       // Simple strings
       spDelim: ';#',
