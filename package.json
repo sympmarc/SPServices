@@ -1,8 +1,8 @@
 {
-  "name": "SPServices",
+  "name": "spservices",
   "filename": "jquery.SPServices",
   "sp_version": "2.0.0",
-  "version": "2.0.0",
+  "version": "2.0.0-pre-alpha",
   "description_short": "Work with SharePoint's Web Services using jQuery",
   "description_long": "SPServices is a jQuery library which abstracts SharePoint's Web Services and makes them easier to use. It also includes functions which use the various Web Service operations to provide more useful (and cool) capabilities. It works entirely client side and requires no server install.",
   "homepage": "http://spservices.codeplex.com/",
@@ -35,5 +35,30 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/sympmarc/spservices"
-  }
+  },
+  "description": "Work with SharePoint's Web Services using jQuery",
+  "bugs": {
+    "url": "https://github.com/sympmarc/spservices/issues"
+  },
+  "main": "Gruntfile.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "SPServices",
+    "SharePoint",
+    "2010",
+    "SharePoint",
+    "2013",
+    "SharePoint",
+    "2007",
+    "SharePoint",
+    "REST",
+    "SOAP"
+  ],
+  "author": "Marc D Anderson"
 }
