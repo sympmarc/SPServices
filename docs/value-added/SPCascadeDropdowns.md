@@ -80,54 +80,69 @@ $().SPServices.SPCascadeDropdowns({
 
 
 _relationshipWebURL_
+
 The URL of the Web (site) which contains the relationshipList. If not specified, the current site is used. Examples would be: "/", "/Accounting", "/Departments/HR", etc. Note: It's always best to use relative URLs.
 
 **_relationshipList_**
+
 The name or GUID of the list which contains the parent/child relationships. If you choose to use the GUID, it should look like: "{E73FEA09-CF8F-4B30-88C7-6FA996EE1706}". Note also that if you use the GUID, you do not need to specify the _relatedWebURL_ if the list is in another site.
 
 **_relationshipListParentColumn_**
+
 The [StaticName](/docs/glossary/index.md#StaticName) of the parent column in the _<span style="text-decoration: underline;">relationshipList</span>_
 
 **_relationshipListChildColumn_**
+
 The [StaticName](/docs/glossary/index.md#StaticName) of the child column in the _<span style="text-decoration: underline;">relationshipList</span>_
 
 _CAMLQuery_
+
 The CAMLQuery option allows you to specify an additional filter on the relationshipList. The additional filter will be <And>ed with the existing CAML which is checking for matching items based on the parentColumn selection. Because it is combined with the CAML required to make the function work, CAMLQuery should contain a CAML **fragment** such as:
 ``` javascript
 <Eq><FieldRef Name='Country'/><Value Type='Text'>United States</Value></Eq>
 ```
 
 _CAMLQueryOptions_
+
 This option can be used to specify additional options for retrieval from the sourceList. See the [MSDN documentation for GetListItems](http://msdn.microsoft.com/en-us/library/lists.lists.getlistitems.aspx) for the syntax.
 
 _relationshipListSortColumn_
+
 If specified, sort the options in the dropdown by this column otherwise the options are sorted by _relationshipListChildColumn_
 
 **_parentColumn_**
+
 The [DisplayName](/docs/glossary/index.md#DisplayName) of the parent column in the _form_
 
 **_childColumn_**
+
 The [DisplayName](/docs/glossary/index.md#DisplayName) of the child column in the _form_
 
 _listName_
+
 By default, set to the list name for the current context based on the URL. If your form is outside the context of the list, then you can specify the listName yourself.
 
 _promptText_
+
 Text to use as prompt. If included, {0} will be replaced with the value of childColumn. The default value is `""`.
 
 NOTE: I discourage the use of this option. Yes, I put it into the function, but if the user doesn't make a choice, they get an ugly error because SharePoint doesn't understand it as an option. I've left in in for backward compatibility.
 <span style="color: #ff0000;">Deprecated in v0.7.1.</span>
 
 _simpleChild_
+
 If set to true, the child dropdown will be converted to a "simple" dropdown - only if it is a "complex" dropdown on page load. See [$().SPServices.SPComplexToSimpleDropdown](http://spservices.codeplex.com/wikipage?title=%24%28%29.SPServices.SPComplexToSimpleDropdown) for details on how this works.  The default value is false.
 
 _selectSingleOption_
+
 If set to true and there is only a single child option, select it.  The default value is false.
 
 _matchOnId_
+
 By default, we match on the lookup's text value. If matchOnId is true, we'll match on the lookup id instead. The default value is false.
 
 _completefunc_
+
 If specified, the completefunc will be called each time there is a change to parentColumn. Potential uses for the completefunc: consistent default formatting overrides, additional lookup customizations, image manipulations, etc. You can pass your completefunc in either of these two ways:
 ```javascript
 completefunc: function() {
@@ -140,6 +155,7 @@ completefunc: doSomething,    // Where doSomething is the name of your function
 ```
 
 _debug_
+
 Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](/docs/glossary/index.md#DebugMode).
 
 ## Example
