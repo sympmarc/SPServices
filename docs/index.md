@@ -1,4 +1,4 @@
-** Please read the documentation (starting with the [General Instructions](/docs/general-instructions.md) at the bottom of this page) before asking questions. I'm happy to help out, but it's so much nicer when folks read the documentation.**
+** Please read the documentation (starting with the [General Instructions](/docs/general-instructions.md)) before asking questions. I'm happy to help out, but it's so much nicer when folks read the documentation.**
 
 ### Core
 
