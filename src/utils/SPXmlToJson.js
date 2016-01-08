@@ -63,7 +63,7 @@ define([
 
             /* Generic [Reusable] Functions */
             "Integer": intToJsonObject,
-            "Number": floatToJsonObject
+            "Number": floatToJsonObject,
             "Boolean": booleanToJsonObject,
             "DateTime": dateToJsonObject,
             "User": userToJsonObject,
