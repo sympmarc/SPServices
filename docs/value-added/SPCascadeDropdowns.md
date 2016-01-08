@@ -170,19 +170,19 @@ You'll need these three relationship lists:
 
 **Countries List**
 
-**The Countries list simply contains all of the country names, stored in the list's Title column.
+The Countries list simply contains all of the country names, stored in the list's Title column.
 
 ![](/docs/value-added/img/SPCascadeDropdown2.png)
 
 **Regions List**
 
-**The Regions list contains all of the Region names in the Title column. The Country column is a Lookup column into the Countries list's Title column.
+The Regions list contains all of the Region names in the Title column. The Country column is a Lookup column into the Countries list's Title column.
 
 ![](/docs/value-added/img/SPCascadeDropdown3.png) 
 
 **States List**
 
-**The States list contains all of the State names in the Title column. Note that I've changed the DisplayName of the Title column to State, but the StaticName is still Title. The Region Name column is a Lookup column into the Regions list's Title column. (The State Abbreviation column is only here to show that you can also store additional information about the States in this list. The same is true of the Countries and Regions lists, of course.)
+The States list contains all of the State names in the Title column. Note that I've changed the DisplayName of the Title column to State, but the StaticName is still Title. The Region Name column is a Lookup column into the Regions list's Title column. (The State Abbreviation column is only here to show that you can also store additional information about the States in this list. The same is true of the Countries and Regions lists, of course.)
 
 ![](/docs/value-added/img/SPCascadeDropdown4.png) 
 
