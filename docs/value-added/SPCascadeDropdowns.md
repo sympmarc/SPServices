@@ -169,15 +169,21 @@ The end result will look like this:
 You'll need these three relationship lists:
 
 **Countries List**
+
 **The Countries list simply contains all of the country names, stored in the list's Title column.
+
 ![](/docs/value-added/img/SPCascadeDropdown2.png)
 
 **Regions List**
+
 **The Regions list contains all of the Region names in the Title column. The Country column is a Lookup column into the Countries list's Title column.
+
 ![](/docs/value-added/img/SPCascadeDropdown3.png) 
 
 **States List**
+
 **The States list contains all of the State names in the Title column. Note that I've changed the DisplayName of the Title column to State, but the StaticName is still Title. The Region Name column is a Lookup column into the Regions list's Title column. (The State Abbreviation column is only here to show that you can also store additional information about the States in this list. The same is true of the Countries and Regions lists, of course.)
+
 ![](/docs/value-added/img/SPCascadeDropdown4.png) 
 
 This is the sum total of what you'll need to add to your page to make the function work for the example above. The first two lines simply pull the script files into the page, and the `$(document).ready(function()` line is a jQuery function that says "Run this script when the page has been fully rendered". In the first call to the function, note that we're turning [debug mode](/docs/glossary/index.md#DebugMode) on by setting `debug: true`.
