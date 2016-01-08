@@ -191,7 +191,9 @@ This is the sum total of what you'll need to add to your page to make the functi
 ```html
 <script language="javascript" type="text/javascript" src="../../jQuery%20Libraries/jquery-1.11.3.js"></script>
 <script language="javascript" type="text/javascript" src="../../jQuery%20Libraries/jquery.SPServices-2014.02.min.js"></script>
-<script language="javascript" type="text/javascript">$(document).ready(function() {
+<script language="javascript" type="text/javascript">
+
+$(document).ready(function() {
   $().SPServices.SPCascadeDropdowns({
     relationshipList: "Regions",
     relationshipListParentColumn: "Country",
@@ -209,6 +211,7 @@ This is the sum total of what you'll need to add to your page to make the functi
     childColumn: "State"
   });
 });
+
 </script>
 ```
 
