@@ -334,7 +334,7 @@ module.exports = function(grunt) {
                         'metalsmith-permalinks': {
                             pattern: ':title'
                         },
-                        'metalsmith-templates': {
+                        'metalsmith-layouts': {
                             engine: 'handlebars'
                         }
                     }
