@@ -26,7 +26,6 @@
     "grunt-metalsmith": "^1.0.0",
     "grunt-zip": "~0.17.1",
     "metalsmith-permalinks": "^0.4.1",
-    "metalsmith-templates": "^0.7.0",
     "qunit": "^0.7.7",
     "rjs-build-analysis": "^0.0.3"
   },
