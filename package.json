@@ -69,5 +69,8 @@
     "REST",
     "SOAP"
   ],
-  "author": "Marc D Anderson"
+  "author": "Marc D Anderson",
+  "dependencies": {
+    "metalsmith-layouts": "^1.4.2"
+  }
 }
