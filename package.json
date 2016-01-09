@@ -23,12 +23,12 @@
     "grunt-contrib-uglify": "~0.11.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-gh-pages": "^1.0.0",
-    "grunt-metalsmith": "^1.0.0",
     "grunt-zip": "~0.17.1",
-    "metalsmith-permalinks": "^0.4.1",
     "qunit": "^0.7.7",
     "rjs-build-analysis": "^0.0.3",
-      "metalsmith-layouts": "^1.4.2"
+    "grunt-metalsmith": "^1.0.0",
+    "metalsmith-permalinks": "^0.4.1",
+    "metalsmith-layouts": "^1.4.2"
 },
   "package_zipfiles": [
     "build/license.txt",
