@@ -320,6 +320,28 @@ module.exports = function(grunt) {
                 }
             }
 
+        },
+
+        metalsmith: {
+            staticSiteExample: {
+                options: {
+                    metadata: {
+                        title: 'SPServices Documentation',
+                        description: 'SPServices Documentation for GitHub Pages'
+                    },
+                    plugins: {
+                        'metalsmith-markdown': {},
+                        'metalsmith-permalinks': {
+                            pattern: ':title'
+                        },
+                        'metalsmith-templates': {
+                            engine: 'handlebars'
+                        }
+                    }
+                },
+                src: "docs",
+                dest: 'docs/html'
+            }
         }
 
     });
@@ -332,6 +354,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
+    grunt.loadNpmTasks('grunt-metalsmith');
 
     // Default task(s).
     grunt.registerTask('default', [

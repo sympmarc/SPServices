@@ -1,20 +1,3 @@
-### Function
-
-**$().SPServices**
-
-### Web Service
-
-**Alerts**
-
-### Supported Operations
-
-| Operation | Options | MSDN Documentation | Introduced |
-| --------- | ------- | ------------------ | ---------- |
-| GetAlerts | <span class="codeInline">[webURL]</span> | [Alerts.GetAlerts Method](http://msdn.microsoft.com/en-us/library/alerts.alerts.getalerts.aspx) | [0.2.8](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32071) |
-| DeleteAlerts | <span class="codeInline">[webURL], IDs</span> | [Alerts.DeleteAlerts Method](http://msdn.microsoft.com/en-us/library/alerts.alerts.deletealerts.aspx) | [0.2.8](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32071) |
-
-
-
 ## Function
 
 **$().SPServices.SPCascadeDropdowns**
@@ -77,8 +60,6 @@ $().SPServices.SPCascadeDropdowns({
 });
 ```
 
-
-
 _relationshipWebURL_
 
 The URL of the Web (site) which contains the relationshipList. If not specified, the current site is used. Examples would be: "/", "/Accounting", "/Departments/HR", etc. Note: It's always best to use relative URLs.
@@ -89,11 +70,11 @@ The name or GUID of the list which contains the parent/child relationships. If y
 
 **_relationshipListParentColumn_**
 
-The [StaticName](/docs/glossary/index.md#StaticName) of the parent column in the _<span style="text-decoration: underline;">relationshipList</span>_
+The [StaticName](/docs/glossary/index.md#StaticName) of the parent column in the _relationshipList_
 
 **_relationshipListChildColumn_**
 
-The [StaticName](/docs/glossary/index.md#StaticName) of the child column in the _<span style="text-decoration: underline;">relationshipList</span>_
+The [StaticName](/docs/glossary/index.md#StaticName) of the child column in the _relationshipList_
 
 _CAMLQuery_
 
