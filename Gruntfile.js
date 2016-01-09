@@ -340,8 +340,15 @@ module.exports = function(grunt) {
                     }
                 },
                 src: "docs",
-                dest: 'docs/html'
+                dest: "docs-html"
             }
+        },
+
+        "gh-pages": {
+            options: {
+                base: "docs"
+            },
+            src: ["**"]
         }
 
     });
@@ -355,6 +362,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-metalsmith');
+    grunt.loadNpmTasks('grunt-gh-pages');
 
     // Default task(s).
     grunt.registerTask('default', [
