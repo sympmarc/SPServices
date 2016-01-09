@@ -1,0 +1,73 @@
+{
+  "name": "spservices",
+  "filename": "jquery.SPServices",
+  "sp_version": "2.0.0",
+  "version": "2.0.0-pre-alpha",
+  "description_short": "Work with SharePoint's Web Services using jQuery",
+  "description_long": "SPServices is a jQuery library which abstracts SharePoint's Web Services and makes them easier to use. It also includes functions which use the various Web Service operations to provide more useful (and cool) capabilities. It works entirely client side and requires no server install.",
+  "homepage": "http://spservices.codeplex.com/",
+  "copyright": "2009-2016 Sympraxis Consulting LLC",
+  "requires": [
+    "jQuery v1.8 or greater - jQuery 1.10.x+ recommended"
+  ],
+  "authors": [
+    "Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com"
+  ],
+  "devDependencies": {
+    "amdclean": "^2.7.0",
+    "grunt": "^0.4.5",
+    "grunt-contrib-concat": "~0.5.1",
+    "grunt-contrib-copy": "^0.8.2",
+    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-contrib-requirejs": "^0.4.4",
+    "grunt-contrib-uglify": "~0.11.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-gh-pages": "^1.0.0",
+    "grunt-metalsmith": "^1.0.0",
+    "grunt-zip": "~0.17.1",
+    "metalsmith-permalinks": "^0.4.1",
+    "metalsmith-templates": "^0.7.0",
+    "qunit": "^0.7.7",
+    "rjs-build-analysis": "^0.0.3"
+  },
+  "package_zipfiles": [
+    "build/license.txt",
+    "build/<%= pkg.filename %>.js",
+    "build/<%= pkg.filename %>.min.js"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/sympmarc/SPServices/blob/master/license.txt"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sympmarc/spservices"
+  },
+  "description": "Work with SharePoint's Web Services using jQuery",
+  "bugs": {
+    "url": "https://github.com/sympmarc/spservices/issues"
+  },
+  "main": "Gruntfile.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "SPServices",
+    "SharePoint",
+    "2010",
+    "SharePoint",
+    "2013",
+    "SharePoint",
+    "2007",
+    "SharePoint",
+    "REST",
+    "SOAP"
+  ],
+  "author": "Marc D Anderson"
+}
