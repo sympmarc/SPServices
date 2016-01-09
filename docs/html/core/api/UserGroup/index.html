@@ -1,0 +1,276 @@
+<h3 id="function">Function</h3>
+<p><strong>$().SPServices</strong></p>
+<h3 id="web-service">Web Service</h3>
+<p><strong>Users and Groups</strong></p>
+<h3 id="supported-operations">Supported Operations</h3>
+<p><strong>Note</strong>: Links in the Operation column will show you more details for the operation, including examples, if available. Links in the MSDN Documentation column will take you to the SDK on MSDN for that operation.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Options</th>
+<th>MSDN Documentation</th>
+<th>Introduced</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AddGroup</td>
+<td><code>groupName, ownerIdentifier, ownerType, defaultUserLoginName, description</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774470.aspx">UserGroup.AddGroup Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>AddGroupToRole</td>
+<td><code>roleName, groupName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772540.aspx">UserGroup.AddGroupToRole Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>AddRole</td>
+<td><code>[webURL], roleName, description, permissionMask</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772714.aspx">UserGroup.AddRole Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.1</a></td>
+</tr>
+<tr>
+<td>AddRoleDef</td>
+<td><code>roleName, description, permissionMask</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774640(v=office.12">UserGroup.AddRoleDef Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>AddUserCollectionToGroup</td>
+<td><code>groupName, usersInfoXml</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774538(v=office.12">UserGroup.AddUserCollectionToGroup Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>AddUserCollectionToRole</td>
+<td><code>roleName, usersInfoXml</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772619(v=office.12">UserGroup.AddUserCollectionToRole Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>AddUserToGroup</td>
+<td><code>groupName, userName, userLoginName, userEmail, userNotes</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772683(v=office.12">UserGroup.AddUserToGroup Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/47136">0.5.7</a></td>
+</tr>
+<tr>
+<td>AddUserToRole</td>
+<td><code>roleName, userName, userLoginName, userEmail, userNotes</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774883(v=office.12">UserGroup.AddUserToRole Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/47136">0.5.7</a></td>
+</tr>
+<tr>
+<td>GetAllUserCollectionFromWeb</td>
+<td><code>[webURL]</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772661.aspx">UserGroup.GetAllUserCollectionFromWeb Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetGroupCollection</td>
+<td><code>groupNamesXml</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774837.aspx">UserGroup.GetGroupCollection Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetGroupCollectionFromRole</td>
+<td><code>roleName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774597.aspx">UserGroup.GetGroupCollectionFromRole Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetGroupCollectionFromSite</td>
+<td><code>[webURL]</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774594.aspx">UserGroup.GetGroupCollectionFromSite Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td><a href="/docs/core/api/UserGroup.GetGroupCollectionFromUser.md">GetGroupCollectionFromUser</a></td>
+<td><code>userLoginName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772552.aspx">UserGroup.GetGroupCollectionFromUser Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetGroupCollectionFromWeb</td>
+<td><code>[webURL]</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774815.aspx">UserGroup.GetGroupCollectionFromWeb Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetGroupInfo</td>
+<td><code>groupName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774799.aspx">UserGroup.GetGroupInfo Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetRoleCollection</td>
+<td><code>roleNamesXml</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774593.aspx">UserGroup.GetRoleCollection Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetRoleCollectionFromGroup</td>
+<td><code>groupName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms773817(v=office.12">UserGroup.GetRoleCollectionFromGroup Method</a>)</td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetRoleCollectionFromUser</td>
+<td><code>userLoginName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772680.aspx">UserGroup.GetRoleCollectionFromUser Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetRoleCollectionFromWeb</td>
+<td><code>[webURL]</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772673.aspx">UserGroup.GetRoleCollectionFromWeb Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetRoleInfo</td>
+<td><code>roleName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774830.aspx">UserGroup.GetRoleInfo Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td><a href="/docs/core/api/UserGroup.GetRolesAndPermissionsForCurrentUser.md">GetRolesAndPermissionsForCurrentUser</a></td>
+<td><code>[webURL]</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774677.aspx">UserGroup.GetRolesAndPermissionsForCurrentUser Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetRolesAndPermissionsForSite</td>
+<td><code>[webURL]</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774632.aspx">UserGroup.GetRolesAndPermissionsForSite Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetUserCollection</td>
+<td><code>userLoginNamesXml</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774455.aspx">UserGroup.GetUserCollection Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetUserCollectionFromGroup</td>
+<td><code>groupName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772554.aspx">UserGroup.GetUserCollectionFromGroup Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetUserCollectionFromRole</td>
+<td><code>roleName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772672.aspx">UserGroup.GetUserCollectionFromRole Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetUserCollectionFromSite</td>
+<td><em>None</em></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772702.aspx">UserGroup.GetUserCollectionFromSite Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetUserCollectionFromWeb</td>
+<td><code>[webURL]</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774581.aspx">UserGroup.GetUserCollectionFromWeb Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>GetUserInfo</td>
+<td><code>userLoginName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774637.aspx">UserGroup.GetUserInfo Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=31744">0.2.3</a></td>
+</tr>
+<tr>
+<td>GetUserLoginFromEmail</td>
+<td><code>emailXml</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774890.aspx">UserGroup.GetUserLoginFromEmail Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>RemoveGroup</td>
+<td><code>groupName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774635.aspx">UserGroup.RemoveGroup Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=32949">0.2.10</a></td>
+</tr>
+<tr>
+<td>RemoveGroupFromRole</td>
+<td><code>roleName, groupName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774728(v=office.12">UserGroup.RemoveGroupFromRole Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>RemoveRole</td>
+<td><code>roleName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774731(v=office.12">Webs.RemoveRole Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/53275">0.5.8</a></td>
+</tr>
+<tr>
+<td>RemoveUserCollectionFromGroup</td>
+<td><code>groupName, userLoginNamesXml</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772658(v=office.12">UserGroup.RemoveUserCollectionFromGroup Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>RemoveUserCollectionFromRole</td>
+<td><code>roleName, userLoginNamesXml</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772654(v=office.12">UserGroup.RemoveUserCollectionFromRole Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>RemoveUserCollectionFromSite</td>
+<td><code>userLoginNamesXml</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774433(v=office.12">UserGroup.RemoveUserCollectionFromSite Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>RemoveUserFromGroup</td>
+<td><code>groupName, userLoginName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774499(v=office.12">UserGroup.RemoveUserFromGroup Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/47136">0.5.7</a></td>
+</tr>
+<tr>
+<td>RemoveUserFromRole</td>
+<td><code>roleName, userLoginName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774892(v=office.12">UserGroup.RemoveUserFromRole Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>RemoveUserFromSite</td>
+<td><code>userLoginName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772644(v=office.12">UserGroup.RemoveUserFromSite Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>RemoveUserFromWeb</td>
+<td><code>userLoginName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772548(v=office.12">UserGroup.RemoveUserFromWeb Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>UpdateGroupInfo</td>
+<td><code>oldGroupName, groupName, ownerIdentifier, ownerType, description</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774703(v=office.12">UserGroup.UpdateGroupInfo Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>UpdateRoleDefInfo</td>
+<td><code>oldRoleName, roleName, description, permissionMask</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774466(v=office.12">UserGroup.UpdateRoleDefInfo Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>UpdateRoleInfo</td>
+<td><code>oldRoleName, roleName, description, permissionMask</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774452(v=office.12">UserGroup.UpdateRoleInfo Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>UpdateUserInfo</td>
+<td><code>userLoginName, userName, userEmail, userNotes</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772614(v=office.12">UserGroup.UpdateUserInfo Method</a>.aspx)</td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+</tbody>
+</table>
