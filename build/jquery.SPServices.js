@@ -15,7 +15,7 @@
 * @name spservices
 * @category Plugins/spservices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build spservices 2.0.0-pre-alpha 2016-01-09 02:27:30
+* @build spservices 2.0.0-pre-alpha 2016-01-21 09:43:00
 */
 ;(function() {
 var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, src_core_Version, src_utils_SPConvertDateToISO, src_utils_SPDebugXMLHttpResult, src_utils_SPDropdownCtl, src_utils_SPFilterNode, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPGetDisplayFromStatic, src_utils_SPGetLastItemId, src_utils_SPGetListItemsJson, src_utils_SPGetQueryString, src_utils_SPGetStaticFromDisplay, src_utils_SPListNameFromUrl, src_utils_SPXmlToJson, src_value_added_SPArrangeChoices, src_value_added_SPAutocomplete, src_value_added_SPCascadeDropdowns, src_value_added_SPComplexToSimpleDropdown, src_value_added_SPDisplayRelatedInfo, src_value_added_SPFilterDropdown, src_value_added_SPFindMMSPicker, src_value_added_SPFindPeoplePicker, src_value_added_SPLookupAddNew, src_value_added_SPRedirectWithID, src_value_added_SPRequireUnique, src_value_added_SPScriptAudit, src_value_added_SPSetMultiSelectSizes, src_value_added_SPUpdateMultipleListItems, src_SPServices;
