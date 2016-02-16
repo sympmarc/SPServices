@@ -39,8 +39,8 @@ define([
             for (attrNum = 0; attrNum < rowAttrs.length; attrNum++) {
                 var thisAttrName = rowAttrs[attrNum].name;
                 var thisMapping = opt.mapping[thisAttrName];
-                var thisObjectName = typeof thisMapping !== "undefined" ? thisMapping.mappedName : opt.removeOws ? thisAttrName.split("ows_")[1] : thisAttrName;
-                var thisObjectType = typeof thisMapping !== "undefined" ? thisMapping.objectType : undefined;
+                var thisObjectName = thisMapping && thisMapping.mappedName ? thisMapping.mappedName : opt.removeOws ? thisAttrName.split("ows_")[1] : thisAttrName;
+                var thisObjectType = thisMapping !== undefined ? thisMapping.objectType : undefined;
                 if (opt.includeAllAttrs || thisMapping !== undefined) {
                     row[thisObjectName] = attrToJson(rowAttrs[attrNum].value, thisObjectType);
                 }
@@ -57,42 +57,39 @@ define([
 
 
     function attrToJson(v, objectType) {
+        function identity(x) { return x; }
 
         var result = {
 
             /* Generic [Reusable] Functions */
-            "Integer": intToJsonObject(v),
-            "Number": floatToJsonObject(v),
-            "Boolean": booleanToJsonObject(v),
-            "DateTime": dateToJsonObject(v),
-            "User": userToJsonObject(v),
-            "UserMulti": userMultiToJsonObject(v),
-            "Lookup": lookupToJsonObject(v),
-            "lookupMulti": lookupMultiToJsonObject(v),
-            "MultiChoice": choiceMultiToJsonObject(v),
-            "Calculated": calcToJsonObject(v),
-            "Attachments": attachmentsToJsonObject(v),
-            "URL": urlToJsonObject(v),
-            "JSON":jsonToJsonObject(v), // Special case for text JSON stored in text columns
+            "Integer": intToJsonObject,
+            "Number": floatToJsonObject,
+            "Boolean": booleanToJsonObject,
+            "DateTime": dateToJsonObject,
+            "User": userToJsonObject,
+            "UserMulti": userMultiToJsonObject,
+            "Lookup": lookupToJsonObject,
+            "lookupMulti": lookupMultiToJsonObject,
+            "MultiChoice": choiceMultiToJsonObject,
+            "Calculated": calcToJsonObject,
+            "Attachments": attachmentsToJsonObject,
+            "URL": urlToJsonObject,
+            "JSON": jsonToJsonObject, // Special case for text JSON stored in text columns
 
             /* These objectTypes reuse above functions */
-            "Text": result.Default(v),
-            "Counter": result.Integer(v),
-            "datetime": result.DateTime(v),    // For calculated columns, stored as datetime;#value
-            "AllDayEvent": result.Boolean(v),
-            "Recurrence": result.Boolean(v),
-            "Currency": result.Number(v),
-            "float": result.Number(v), // For calculated columns, stored as float;#value
-            "RelatedItems": result.JSON(v),
+            "Text": result.Default,
+            "Counter": result.Integer,
+            "datetime": result.DateTime,    // For calculated columns, stored as datetime;#value
+            "AllDayEvent": result.Boolean,
+            "Recurrence": result.Boolean,
+            "Currency": result.Number,
+            "float": result.Number, // For calculated columns, stored as float;#value
+            "RelatedItems": result.JSON,
 
-            "Default": v
+            "Default": identity
         };
 
-        if (result[objectType] !== undefined) {
-            return result.objectType(v);
-        } else {
-            return v;
-        }
+        return (result[objectType] || identity)(v);
 
 /*
         switch (objectType) {
