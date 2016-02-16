@@ -20,11 +20,10 @@
     "grunt-contrib-copy": "^0.8.2",
     "grunt-contrib-jshint": "^0.12.0",
     "grunt-contrib-requirejs": "^0.4.4",
-    "grunt-contrib-uglify": "~0.11.0",
+    "grunt-contrib-uglify": "~0.11.1",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-zip": "~0.17.1",
-    "qunit": "^0.7.7",
-    "rjs-build-analysis": "^0.0.3"
+    "qunit": "^0.9.0"
   },
   "package_zipfiles": [
     "build/license.txt",
@@ -65,5 +64,10 @@
     "REST",
     "SOAP"
   ],
-  "author": "Marc D Anderson"
+  "author": "Marc D Anderson",
+  "dependencies": {
+    "git": "^0.1.5",
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13"
+  }
 }
