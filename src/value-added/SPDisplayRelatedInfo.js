@@ -24,7 +24,7 @@ define([
             relatedList: "", // The name of the list which contains the additional information
             relatedListColumn: "", // The internal name of the related column in the related list
             relatedColumns: [], // An array of related columns to display
-            displayFormat: "table", // The format to use in displaying the related information.  Possible values are: [table, list]
+            displayFormat: "table", // The format to use in displaying the related information.  Possible values are: [table, list, none]
             headerCSSClass: "ms-vh2", // CSS class for the table headers
             rowCSSClass: "ms-vb", // CSS class for the table rows
             CAMLQuery: "", // [Optional] For power users, this CAML fragment will be <And>ed with the default query on the relatedList
@@ -36,7 +36,6 @@ define([
         }, options);
 
         var i;
-        var divId;
         var relatedColumnsXML = [];
         var relatedListXML;
         var thisFunction = "SPServices.SPDisplayRelatedInfo";
@@ -49,9 +48,6 @@ define([
             utils.errBox(thisFunction, "columnName: " + opt.columnName, constants.TXTColumnNotFound);
             return;
         }
-
-        // Generate a unique id for the container
-        divId = utils.genContainerId("SPDisplayRelatedInfo", opt.columnName, opt.listName);
 
         // Get information about the related list and its columns
         $().SPServices({
@@ -82,14 +78,14 @@ define([
             // Plain old select
             case constants.dropdownType.simple:
                 columnSelect.Obj.bind("change", function () {
-                    showRelated(opt, divId, relatedListXML, relatedColumnsXML);
+                    showRelated(opt, relatedListXML, relatedColumnsXML);
                 });
                 break;
             // Input / Select hybrid
             case constants.dropdownType.complex:
                 // Bind to any change on the hidden input element
                 columnSelect.optHid.bind("propertychange", function () {
-                    showRelated(opt, divId, relatedListXML, relatedColumnsXML);
+                    showRelated(opt, relatedListXML, relatedColumnsXML);
                 });
                 break;
             // Multi-select hybrid
@@ -102,11 +98,11 @@ define([
                 break;
         }
         // Fire the change to set the initially allowable values
-        showRelated(opt, divId, relatedListXML, relatedColumnsXML);
+        showRelated(opt, relatedListXML, relatedColumnsXML);
 
     }; // End $.fn.SPServices.SPDisplayRelatedInfo
 
-    function showRelated(opt, divId, relatedListXML, relatedColumnsXML) {
+    function showRelated(opt, relatedListXML, relatedColumnsXML) {
 
         var i;
         var columnSelectSelected;
@@ -131,10 +127,14 @@ define([
         }
         columnSelect.Obj.attr("showRelatedSelected", columnSelectSelected[0]);
 
-        // Remove the old container...
-        $("#" + divId).remove();
-        // ...and append a new, empty one
-        columnSelect.Obj.parent().append("<div id=" + divId + "></div>");
+        if(opt.displayFormat !== "none") {
+            // Generate a unique id for the container
+            var divId = utils.genContainerId("SPDisplayRelatedInfo", opt.columnName, opt.listName);
+            // Remove the old container...
+            $("#" + divId).remove();
+            // ...and append a new, empty one
+            columnSelect.Obj.parent().append("<div id=" + divId + "></div>");
+        }
 
         // Get the list items which match the current selection
         var camlQuery = "<Query><Where>";
@@ -233,11 +233,15 @@ define([
                         });
                         outString += "</table>";
                         break;
+                    case "none":
+                        break;
                     default:
                         break;
                 }
                 // Write out the results
-                $("#" + divId).html(outString);
+                if(opt.displayFormat !== "none") {
+                    $("#" + divId).html(outString);
+                }
 
                 // If present, call completefunc when all else is done
                 if (opt.completefunc !== null) {
