@@ -15,7 +15,7 @@
 * @name spservices
 * @category Plugins/spservices
 * @author Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com
-* @build spservices 2.0.0-pre-alpha 2016-01-21 09:43:00
+* @build spservices 2.0.0-pre-alpha 2016-02-16 01:56:54
 */
 ;(function() {
 var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, src_core_Version, src_utils_SPConvertDateToISO, src_utils_SPDebugXMLHttpResult, src_utils_SPDropdownCtl, src_utils_SPFilterNode, src_utils_SPGetCurrentSite, src_utils_SPGetCurrentUser, src_utils_SPGetDisplayFromStatic, src_utils_SPGetLastItemId, src_utils_SPGetListItemsJson, src_utils_SPGetQueryString, src_utils_SPGetStaticFromDisplay, src_utils_SPListNameFromUrl, src_utils_SPXmlToJson, src_value_added_SPArrangeChoices, src_value_added_SPAutocomplete, src_value_added_SPCascadeDropdowns, src_value_added_SPComplexToSimpleDropdown, src_value_added_SPDisplayRelatedInfo, src_value_added_SPFilterDropdown, src_value_added_SPFindMMSPicker, src_value_added_SPFindPeoplePicker, src_value_added_SPLookupAddNew, src_value_added_SPRedirectWithID, src_value_added_SPRequireUnique, src_value_added_SPScriptAudit, src_value_added_SPSetMultiSelectSizes, src_value_added_SPUpdateMultipleListItems, src_SPServices;
@@ -259,20 +259,16 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, sr
         //      FieldType="SPFieldText"
         //  -->
         // as the "anchor" to find it. Necessary because SharePoint doesn't give all field types ids or specific classes.
-        findFormField: function (columnName) {
-          var thisFormBody;
-          // There's no easy way to find one of these columns; we'll look for the comment with the columnName
-          var searchText = new RegExp('FieldName="' + columnName.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&') + '"', 'gi');
-          // Loop through all of the ms-formbody table cells
-          $('td.ms-formbody, td.ms-formbodysurvey').each(function () {
-            // Check for the right comment
-            if (searchText.test($(this).html())) {
-              thisFormBody = $(this);
-              // Found it, so we're done
-              return false;
-            }
-          });
-          return thisFormBody;
+        findFormField: function (v) {
+          var $formBody = $('td.ms-formbody, td.ms-formbodysurvey'),
+            // Borrowed from MDN.
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+            escapeRegExp = function (v) {
+              return v.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');
+            }, columnName = escapeRegExp(v), rcommentValidation = new RegExp('(?:Field|FieldInternal)Name="' + columnName + '"', 'i'), $columnNode = $formBody.contents().filter(function () {
+              return this.nodeType === 8 && rcommentValidation.test(this.nodeValue);
+            });
+          return $columnNode.parent('td');
         },
         // End of function findFormField
         // Show a single attribute of a node, enclosed in a table
@@ -3545,8 +3541,8 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, sr
         for (attrNum = 0; attrNum < rowAttrs.length; attrNum++) {
           var thisAttrName = rowAttrs[attrNum].name;
           var thisMapping = opt.mapping[thisAttrName];
-          var thisObjectName = typeof thisMapping !== 'undefined' ? thisMapping.mappedName : opt.removeOws ? thisAttrName.split('ows_')[1] : thisAttrName;
-          var thisObjectType = typeof thisMapping !== 'undefined' ? thisMapping.objectType : undefined;
+          var thisObjectName = thisMapping && thisMapping.mappedName ? thisMapping.mappedName : opt.removeOws ? thisAttrName.split('ows_')[1] : thisAttrName;
+          var thisObjectType = thisMapping !== undefined ? thisMapping.objectType : undefined;
           if (opt.includeAllAttrs || thisMapping !== undefined) {
             row[thisObjectName] = attrToJson(rowAttrs[attrNum].value, thisObjectType);
           }
@@ -3559,106 +3555,105 @@ var src_utils_constants, src_core_SPServicesutils, src_core_SPServicescorejs, sr
     };
     // End $.fn.SPServices.SPXmlToJson
     function attrToJson(v, objectType) {
+      function identity(x) {
+        return x;
+      }
       var result = {
         /* Generic [Reusable] Functions */
-        'Integer': intToJsonObject(v),
-        'Number': floatToJsonObject(v),
-        'Boolean': booleanToJsonObject(v),
-        'DateTime': dateToJsonObject(v),
-        'User': userToJsonObject(v),
-        'UserMulti': userMultiToJsonObject(v),
-        'Lookup': lookupToJsonObject(v),
-        'lookupMulti': lookupMultiToJsonObject(v),
-        'MultiChoice': choiceMultiToJsonObject(v),
-        'Calculated': calcToJsonObject(v),
-        'Attachments': attachmentsToJsonObject(v),
-        'URL': urlToJsonObject(v),
-        'JSON': jsonToJsonObject(v),
+        'Integer': intToJsonObject,
+        'Number': floatToJsonObject,
+        'Boolean': booleanToJsonObject,
+        'DateTime': dateToJsonObject,
+        'User': userToJsonObject,
+        'UserMulti': userMultiToJsonObject,
+        'Lookup': lookupToJsonObject,
+        'lookupMulti': lookupMultiToJsonObject,
+        'MultiChoice': choiceMultiToJsonObject,
+        'Calculated': calcToJsonObject,
+        'Attachments': attachmentsToJsonObject,
+        'URL': urlToJsonObject,
+        'JSON': jsonToJsonObject,
         // Special case for text JSON stored in text columns
         /* These objectTypes reuse above functions */
-        'Text': result.Default(v),
-        'Counter': result.Integer(v),
-        'datetime': result.DateTime(v),
+        'Text': result.Default,
+        'Counter': result.Integer,
+        'datetime': result.DateTime,
         // For calculated columns, stored as datetime;#value
-        'AllDayEvent': result.Boolean(v),
-        'Recurrence': result.Boolean(v),
-        'Currency': result.Number(v),
-        'float': result.Number(v),
+        'AllDayEvent': result.Boolean,
+        'Recurrence': result.Boolean,
+        'Currency': result.Number,
+        'float': result.Number,
         // For calculated columns, stored as float;#value
-        'RelatedItems': result.JSON(v),
-        'Default': v
+        'RelatedItems': result.JSON,
+        'Default': identity
       };
-      if (result[objectType] !== undefined) {
-        return result.objectType(v);
-      } else {
-        return v;
-      }  /*
-                 switch (objectType) {
-         
-                     case "Text":
-                         colValue = v;
-                         break;
-                     case "DateTime":
-                     case "datetime": // For calculated columns, stored as datetime;#value
-                         // Dates have dashes instead of slashes: ows_Created="2009-08-25 14:24:48"
-                         colValue = dateToJsonObject(v);
-                         break;
-                     case "User":
-                         colValue = userToJsonObject(v);
-                         break;
-                     case "UserMulti":
-                         colValue = userMultiToJsonObject(v);
-                         break;
-                     case "Lookup":
-                         colValue = lookupToJsonObject(v);
-                         break;
-         
-                     case "LookupMulti":
-                         colValue = lookupMultiToJsonObject(v);
-                         break;
-                     case "Boolean":
-                     case "AllDayEvent":
-                     case "Recurrence":
-                         colValue = booleanToJsonObject(v);
-                         break;
-         
-                     case "Integer":
-                         colValue = intToJsonObject(v);
-                         break;
-         
-                     case "Counter":
-                         colValue = intToJsonObject(v);
-                         break;
-         
-                     case "MultiChoice":
-                         colValue = choiceMultiToJsonObject(v);
-                         break;
-                     case "Number":
-                     case "Currency":
-                     case "float": // For calculated columns, stored as float;#value
-                         colValue = floatToJsonObject(v);
-                         break;
-                     case "Calculated":
-                         colValue = calcToJsonObject(v);
-                         break;
-                     case "Attachments":
-                         colValue = attachmentsToJsonObject(v);
-                         break;
-                     case "URL":
-                         colValue = urlToJsonObject(v);
-                         break;
-                     case "JSON":
-                     case "RelatedItems":
-                         colValue = jsonToJsonObject(v); // Special case for text JSON stored in text columns
-                         break;
-         
-                     default:
-                         // All other objectTypes will be simple strings
-                         colValue = v;
-                         break;
-                 }
-                 return colValue;
-          */
+      return (result[objectType] || identity)(v);  /*
+                                                           switch (objectType) {
+                                                   
+                                                               case "Text":
+                                                                   colValue = v;
+                                                                   break;
+                                                               case "DateTime":
+                                                               case "datetime": // For calculated columns, stored as datetime;#value
+                                                                   // Dates have dashes instead of slashes: ows_Created="2009-08-25 14:24:48"
+                                                                   colValue = dateToJsonObject(v);
+                                                                   break;
+                                                               case "User":
+                                                                   colValue = userToJsonObject(v);
+                                                                   break;
+                                                               case "UserMulti":
+                                                                   colValue = userMultiToJsonObject(v);
+                                                                   break;
+                                                               case "Lookup":
+                                                                   colValue = lookupToJsonObject(v);
+                                                                   break;
+                                                   
+                                                               case "LookupMulti":
+                                                                   colValue = lookupMultiToJsonObject(v);
+                                                                   break;
+                                                               case "Boolean":
+                                                               case "AllDayEvent":
+                                                               case "Recurrence":
+                                                                   colValue = booleanToJsonObject(v);
+                                                                   break;
+                                                   
+                                                               case "Integer":
+                                                                   colValue = intToJsonObject(v);
+                                                                   break;
+                                                   
+                                                               case "Counter":
+                                                                   colValue = intToJsonObject(v);
+                                                                   break;
+                                                   
+                                                               case "MultiChoice":
+                                                                   colValue = choiceMultiToJsonObject(v);
+                                                                   break;
+                                                               case "Number":
+                                                               case "Currency":
+                                                               case "float": // For calculated columns, stored as float;#value
+                                                                   colValue = floatToJsonObject(v);
+                                                                   break;
+                                                               case "Calculated":
+                                                                   colValue = calcToJsonObject(v);
+                                                                   break;
+                                                               case "Attachments":
+                                                                   colValue = attachmentsToJsonObject(v);
+                                                                   break;
+                                                               case "URL":
+                                                                   colValue = urlToJsonObject(v);
+                                                                   break;
+                                                               case "JSON":
+                                                               case "RelatedItems":
+                                                                   colValue = jsonToJsonObject(v); // Special case for text JSON stored in text columns
+                                                                   break;
+                                                   
+                                                               default:
+                                                                   // All other objectTypes will be simple strings
+                                                                   colValue = v;
+                                                                   break;
+                                                           }
+                                                           return colValue;
+                                                    */
     }
     function intToJsonObject(s) {
       return parseInt(s, 10);
