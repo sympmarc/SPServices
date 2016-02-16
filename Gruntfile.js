@@ -2,6 +2,7 @@
  * Created by Marc on 4/26/2015.
  */
 module.exports = function(grunt) {
+    require('jit-grunt')(grunt);
 
     "use strict";
 
@@ -269,6 +270,9 @@ module.exports = function(grunt) {
                     },
                     exclude: ["jquery"],
                     optimize: "none",
+
+                    optimizeCss: "standard.keepLines.keepWhitespace",
+
                     wrap: {
                         // AMD loader code
                         start: ';(function(factory){\n' +
@@ -320,7 +324,23 @@ module.exports = function(grunt) {
                 }
             }
 
+        },
+
+        less: {
+            development: {
+                options: {
+                    compress: true,
+                    yuicompress: true,
+                    optimization: 2,
+                    paths: ["src/css"]
+                },
+                files: {
+                    "src/css/SPServices.css": "src/less/SPServices.less"
+                }
+            }
+
         }
+
 
     });
 
@@ -332,10 +352,12 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
+    grunt.loadNpmTasks('grunt-contrib-less');
 
     // Default task(s).
     grunt.registerTask('default', [
         'jshint',
+        'less',
         'requirejs:compile',
         'concat',
         'copy:processBuildVariables',

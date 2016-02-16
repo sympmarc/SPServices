@@ -238,12 +238,14 @@ define([
                 }
                 // Write out the results
                 $("#" + divId).html(outString);
+
+                // If present, call completefunc when all else is done
+                if (opt.completefunc !== null) {
+                    opt.completefunc(xData);
+                }
+
             }
         });
-        // If present, call completefunc when all else is done
-        if (opt.completefunc !== null) {
-            opt.completefunc();
-        }
     } // End showRelated
 
     // Display a column (field) formatted correctly based on its definition in the list.
