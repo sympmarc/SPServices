@@ -16,12 +16,21 @@
     "Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com"
   ],
   "devDependencies": {
+    "del": "^2.2.0",
     "gulp": "^3.9.1",
+    "gulp-cached": "^1.1.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-header": "^1.7.1",
+    "gulp-jshint": "^2.0.0",
     "gulp-less": "^3.0.5",
+    "gulp-remember": "^0.3.0",
+    "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.5.2",
     "gulp-useref": "^3.0.5",
     "gulp-util": "^3.0.7",
+    "gulp-wrap": "^0.11.0",
     "jquery": "^2.2.0",
+    "jshint": "^2.9.1",
     "qunit": "^0.9.0"
   },
   "package_zipfiles": [
@@ -43,7 +52,7 @@
   "bugs": {
     "url": "https://github.com/sympmarc/spservices/issues"
   },
-  "main": "Gruntfile.js",
+  "main": "Gulpfile.js",
   "directories": {
     "doc": "docs",
     "test": "tests"
