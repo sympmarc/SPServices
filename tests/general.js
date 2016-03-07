@@ -1,6 +1,8 @@
 
 !(function() {
 
+    var QUnit = require('qunit');
+
     // A few QUnit configuration settings
     // For more, see: http://api.qunitjs.com/QUnit.config/
     QUnit.config.autostart = false;

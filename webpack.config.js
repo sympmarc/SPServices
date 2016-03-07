@@ -8,6 +8,6 @@ module.exports = {
         //  on the global var jQuery
         "jquery": "jQuery"
     }
-}
+};
 
 
