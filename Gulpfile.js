@@ -1,4 +1,4 @@
-"use strict;"
+"use strict";
 
 var gulp = require('gulp');
 var del = require('del');
@@ -11,8 +11,6 @@ var gulpIf = require('gulp-if');
 var gutil = require('gulp-util');
 var webpack = require('webpack-stream');
 var sourcemaps = require('gulp-sourcemaps');
-var cached = require('gulp-cached');
-var remember = require('gulp-remember');
 var header = require('gulp-header');
 var rename = require('gulp-rename');
 
@@ -25,7 +23,7 @@ var
     },
 //    buildDate   = gulp.template.today('yyyy-mm-dd'),
 //    buildYear   = gulp.template.today('yyyy'),
-    buildId     = (new Date()).getTime(),
+//    buildId     = (new Date()).getTime(),
     banner      = "/*\n" +
         "* <%= pkg.name %> - <%= pkg.description_short %>\n" +
         "* Version <%= pkg.version %>\n" +
@@ -66,7 +64,7 @@ gulp.task('less', function () {
         .pipe(less({
             paths: [ path.join(__dirname, 'less', 'includes') ]
         }))
-        .pipe(gulp.dest('src/css'))
+        .pipe(gulp.dest('src/css'));
 });
 
 
