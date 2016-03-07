@@ -17,6 +17,7 @@
   ],
   "devDependencies": {
     "del": "^2.2.0",
+    "fs": "0.0.2",
     "gulp": "^3.9.1",
     "gulp-cached": "^1.1.0",
     "gulp-concat": "^2.6.0",
