@@ -18,6 +18,7 @@ _*Until otherwise announced, this is not a fully functional version of SPService
 * 2015-12-05 Initial tests using QUnit are in place. Instructions below.
 * 2015-12-01 The monolithic SPServices file is not broken out into modules, one per major function.
 * 2016-01-04 SPServices 2.0 is now building and operational - pre-alpha.
+* 2016-03-07 Switched from grunt/requirejs to gulp/webpack.
 
 For full documentation, please visit http://spservices.codeplex.com/documentation
 
