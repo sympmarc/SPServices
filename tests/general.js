@@ -3,6 +3,7 @@
 
     var QUnit = require('qunit');
     var $ = require('jquery');
+    var equal = require('equal');
 
     // A few QUnit configuration settings
     // For more, see: http://api.qunitjs.com/QUnit.config/
