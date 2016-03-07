@@ -1,9 +1,4 @@
-/**
- * Created by Marc D Anderson on 2/18/2016.
- */
-
 "use strict;"
-
 
 var gulp = require('gulp');
 var del = require('del');
@@ -19,8 +14,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var cached = require('gulp-cached');
 var remember = require('gulp-remember');
 var header = require('gulp-header');
-
-
+var rename = require('gulp-rename');
 
 var
     packageFile = 'package.json',
@@ -101,7 +95,7 @@ gulp.task('scripts', function() {
         .pipe(sourcemaps.init())
         //        .pipe(uglify())
         .pipe(header(banner, { pkg : pkg } ))
-        .pipe(concat('SPServices.js'))
+        .pipe(concat('jQuery.SPServices-' + pkg.version + '.js'))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('build/'));
 });
@@ -111,13 +105,12 @@ gulp.task('scripts', function() {
 // Build module
 gulp.task('build', function() {
     return gulp.src(paths.scripts)
-
-
         .pipe(webpack(require('./webpack.config.js'), null, function(err, stats) {
             // Output stats so we can tell what happened
             gutil.log(stats.toString());
         }))
         .pipe(gulpIf('*.js', uglify())) // Minify all modules
+        .pipe(rename('jQuery.SPServices-' + pkg.version + '.min.js'))
         .pipe(gulp.dest('build/')); // SPServices.min.js
 });
 

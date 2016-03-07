@@ -1239,6 +1239,9 @@ define([
             cachedPromise = promisesCache[msg];
         }
 
+        // Do we have any customHeaders?
+        var headers = opt.customHeaders ? opt.customHeaders : {};
+
         if (typeof cachedPromise === "undefined") {
 
             // Finally, make the Ajax call
@@ -1247,6 +1250,8 @@ define([
                 url: ajaxURL,
                 // By default, the AJAX calls are asynchronous.  You can specify false to require a synchronous call.
                 async: opt.async,
+                // Optionally, pass in headers
+                headers: headers,
                 // Before sending the msg, need to send the request header
                 beforeSend: function (xhr) {
                     // If we need to pass the SOAPAction, do so
@@ -1299,6 +1304,7 @@ define([
         cacheXML: false, // If true, we'll cache the XML results with jQuery's .data() function
         operation: "", // The Web Service operation
         webURL: "", // URL of the target Web
+        customHeaders: {},
         makeViewDefault: false, // true to make the view the default view for the list
 
         // For operations requiring CAML, these options will override any abstractions
