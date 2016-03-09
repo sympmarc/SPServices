@@ -1,0 +1,37 @@
+### Function
+
+**$().SPServices**
+
+### Web Service
+
+**Users and Groups**
+
+### Operation
+
+**GetGroupCollectionFromUser**
+
+### Example
+
+Here's an example from greginchicago on [EndUserSharePoint's Stump the Panel](http://www.endusersharepoint.com/STP/viewtopic.php?f=7&t=983&start=0). We worked through it together and it's a nice use of GetGroupCollectionFromUser to disable the 'Change Password' option for users belonging to a given Permission group in the 'Welcome' drop down located on the top right corner of the default SharePoint page.  
+
+Here's the code:  
+``` javascript
+/* place code right before the matching closing tag </asp:Content> for <asp:Content ContentPlaceHolderId="PlaceHolderMain" runat="server">*/
+  $(document).ready(function() {
+    $().SPServices({
+      operation: "GetGroupCollectionFromUser",
+      userLoginName: $().SPServices.SPGetCurrentUser(),
+      async: false,
+      completefunc: function(xData, Status) {
+        if($(xData.responseXML).find("Group[Name='GroupName']").length == 1) {
+          $("#zz9_ID_PersonalizePage").remove();
+          /*   zz5_ID_LoginAsDifferentUser
+               zz6_ID_RequestAccess
+               zz7_ID_Logout
+               zz8_MSOMenu_ChangePassword
+               zz9_ID_PersonalizePage   */
+        }
+      }
+   }); /*close().SPServices({ */
+}); /* close (document).ready(function() { */
+```

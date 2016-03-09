@@ -3,6 +3,7 @@
   "filename": "jquery.SPServices",
   "sp_version": "2.0.0",
   "version": "2.0.0-pre-alpha",
+  "license": "MIT",
   "description_short": "Work with SharePoint's Web Services using jQuery",
   "description_long": "SPServices is a jQuery library which abstracts SharePoint's Web Services and makes them easier to use. It also includes functions which use the various Web Service operations to provide more useful (and cool) capabilities. It works entirely client side and requires no server install.",
   "homepage": "http://spservices.codeplex.com/",
@@ -10,26 +11,30 @@
   "requires": [
     "jQuery v1.8 or greater - jQuery 1.10.x+ recommended"
   ],
+  "author": "Marc D Anderson",
   "authors": [
     "Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com"
   ],
   "devDependencies": {
-    "amdclean": "^2.7.0",
-    "grunt": "^0.4.5",
-    "grunt-contrib-concat": "~0.5.1",
-    "grunt-contrib-copy": "^0.8.2",
-    "grunt-contrib-jshint": "^0.12.0",
-    "grunt-contrib-requirejs": "^0.4.4",
-    "grunt-contrib-uglify": "~0.11.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-gh-pages": "^1.0.0",
-    "grunt-zip": "~0.17.1",
-    "qunit": "^0.7.7",
-    "rjs-build-analysis": "^0.0.3",
-    "grunt-metalsmith": "^1.0.0",
-    "metalsmith-permalinks": "^0.4.1",
-    "metalsmith-layouts": "^1.4.2"
-},
+    "del": "^2.2.0",
+    "fs": "0.0.2",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-gh-pages": "^0.5.4",
+    "gulp-header": "^1.7.1",
+    "gulp-jshint": "^2.0.0",
+    "gulp-less": "^3.0.5",
+    "gulp-markdown-docs": "^0.1.5",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.5.3",
+    "gulp-useref": "^3.0.5",
+    "gulp-util": "^3.0.7",
+    "gulp-wrap": "^0.11.0",
+    "jquery": "^2.2.0",
+    "jshint": "^2.9.1",
+    "qunit": "^0.9.0"
+  },
   "package_zipfiles": [
     "build/license.txt",
     "build/<%= pkg.filename %>.js",
@@ -49,7 +54,7 @@
   "bugs": {
     "url": "https://github.com/sympmarc/spservices/issues"
   },
-  "main": "Gruntfile.js",
+  "main": "Gulpfile.js",
   "directories": {
     "doc": "docs",
     "test": "tests"
@@ -59,15 +64,11 @@
   },
   "keywords": [
     "SPServices",
-    "SharePoint",
-    "2010",
-    "SharePoint",
-    "2013",
-    "SharePoint",
-    "2007",
+    "SharePoint 2013",
+    "SharePoint 2010",
+    "SharePoint 2007",
     "SharePoint",
     "REST",
     "SOAP"
-  ],
-  "author": "Marc D Anderson"
+  ]
 }

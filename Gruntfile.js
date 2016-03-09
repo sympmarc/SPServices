@@ -1,5 +1,8 @@
 /**
  * Created by Marc on 4/26/2015.
+ *
+ * DEPRECATED in favor of Gulpfile.js
+ *
  */
 module.exports = function(grunt) {
 
