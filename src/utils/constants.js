@@ -21,7 +21,6 @@ define([], function () {
         // String constants
         //   General
         SCHEMASharePoint: "http://schemas.microsoft.com/sharepoint",
-        SCHEMANintex: "http://nintex.com",
         multiLookupPrefix: "MultiLookupPicker",
         multiLookupPrefix2013: "MultiLookup",
 
