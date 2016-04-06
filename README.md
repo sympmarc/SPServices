@@ -78,6 +78,25 @@ To deploy using grunt, run:
 
     grunt deploy
 
+
+### Run a build (with Gulp)
+
+1.  run:
+
+        gulp
+
+    This will build SPServices and output the results to the `build` folder. During development, these are the files that should be used for testing (i.e. copy to SharePoint and link to them).
+
+### Develop and Watch
+
+A `gulp` target called `watch` is available for linting code as files are changed and saved. To use it, simply run:
+
+    gulp watch
+
+This will start a job that watches the sources files as they are saved and runs the linting tool to ensure they are clean of issues.
+
+
+
 ### Unit Tests
 
 Unit test cases are written under the test folder using [QUnit](http://qunitjs.com/). Tests will run in the dev.aspx above.
