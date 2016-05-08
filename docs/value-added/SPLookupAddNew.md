@@ -36,19 +36,19 @@ $().SPServices.SPLookupAddNew({
 });
 ```
 
-**Lookup column**
+### Lookup column
 
 The [DisplayName](/docs/glossary/index.md#DisplayName) of the Lookup column in the form.
 
-*promptText*
+### promptText
 
 The text to display as a link to add a new value to the lookup list. If you include the {0} placeholder, it will be replaced with the value of looukupColumn. The default value is "Add new {0}".
 
-*newWindow*
+### newWindow
 
 If true, the link will open in a new window without passing the Source. The default value is false.
 
-*ContentTypeID*
+### ContentTypeID
 
 If ContentTypeID is specified, it will be passed on the Query String to the NewForm for the Lookup column's list. e.g., "/SiteName/NewForm.aspx?ContentTypeID=0x0100FD8C376B70E78A46974ECF1B10F8D7AD"
 
@@ -66,7 +66,7 @@ or
 completefunc: doSomething,   // Where doSomething is the name of your function
 ```
 
-*debug*
+### debug
 
 Setting debug: true indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [DebugMode](/docs/glossary/index.md#DebugMode).
 
