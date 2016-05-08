@@ -37,6 +37,7 @@ $().SPServices.SPLookupAddNew({
 ```
 
 ** Lookup column **
+
 The [DisplayName](/docs/glossary/index.md#DisplayName) of the Lookup column in the form.
 
 *promptText*
