@@ -1,3 +1,11 @@
+---
+label: index
+id: index
+categorySlug: 'glossary'
+categoryLabel: 'glossary'
+categorySort: 'alphabetical'
+documentSort: 'alphabetical'
+
 ## Certification <a name="Certification"></a>
 
 ![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg)

@@ -1,3 +1,12 @@
+---
+label: Alerts
+id: Alerts
+categorySlug: 'core api'
+categoryLabel: 'core'
+categorySort: 'alphabetical'
+documentSort: 'alphabetical'
+---
+
 ### Function
 
 **$().SPServices**

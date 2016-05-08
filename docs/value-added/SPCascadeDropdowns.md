@@ -1,3 +1,11 @@
+---
+label: SPCascadeDropdowns
+id: SPCascadeDropdowns
+categorySlug: 'value-added'
+categoryLabel: 'value-added'
+categorySort: 'alphabetical'
+documentSort: 'alphabetical'
+
 ## Function
 
 **$().SPServices.SPCascadeDropdowns**

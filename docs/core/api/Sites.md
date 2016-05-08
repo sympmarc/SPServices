@@ -1,3 +1,11 @@
+---
+label: Sites
+id: Sites
+categorySlug: 'core'
+categoryLabel: 'core'
+categorySort: 'alphabetical'
+documentSort: 'alphabetical'
+
 ### Function
 
 **$().SPServices**

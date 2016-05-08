@@ -13,13 +13,20 @@ var webpack = require('webpack-stream');
 var sourcemaps = require('gulp-sourcemaps');
 var header = require('gulp-header');
 var rename = require('gulp-rename');
+var ghPages = require('gulp-gh-pages');
+var markdownDocs = require('gulp-markdown-docs');
+var marked = require('marked');
+var highlight = require('gulp-highlight');
+var tap = require('gulp-tap');
 
 var
     packageFile = 'package.json',
-    pkg = require('./package.json'),
+    pkg = require('./' + packageFile),
     paths = {
         scripts: ['src/**/*.js', '!src/jquery.SPServices Intellisense.js'],
-        less: ['src/less/**/*.less']
+        less: ['src/less/**/*.less'],
+        docs: ['docs/**/*.md'],
+        dist: ['dist/**/*']
     },
 //    buildDate   = gulp.template.today('yyyy-mm-dd'),
 //    buildYear   = gulp.template.today('yyyy'),
@@ -67,18 +74,12 @@ gulp.task('less', function () {
         .pipe(gulp.dest('src/css'));
 });
 
-
-
-
 // Lint the files to catch any issues
 gulp.task('lint', function() {
     return gulp.src(paths.scripts)
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });
-
-
-
 
 // Gulp watch syntax
 gulp.task('watch', ['less'], function(){
@@ -100,6 +101,44 @@ gulp.task('scripts', function() {
 
 
 
+
+
+
+/*
+    gulp.task('fixdocs', function () {
+        return gulp.src(paths.docs) //paths.docs
+            .pipe(tap(function(file) {
+                gutil.log(file.path);
+                var tmp = file.path.split('\\');
+                var cat = tmp.length > 4 ? tmp[4] : '';
+                var name = tmp[tmp.length - 1].split('.')[0];
+                file.contents = Buffer.concat([
+                    new Buffer(['---',
+                        'label: ' + name,
+                        'id: ' + name,
+                        'categorySlug: \'' + cat + '\'',
+                        'categoryLabel: \'' + cat + '\'',
+                        'categorySort: \'alphabetical\'', // 'alphabetical' || 'rank'
+                        'documentSort: \'alphabetical\'', // 'alphabetical' || 'rank'
+                        '', ''].join('\n')),
+                    file.contents
+                ])
+            }))
+            .pipe(gulp.dest('dist/tmp'));
+    });
+*/
+
+gulp.task('docs', function () {
+    return gulp.src(paths.docs) //paths.docs
+        .pipe(markdownDocs('index.html', {
+            yamlMeta: true,
+            templatePath: 'docs/index.html',
+            highlightTheme: 'solarized_light'
+        }))
+        .pipe(gulp.dest('dist/docs/'));
+});
+
+
 // Build module
 gulp.task('build', function() {
     return gulp.src(paths.scripts)
@@ -107,10 +146,19 @@ gulp.task('build', function() {
             // Output stats so we can tell what happened
             gutil.log(stats.toString());
         }))
+        .pipe(rename('jQuery.SPServices-' + pkg.version + '.js'))
+        .pipe(gulp.dest('build/')) // SPServices.js
         .pipe(gulpIf('*.js', uglify())) // Minify all modules
         .pipe(rename('jQuery.SPServices-' + pkg.version + '.min.js'))
         .pipe(gulp.dest('build/')); // SPServices.min.js
 });
+
+// Deploy to gh-pages
+gulp.task('deploydocs', function() {
+    return gulp.src(paths.dist)
+        .pipe(ghPages());
+});
+
 
 // Default task(s).
 gulp.task('default', [

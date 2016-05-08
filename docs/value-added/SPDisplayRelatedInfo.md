@@ -1,3 +1,11 @@
+---
+label: SPDisplayRelatedInfo
+id: SPDisplayRelatedInfo
+categorySlug: 'value-added'
+categoryLabel: 'value-added'
+categorySort: 'alphabetical'
+documentSort: 'alphabetical'
+
 ### Function
 
 **$().SPServices.SPDisplayRelatedInfo**

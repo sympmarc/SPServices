@@ -1,3 +1,11 @@
+---
+label: UserProfileService
+id: UserProfileService
+categorySlug: 'core'
+categoryLabel: 'core'
+categorySort: 'alphabetical'
+documentSort: 'alphabetical'
+
 ### Function
 
 **$().SPServices**
