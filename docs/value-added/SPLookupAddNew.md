@@ -68,7 +68,7 @@ completefunc: doSomething,   // Where doSomething is the name of your function
 
 ### debug
 
-Setting debug: true indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [DebugMode](/docs/glossary/index.md#DebugMode).
+Setting debug: true indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [DebugMode](/docs/glossary/index.md#Debug-Mode-).
 
 ## Example
 
