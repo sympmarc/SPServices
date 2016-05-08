@@ -14,7 +14,11 @@ This function allows you to redirect to another page from a new item form with t
 ```
 I just discovered something about SPRedirectWithID that I thought others might find useful.
 
-I've got a list with a custom new item form, and it turns out that the SPRedirectWithID function will not work if there is not already a redirect statement applied to the 'save' button. The function works perfectly with a standard form, but it will fail if the "save" button only performs a commit - it must also have a redirect action applied. I dont' know if I just missed this in your setup, but it might be important for those of us who are using custom forms.
+I've got a list with a custom new item form, and it turns out that the SPRedirectWithID function 
+will not work if there is not already a redirect statement applied to the 'save' button. 
+The function works perfectly with a standard form, but it will fail if the "save" button only 
+performs a commit - it must also have a redirect action applied. I dont' know if I just missed 
+this in your setup, but it might be important for those of us who are using custom forms.
 ```
 
 **Tip**: If you are using this function in conjunction with others in the library, call SPRedirectWithID first, as it will speed up the redirection.
