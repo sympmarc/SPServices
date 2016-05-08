@@ -6,7 +6,6 @@ categoryLabel: 'Overview'
 categoryRank: -10000
 categorySort: 'alphabetical'
 documentSort: 'alphabetical'
----
 
 ### General Instructions
 

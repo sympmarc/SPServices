@@ -100,10 +100,6 @@ gulp.task('scripts', function() {
 });
 
 
-
-
-
-
 /*
     gulp.task('fixdocs', function () {
         return gulp.src(paths.docs) //paths.docs
