@@ -8,7 +8,7 @@
 
 ## Functionality
 
-The SPLookupAddNew function allows you to provide a link in forms for Lookup columns so that the user can add new values to the Lookup list easily. It is based on a blog post by Waldek Mastykarzv ([see Credits](https://blog.mastykarz.nl/extending-lookup-fields-add-new-item-option/)).
+The SPLookupAddNew function allows you to provide a link in forms for Lookup columns so that the user can add new values to the Lookup list easily. It is based on [a blog post](https://blog.mastykarz.nl/extending-lookup-fields-add-new-item-option/) by Waldek Mastykarz.
 
 ## How Does It Work?
 
@@ -68,7 +68,7 @@ completefunc: doSomething,   // Where doSomething is the name of your function
 
 ### debug
 
-Setting debug: true indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [DebugMode](/docs/glossary/index.md#Debug-Mode-).
+Setting debug: true indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [DebugMode](/docs/glossary/index.md#DebugMode).
 
 ## Example
 
