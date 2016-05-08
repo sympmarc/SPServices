@@ -15,6 +15,9 @@
   "authors": [
     "Sympraxis Consulting LLC/marc.anderson@sympraxisconsulting.com"
   ],
+  "dependencies": {
+    "jquery": "^1.10.0"
+  },
   "devDependencies": {
     "del": "^2.2.0",
     "fs": "0.0.2",
