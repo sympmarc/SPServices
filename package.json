@@ -24,10 +24,12 @@
     "gulp": "^3.9.1",
     "gulp-cached": "^1.1.0",
     "gulp-concat": "^2.6.0",
+    "gulp-gh-pages": "^0.5.4",
     "gulp-header": "^1.8.2",
     "gulp-highlight": "^2.0.0",
+    "gulp-if": "^2.0.1",
     "gulp-jshint": "^2.0.0",
-    "gulp-less": "^3.0.5",
+    "gulp-less": "^3.1.0",
     "gulp-markdown-docs": "^0.1.5",
     "gulp-remember": "^0.3.1",
     "gulp-rename": "^1.2.2",
@@ -40,7 +42,8 @@
     "jquery": "^2.2.0",
     "jshint": "^2.9.1",
     "marked": "^0.3.5",
-    "qunit": "^0.9.0"
+    "qunit": "^0.9.0",
+    "webpack-stream": "^3.2.0"
   },
   "package_zipfiles": [
     "build/license.txt",
@@ -77,9 +80,5 @@
     "SharePoint",
     "REST",
     "SOAP"
-  ],
-  "dependencies": {
-    "gulp-less": "^3.1.0",
-    "gulp-remember": "^0.3.1"
-  }
+  ]
 }
