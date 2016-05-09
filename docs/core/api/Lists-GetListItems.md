@@ -1,20 +1,20 @@
-## Function
+### Function
 
 **$().SPServices**
 
-## Web Service
+### Web Service
 
 **Lists**
 
-## Operation
+### Operation
 
 **GetListItems**
 
-## Notes
+### Notes
 
 * This operation accepts a webURL option. This allows you to change the context for the operation to a different site. Using a GUID for the listName does NOT change the context as it does with the Object Model, so you need to use the webURL option as well if your list is in a different site.
 
-## Tips  
+### Tips  
 
 See  [Steve Ottenad's post](http://labs.steveottenad.com/getting-ows_metainfo-with-spservices/) about getting the MetaInfo in a useful way. The trick is to add the following snippet to your call:
 
@@ -28,7 +28,7 @@ CAMLViewFields: "<ViewFields Properties='True' />",
 CAMLQueryOptions: "<QueryOptions><ExpandUserField>True</ExpandUserField></QueryOptions>"
 ```
 
-## Example
+### Example
 
 This is an example from the [SharePoint and jQuery](http://www.endusersharepoint.com/STP/viewtopic.php?f=13&t=937&p=4337#p4337) forum at [Stump the Panel](http://www.endusersharepoint.com/STP) over at http://www.endusersharepoint.com.
 

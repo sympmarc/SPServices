@@ -1,20 +1,20 @@
-## Function
+### Function
 
 **$().SPServices**
 
-## Web Service
+### Web Service
 
 **Lists**
 
-## Operation
+### Operation
 
 **UpdateListItems**
 
-## Notes
+### Notes
 
 * This operation accepts a webURL option. This allows you to change the context for the operation to a different site. Using a GUID for the listName does NOT change the context as it does with the Object Model, so you need to use the webURL option as well if your list is in a different site.
 
-## Additional Syntax
+### Additional Syntax
 
 If you want to update a single list item, rather than using the CAML syntax in updates you can specify valuepairs and the item's ID. If you specify valuepairs then updates should not be specified. The way it works is that it lets you specify an array of column [StaticNames](/docs/glossary/index.md#StaticName) and values. So if you wanted to update the Title and the Body:
 
@@ -38,7 +38,7 @@ All that happens here is that the valuepairs are used to build up the CAML for U
 
 Note that if you decide to use the valuepairs approach, you also need to specify the ID option. The default for the batchCmd option is 'Update'. Also, the choices for Cmd are [New, Update, Delete, Moderate].
 
-## Example
+### Example
 
 This is an example from my test harness. If you have a better, real life example, please create an issue or an PR.
 

@@ -1,20 +1,20 @@
-## Function
+### Function
 
 **$().SPServices**
 
-## Web Service
+### Web Service
 
 **Lists**
 
-## Operation
+### Operation
 
 **UpdateList**
 
-## Notes
+### Notes
 
 * This operation accepts a webURL option. This allows you to change the context for the operation to a different site. Using a GUID for the listName does NOT change the context as it does with the Object Model, so you need to use the webURL option as well if your list is in a different site.
 
-## Example
+### Example
 
 This is an example from [MartijnMolegraaf](http://www.codeplex.com/site/users/view/MartijnMolegraaf).
 
