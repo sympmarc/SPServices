@@ -33,4 +33,4 @@ _$*
 .project*
 node_modules
 me.*
-.idea
+.idea/
