@@ -18,7 +18,7 @@
 
 This is an example from [jenglish](http://www.codeplex.com/site/users/view/jenglish). I wrote a [blog post](http://mdasblog.wordpress.com/2011/02/11/using-spservices-to-get-the-display-names-for-a-sharepoint-lists-content-types/) about this example as well.  
 
-If you have a better, real life example, please post it in the Discussions.
+If you have a better, real life example, please create an issue or an PR.
 
 ```javascript
 var queryStringVals = $().SPServices.SPGetQueryString(); // The SPGetQueryString function parses the Query String values out into an array
