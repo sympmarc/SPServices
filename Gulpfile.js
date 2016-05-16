@@ -14,7 +14,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var header = require('gulp-header');
 var rename = require('gulp-rename');
 var ghPages = require('gulp-gh-pages');
-var markdownDocs = require('gulp-markdown-docs');
+var markdown = require('gulp-markdown');
 var marked = require('marked');
 var highlight = require('gulp-highlight');
 var tap = require('gulp-tap');
@@ -126,7 +126,7 @@ gulp.task('scripts', function() {
 
 gulp.task('docs', function () {
     return gulp.src(paths.docs) //paths.docs
-        .pipe(markdownDocs('index.html', {
+        .pipe(markdown('index.html', {
             yamlMeta: true,
             templatePath: 'docs/index.html',
             highlightTheme: 'solarized_light'
