@@ -26,7 +26,6 @@
     "gulp-concat": "^2.6.0",
     "gulp-gh-pages": "^0.5.4",
     "gulp-header": "^1.8.2",
-    "gulp-highlight": "^2.0.0",
     "gulp-if": "^2.0.1",
     "gulp-jshint": "^2.0.0",
     "gulp-less": "^3.1.0",

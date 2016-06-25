@@ -16,7 +16,6 @@ var rename = require('gulp-rename');
 var ghPages = require('gulp-gh-pages');
 var markdown = require('gulp-markdown');
 var marked = require('marked');
-var highlight = require('gulp-highlight');
 var tap = require('gulp-tap');
 
 var
