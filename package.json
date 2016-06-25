@@ -37,7 +37,6 @@
     "gulp-wrap": "^0.13.0",
     "jquery": "^1.12.4",
     "jshint": "^2.9.1",
-    "marked": "^0.3.5",
     "qunit": "^0.9.0",
     "webpack-stream": "^3.2.0"
   },
