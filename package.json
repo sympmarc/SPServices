@@ -19,6 +19,7 @@
     "jquery": "^1.10.0"
   },
   "devDependencies": {
+    "bithound": "^1.3.0",
     "del": "^2.2.0",
     "fs": "0.0.2",
     "gulp": "^3.9.1",
