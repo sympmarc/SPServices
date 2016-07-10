@@ -78,7 +78,7 @@
     </script>
 
     <!-- LOAD TEST CASE FILES -->
-    <script type="text/javascript" src="../tests/general.js"></script>
+    <script type="text/javascript" src="../test/general.js"></script>
 <!--    <script type="text/javascript" src="../tests/Lists.js"></script> -->
 
 
