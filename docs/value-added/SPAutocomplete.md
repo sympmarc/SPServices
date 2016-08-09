@@ -78,7 +78,7 @@ If set to true, the function ignores case, if false it looks for an exact match.
 
 ### highlightClass
 
-When a matching value is shown, the matching characters are wrapped in a `&lt;span&gt;`. If highlightClass is specified, that class is applied to the `span`. An example might be:
+When a matching value is shown, the matching characters are wrapped in a `<span>`. If highlightClass is specified, that class is applied to the `span`. An example might be:
 
 ``` javascript
 highlightClass: "ms-bold",
