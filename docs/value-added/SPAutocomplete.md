@@ -40,11 +40,11 @@ $().SPServices.SPAutocomplete({
 
 ### WebURL
 
-The URL of the Web (site) which contains the sourceList. If not specified, the current site is used. Examples would be: `/`, `/Accounting`, `/Departments/HR`, etc. **Note**: It's always best to use relative URLs.
+The URL of the Web (site) which contains the sourceList. If not specified, the current site is used. Examples would be: `"/"`, `"/Accounting"`, `"/Departments/HR"`, etc. **Note**: It's always best to use relative URLs.
 
 ### sourceList
 
-The name or GUID of the list which contains the available values. If you choose to use the GUID, it should look like: `{E73FEA09-CF8F-4B30-88C7-6FA996EE1706}`. Note also that if you use the GUID, you do not need to specify the WebURL if the list is in another site.
+The name or GUID of the list which contains the available values. If you choose to use the GUID, it should look like: `"{E73FEA09-CF8F-4B30-88C7-6FA996EE1706}"`. Note also that if you use the GUID, you do not need to specify the WebURL if the list is in another site.
 
 ### sourceColumn
 
