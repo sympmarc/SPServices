@@ -40,11 +40,11 @@ $().SPServices.SPAutocomplete({
 
 ### WebURL
 
-The URL of the Web (site) which contains the sourceList. If not specified, the current site is used. Examples would be: `/`, `/Accounting`, `/Departments/HR`, etc. **Note**: It's always best to use relative URLs.
+The URL of the Web (site) which contains the sourceList. If not specified, the current site is used. Examples would be: `"/"`, `"/Accounting"`, `"/Departments/HR"`, etc. **Note**: It's always best to use relative URLs.
 
 ### sourceList
 
-The name or GUID of the list which contains the available values. If you choose to use the GUID, it should look like: `{E73FEA09-CF8F-4B30-88C7-6FA996EE1706}`. Note also that if you use the GUID, you do not need to specify the WebURL if the list is in another site.
+The name or GUID of the list which contains the available values. If you choose to use the GUID, it should look like: `"{E73FEA09-CF8F-4B30-88C7-6FA996EE1706}"`. Note also that if you use the GUID, you do not need to specify the WebURL if the list is in another site.
 
 ### sourceColumn
 
@@ -78,7 +78,7 @@ If set to true, the function ignores case, if false it looks for an exact match.
 
 ### highlightClass
 
-When a matching value is shown, the matching characters are wrapped in a `&lt;span&gt;`. If highlightClass is specified, that class is applied to the `span`. An example might be:
+When a matching value is shown, the matching characters are wrapped in a `<span>`. If highlightClass is specified, that class is applied to the `span`. An example might be:
 
 ``` javascript
 highlightClass: "ms-bold",
