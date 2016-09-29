@@ -17,6 +17,8 @@ var ghPages = require('gulp-gh-pages');
 var tap = require('gulp-tap');
 var metalsmith = require('metalsmith');
 var markdown = require('metalsmith-markdown');
+var layouts = require('metalsmith-layouts');
+
 
 var
     packageFile = 'package.json',
@@ -126,8 +128,14 @@ gulp.task('scripts', function() {
 gulp.task('docs', function () {
     return metalsmith(__dirname)
         .source('./docs')
+        .ignore('templates')
         .destination('./dist/docs')
         .use(markdown())
+        .use(layouts({
+          engine: 'handlebars',
+          directory: 'docs/templates',
+          default: 'main.hbs'
+        }))
         .build(function (err) {
           if (err) {
             throw err;

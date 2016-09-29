@@ -35,9 +35,11 @@
     "gulp-uglify": "^1.5.2",
     "gulp-util": "^3.0.7",
     "gulp-wrap": "^0.13.0",
+    "handlebars": "^4.0.5",
     "jquery": "^1.12.4",
     "jshint": "^2.9.1",
     "metalsmith": "^2.2.0",
+    "metalsmith-layouts": "^1.6.5",
     "metalsmith-markdown": "^0.2.1",
     "qunit": "^0.9.0",
     "webpack-stream": "^3.2.0"
