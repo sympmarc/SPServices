@@ -1,3 +1,7 @@
+---
+title: 'SPLookupAddNew'
+---
+
 ## Function
 
 **$().SPServices.SPLookupAddNew**
@@ -26,7 +30,7 @@ The function works like this:
 ## Syntax
 
 ``` javascript
-$().SPServices.SPLookupAddNew({	
+$().SPServices.SPLookupAddNew({
 	lookupColumn: "",
 	promptText: "Add new {0}",
 	newWindow: false,
@@ -60,7 +64,7 @@ completefunc: function() {
 },
 ```
 
-or 
+or
 
 ``` javascript
 completefunc: doSomething,   // Where doSomething is the name of your function
@@ -74,7 +78,7 @@ Setting debug: true indicates that you would like to receive messages if anythin
 
 ``` javascript
 $(document).ready(function() {
-	$().SPServices.SPLookupAddNew({	
+	$().SPServices.SPLookupAddNew({
 		lookupColumn: "Region Name",
 		promptText: "Add new {0} "
 	});

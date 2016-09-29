@@ -1,10 +1,6 @@
 ---
-label: Lists-GetList
-id: Lists-GetList
-categorySlug: 'core'
-categoryLabel: 'core'
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
+title: 'Lists-GetList'
+---
 
 ### Function
 

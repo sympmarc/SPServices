@@ -1,3 +1,7 @@
+---
+title: 'Webs-UpdateColumns'
+---
+
 ### Function
 
 **$().SPServices**
@@ -29,8 +33,8 @@ function addColumns(){
     newFields: newFields,
     completefunc: function (xData, Status) {
       var fields='';
-      $(xData.responseXML).SPFilterNode("z:row").each(function() { 
-        fields=fields+'<Method ID="1"><Field ID="'+$(this).attr("ID")+'" Name="'+$(this).attr("Name")+'" DisplayName="'+$(this).attr("DisplayName")+'"/></Method>'; 
+      $(xData.responseXML).SPFilterNode("z:row").each(function() {
+        fields=fields+'<Method ID="1"><Field ID="'+$(this).attr("ID")+'" Name="'+$(this).attr("Name")+'" DisplayName="'+$(this).attr("DisplayName")+'"/></Method>';
       });
       addContentType(fields);
     }

@@ -1,3 +1,7 @@
+---
+title: 'SPFindMMSPicker'
+---
+
 ## Function
 
 **$().SPServices.SPFindMMSPicker**

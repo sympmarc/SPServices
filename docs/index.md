@@ -1,11 +1,5 @@
 ---
-label: index
-id: index
-categorySlug: 'Home'
-categoryLabel: 'Overview'
-categoryRank: -9999
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
+title: 'Home'
 ---
 
 ** Please read the documentation (starting with the [General Instructions](/docs/general-instructions.md)) before asking questions. I'm happy to help out, but it's so much nicer when folks read the documentation.**

@@ -1,3 +1,7 @@
+---
+title: 'SPSetMultiSelectSizes'
+---
+
 ## Function
 
 **$().SPServices.SPSetMultiSelectSizes**
@@ -22,11 +26,11 @@ $().SPServices.SPSetMultiSelectSizes({
 });
 ```
 
-### multiSelectColumn 
+### multiSelectColumn
 
 The [DisplayName](/docs/glossary/index.md#DisplayName) of the multi-select column in the form.
 
-### minWidth 
+### minWidth
 
 If present, the width of the multi-select boxes will not be set narrower than this number of pixels. If **either** minWidth or maxWidth is greater than zero, then they provide the lower and upper bounds (in pixels) for the width of the multi-select boxes.
 

@@ -1,3 +1,7 @@
+---
+title: 'SPArrangeChoices'
+---
+
 ## Function
 
 **$().SPServices.SPArrangeChoices**
@@ -16,8 +20,8 @@ The SPArrangeChoices rearranges radio buttons or checkboxes in a form from verti
 * If you are working with a customized form, you'll need to use a little trick to get this function to work. (Thanks to [alexlee797](http://www.codeplex.com/site/users/view/alexlee797) for pointing this out.) You'll need to add the following line:
 ``` html
 <xsl:comment>FieldName="Display Name"</xsl:comment>
-``` 
-just above the 
+```
+just above the
 ``` html
 <SharePoint:FormField>
 ```
@@ -32,16 +36,16 @@ $().SPServices.SPArrangeChoices({
 	columnName: "",
 	perRow: 99,
 	randomize: false
-}); 
+});
 ```
 
 ### listName
 If specified, this list will be used to look up the column's attributes. By default, this is set at runtime to the list name for the current form's context based on the form's URL. You will not generally need to specify this value.
 
-### columnName 
+### columnName
 The [DisplayName](/docs/glossary/index.md#DisplayName) of the Choice column in the form. This function works with both radio buttons and checkboxes.
 
-### perRow 
+### perRow
 The maximum number of choices to show per row.
 
 ### randomize

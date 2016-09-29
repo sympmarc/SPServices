@@ -1,10 +1,6 @@
 ---
-label: index
-id: index
-categorySlug: 'glossary'
-categoryLabel: 'glossary'
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
+title: 'Glossary'
+---
 
 ## Certification <a name="Certification"></a>
 

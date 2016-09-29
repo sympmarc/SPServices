@@ -1,3 +1,7 @@
+---
+title: 'SPAutocomplete'
+---
+
 ## Function
 
 **$().SPServices.SPAutocomplete**

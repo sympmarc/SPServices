@@ -1,3 +1,7 @@
+---
+title: 'SPComplexToSimpleDropdown'
+---
+
 ## Function
 
 **$().SPServices.SPComplexToSimpleDropdown**

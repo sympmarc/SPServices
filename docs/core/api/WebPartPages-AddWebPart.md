@@ -1,3 +1,7 @@
+---
+title: 'WebPartPages-AddWebPart'
+---
+
 ### Function
 
 **$().SPServices**

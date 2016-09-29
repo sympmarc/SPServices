@@ -1,10 +1,6 @@
 ---
-label: SPCascadeDropdowns
-id: SPCascadeDropdowns
-categorySlug: 'value-added'
-categoryLabel: 'value-added'
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
+title: 'SPCascadeDropdowns'
+---
 
 ## Function
 
@@ -58,7 +54,7 @@ $().SPServices.SPCascadeDropdowns({
   childColumn: "",
   CAMLQuery: "",
   CAMLQueryOptions: "<QueryOptions><IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns></QueryOptions>", // Added in 2013.01
-  listName: $().SPServices.SPListNameFromUrl(), 
+  listName: $().SPServices.SPListNameFromUrl(),
   promptText: "",
   simpleChild: false,			// Added in v0.6.2
   selectSingleOption: false,    // Added in v0.6.2
@@ -203,4 +199,3 @@ $(document).ready(function() {
 
 </script>
 ```
-

@@ -1,10 +1,6 @@
 ---
-label: Search
-id: Search
-categorySlug: 'core'
-categoryLabel: 'core'
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
+title: 'Search'
+---
 
 ### Function
 

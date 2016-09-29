@@ -1,10 +1,5 @@
 ---
-label: Alerts
-id: Alerts
-categorySlug: 'core api'
-categoryLabel: 'core'
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
+title: 'Alerts'
 ---
 
 ### Function

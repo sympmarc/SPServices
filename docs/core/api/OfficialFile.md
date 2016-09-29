@@ -1,10 +1,6 @@
 ---
-label: OfficialFile
-id: OfficialFile
-categorySlug: 'core'
-categoryLabel: 'core'
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
+title: 'OfficialFile'
+---
 
 ### Function
 

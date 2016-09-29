@@ -1,3 +1,7 @@
+---
+title: 'SPUpdateMultipleListItems'
+---
+
 ## Function
 
 **$().SPServices.SPUpdateMultipleListItems**

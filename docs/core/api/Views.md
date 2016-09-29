@@ -1,10 +1,6 @@
 ---
-label: Views
-id: Views
-categorySlug: 'core'
-categoryLabel: 'core'
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
+title: 'Views'
+---
 
 ### Function
 

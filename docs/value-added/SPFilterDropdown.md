@@ -1,3 +1,7 @@
+---
+title: 'SPFilterDropdown'
+---
+
 ## Function
 
 **$().SPServices.SPFilterDropdown**

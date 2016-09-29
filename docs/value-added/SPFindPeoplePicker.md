@@ -1,3 +1,7 @@
+---
+title: 'SPFindPeoplePicker'
+---
+
 ## Function
 
 **$().SPServices.SPFindPeoplePicker**

@@ -1,3 +1,7 @@
+---
+title: 'UserGroup-GetGroupCollectionFromUser'
+---
+
 ### Function
 
 **$().SPServices**

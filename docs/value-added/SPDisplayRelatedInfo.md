@@ -1,10 +1,6 @@
 ---
-label: SPDisplayRelatedInfo
-id: SPDisplayRelatedInfo
-categorySlug: 'value-added'
-categoryLabel: 'value-added'
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
+title: 'SPDisplayRelatedInfo'
+---
 
 ### Function
 
@@ -129,12 +125,12 @@ Here I’m asking SPDisplayRelatedInfo to show me the values in the `System_x002
 In this example, I'm displaying some information about the `Region`. To make the output look better, I'm doing a little post-processing on the `Total_x0020_Sales` column. You’ll see that I’m both pre-pending the value with “$” and right justifying it. In my case, the column is `Region` and the `Total_x0020_Sales` column is the 4th one, so I’m using `:nth-child(4)`.
 ``` javascript
 $().SPServices.SPDisplayRelatedInfo({       
-  columnName: "Region", 
+  columnName: "Region",
   relatedWebURL: "/Intranet/JQueryLib",
   relatedList: "Regions",
   relatedListColumn: "Title",
   relatedColumns: ["ID", "Country", "Title", "Total_x0020_Sales"],
-  displayFormat: "table", 
+  displayFormat: "table",
   completefunc: addDollarSigns,
   debug: true
 });

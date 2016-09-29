@@ -1,10 +1,5 @@
 ---
-label: Lists
-id: Lists
-categorySlug: 'Lists'
-categoryLabel: 'Lists'
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
+title: 'Lists'
 ---
 
 ### Web Service

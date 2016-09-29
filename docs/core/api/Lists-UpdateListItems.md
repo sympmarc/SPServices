@@ -1,3 +1,7 @@
+---
+title: 'Lists-UpdateListItems'
+---
+
 ### Function
 
 **$().SPServices**
@@ -93,7 +97,7 @@ This is an example of adding a new list item from a simple feedback type form.
 ```javascript
 $(document).ready(function() {
     $("#feedback-submit input").click(function() {
-	      
+
 		var subject = $("#feedback-subject-input input").val();
 		var message = $("#feedback-message-input textarea").text();
 

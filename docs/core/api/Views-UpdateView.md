@@ -1,3 +1,7 @@
+---
+title: 'Views-UpdateView'
+---
+
 ### Function
 
 **$().SPServices**
@@ -32,10 +36,10 @@ function UpdateView(url,list,view)
         operation: "GetViewCollection",
         webURL: url,
         async: false,
-        listName: list, 
-        completefunc: function (xData, Status) 
+        listName: list,
+        completefunc: function (xData, Status)
         {
-            $(xData.responseXML).find("[nodeName='View']").each(function() 
+            $(xData.responseXML).find("[nodeName='View']").each(function()
             {
                  var viewdisplayname = $(this).attr("DisplayName");
                  if (viewdisplayname==view)
@@ -44,23 +48,23 @@ function UpdateView(url,list,view)
                        return false;
                  }
         });
-    } 
-    }); 
+    }
+    });
 
- 
+
   var viewfields = "<ViewFields><FieldRef Name=\"Contacts_x0020_Full_x0020_Name\" /><FieldRef Name=\"Associated_x0020_With\" /><FieldRef Name=\"Contacts_x0020_Job_x0020_Title\" /><FieldRef Name=\"Email_x0020_Address\" /><FieldRef Name=\"Mobile_x0020_Telephone\" /><FieldRef Name=\"Business_x0020_Telephone\" /></ViewFields>";
   $().SPServices({
         operation: "UpdateView",
         webURL: url,
         async: false,
-        listName: list, 
+        listName: list,
         viewName: viewname,
         viewFields: viewfields,
-        completefunc: function (xData, Status) 
+        completefunc: function (xData, Status)
         {
-        } 
+        }
 
-    }); 
+    });
 
 }
 ```
