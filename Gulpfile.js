@@ -14,8 +14,9 @@ var sourcemaps = require('gulp-sourcemaps');
 var header = require('gulp-header');
 var rename = require('gulp-rename');
 var ghPages = require('gulp-gh-pages');
-var markdown = require('gulp-markdown');
 var tap = require('gulp-tap');
+var metalsmith = require('metalsmith');
+var markdown = require('metalsmith-markdown');
 
 var
     packageFile = 'package.json',
@@ -123,13 +124,15 @@ gulp.task('scripts', function() {
 */
 
 gulp.task('docs', function () {
-    return gulp.src(paths.docs) //paths.docs
-        .pipe(markdown('index.html', {
-            yamlMeta: true,
-            templatePath: 'docs/index.html',
-            highlightTheme: 'solarized_light'
-        }))
-        .pipe(gulp.dest('dist/docs/'));
+    return metalsmith(__dirname)
+        .source('./docs')
+        .destination('./dist/docs')
+        .use(markdown())
+        .build(function (err) {
+          if (err) {
+            throw err;
+          }
+        });
 });
 
 
