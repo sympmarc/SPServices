@@ -8,7 +8,7 @@ title: 'Lists'
 
 ### Certification
 
-[![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg)](../../glossary/index.md#Certification) [![Works with Caveats with SharePoint 2010](/docs/img/sp2010-works.jpg)](../../glossary/index.md#Certification)
+[![Certified for SharePoint 2007](../../img/sp2007-cert.jpg)](../../glossary/index.md#Certification) [![Works with Caveats with SharePoint 2010](../../img/sp2010-works.jpg)](../../glossary/index.md#Certification)
 
 See individual operations below.
 
