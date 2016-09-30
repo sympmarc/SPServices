@@ -8,7 +8,7 @@ title: 'SPLookupAddNew'
 
 ## Certification
 
-[![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg)](/docs/glossary/index.md#Certification) [![Certified for SharePoint 2010](/docs/img/sp2010-cert.jpg "Certified for SharePoint 2010")](/docs/glossary/index.md#Certification)
+[![Certified for SharePoint 2007](../img/sp2007-cert.jpg)](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -42,7 +42,7 @@ $().SPServices.SPLookupAddNew({
 
 ### Lookup column
 
-The [DisplayName](/docs/glossary/index.md#DisplayName) of the Lookup column in the form.
+The [DisplayName](../glossary/index.md#DisplayName) of the Lookup column in the form.
 
 ### promptText
 
@@ -72,7 +72,7 @@ completefunc: doSomething,   // Where doSomething is the name of your function
 
 ### debug
 
-Setting debug: true indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [DebugMode](/docs/glossary/index.md#DebugMode).
+Setting debug: true indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [DebugMode](../glossary/index.md#DebugMode).
 
 ## Example
 
@@ -85,7 +85,7 @@ $(document).ready(function() {
 });
 ```
 
-![SP Lookup Add New](/docs/img/splookupaddnew.jpg)
+![SP Lookup Add New](../img/splookupaddnew.jpg)
 
 The prompt in this example will be 'Add new Region Name'. Other prompt examples:
 * 'Add {0}' --> 'Add Region Name'

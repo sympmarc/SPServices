@@ -8,11 +8,11 @@ title: 'SPRequireUnique'
 
 ## Certification
 
-[![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg)](/docs/glossary/index.md#Certification) [![Certified for SharePoint 2010](/docs/img/sp2010-cert.jpg "Certified for SharePoint 2010")](/docs/glossary/index.md#Certification)
+[![Certified for SharePoint 2007](../img/sp2007-cert.jpg)](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
-Checks to see if the value for a column on the form is unique in the list. The idea for this function came from testing [$().SPServices.SPCascadeDropdowns](/docs/value-added/SPCascadeDropdowns.md). When using lists like relational tables, you want to be sure that at least one column contains unique values. Currently, the function works only with Single line of text columns, and will generally be used with the Title column. There is considerable flexibility in the use of this function based on the combination of options and the ability to change the messages and their formatting.
+Checks to see if the value for a column on the form is unique in the list. The idea for this function came from testing [$().SPServices.SPCascadeDropdowns](SPCascadeDropdowns.md). When using lists like relational tables, you want to be sure that at least one column contains unique values. Currently, the function works only with Single line of text columns, and will generally be used with the Title column. There is considerable flexibility in the use of this function based on the combination of options and the ability to change the messages and their formatting.
 
 Note that this function will work on the NewForm and EditForm for a list, but not in the datasheet view. The intent is to put some rigor around the normal item creation process. Because this is a client-side function, it does not pervasively enforce the uniqueness rule.
 
@@ -38,7 +38,7 @@ $().SPServices.SPRequireUnique({
 
 ### columnStaticName
 
-The [StaticName](/docs/glossary/index.md#StaticName) of the column on the form. The default value is "Title".
+The [StaticName](../glossary/index.md#StaticName) of the column on the form. The default value is "Title".
 
 ### duplicateAction
 
@@ -104,12 +104,12 @@ The following example will require the Title column to be unique.
 
 This screenshot shows how the initMsg is displayed below the State column (State is the DisplayName for the Title column in this list):
 
-![](/docs/value-added/img/sprequireunique1.jpg)
+![](img/sprequireunique1.jpg)
 
 This screenshot shows the errMsg being displayed because the value 'Alabama' already exists in the State column of an existing item. Note also that the OK buttons are disabled, preventing the user from saving the duplicate value.  
 
-![](/docs/value-added/img/sprequireunique2.jpg)
+![](img/sprequireunique2.jpg)
 
 And with showDupes set to true:
 
-![](/docs/value-added/img/sprequireunique3.png)
+![](img/sprequireunique3.png)

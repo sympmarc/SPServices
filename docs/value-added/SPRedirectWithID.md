@@ -8,7 +8,7 @@ title: 'SPRedirectWithID'
 
 ## Certification
 
-[![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg)](/docs/glossary/index.md#Certification) [![Not tested with SharePoint 2010](/docs/img/sp2010-notest.jpg "Not tested with SharePoint 2010")](/docs/glossary/index.md#Certification)
+[![Certified for SharePoint 2007](../img/sp2007-cert.jpg)](../glossary/index.md#Certification) [![Not tested with SharePoint 2010](../img/sp2010-notest.jpg "Not tested with SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -31,8 +31,8 @@ this in your setup, but it might be important for those of us who are using cust
 
 Assuming your NewForm is called NewFormCustom.aspx and the redirectUrl is set to EditForm.aspx:
 
-* On the initial load of NewFormCustom.aspx, the form action is changed to point back to the same page, with ?Source=NewFormCust.aspx?ID=[the last ID created by the current user]%26RealSource=[the actual Source for the page]. The [the last ID created by the current user] is determined by calling the [$().SPServices.SPGetLastItemId](/docs/value-added/SPGetLastItemId.md) function.
-* When the form reloads, because the ID is present on the Query String, the jQuery function then waits until [the last ID created by the current user] is not equal to the value on the Query String. This ensures that the commit has completed. The [the last ID created by the current user] is again determined by calling the [$().SPServices.SPGetLastItemId](/docs/value-added/SPGetLastItemId.md) function.
+* On the initial load of NewFormCustom.aspx, the form action is changed to point back to the same page, with ?Source=NewFormCust.aspx?ID=[the last ID created by the current user]%26RealSource=[the actual Source for the page]. The [the last ID created by the current user] is determined by calling the [$().SPServices.SPGetLastItemId](SPGetLastItemId.md) function.
+* When the form reloads, because the ID is present on the Query String, the jQuery function then waits until [the last ID created by the current user] is not equal to the value on the Query String. This ensures that the commit has completed. The [the last ID created by the current user] is again determined by calling the [$().SPServices.SPGetLastItemId](SPGetLastItemId.md) function.
 * The user should then be redirected to EditForm.aspx?ID=[the last ID created by the current user]
 
 ## Syntax

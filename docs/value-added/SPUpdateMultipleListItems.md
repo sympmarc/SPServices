@@ -8,7 +8,7 @@ title: 'SPUpdateMultipleListItems'
 
 ## Certification
 
-[![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg "Certified for SharePoint 2007")](/docs/glossary/index.md#Certification) [![Certified for SharePoint 2010](/docs/img/sp2010-cert.jpg "Certified for SharePoint 2010")](/docs/glossary/index.md#Certification)
+[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -79,7 +79,7 @@ completefunc: doSomething, // Where doSomething is the name of your function
 
 ### debug
 
-Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](/docs/glossary/index.md#debug-mode-).
+Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](../glossary/index.md#debug-mode-).
 
 **NOTE**: Debug mode is not implemented in the initial release of SPUpdateMultipleListItems in v0.5.8.
 

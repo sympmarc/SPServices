@@ -8,11 +8,11 @@ title: 'SPGetLastItemId'
 
 ## Certification
 
-[![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg)](/docs/glossary/index.md#Certification) [![Certified for SharePoint 2010](/docs/img/sp2010-cert.jpg "Certified for SharePoint 2010")](/docs/glossary/index.md#Certification)
+[![Certified for SharePoint 2007](../img/sp2007-cert.jpg)](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
-Function to return the ID of the last item created on a list by a specific user. Useful for maintaining parent/child relationships. This function was built for use by the [$().SPServices.SPRedirectWithID](/docs/value-added/SPRedirectWithID.md) function, but is also useful in other circumstances.
+Function to return the ID of the last item created on a list by a specific user. Useful for maintaining parent/child relationships. This function was built for use by the [$().SPServices.SPRedirectWithID](SPRedirectWithID.md) function, but is also useful in other circumstances.
 
 ## Prerequisites
 
