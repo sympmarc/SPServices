@@ -20,7 +20,7 @@ title: 'Lists-UpdateListItems'
 
 ### Additional Syntax
 
-If you want to update a single list item, rather than using the CAML syntax in updates you can specify valuepairs and the item's ID. If you specify valuepairs then updates should not be specified. The way it works is that it lets you specify an array of column [StaticNames](/docs/glossary/index.md#StaticName) and values. So if you wanted to update the Title and the Body:
+If you want to update a single list item, rather than using the CAML syntax in updates you can specify valuepairs and the item's ID. If you specify valuepairs then updates should not be specified. The way it works is that it lets you specify an array of column [StaticNames](../../glossary/index.md#StaticName) and values. So if you wanted to update the Title and the Body:
 
 ```javascript
 batchCmd: "Update",
