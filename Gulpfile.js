@@ -16,10 +16,10 @@ var rename = require('gulp-rename');
 var ghPages = require('gulp-gh-pages');
 var tap = require('gulp-tap');
 var metalsmith = require('metalsmith');
-var markdown = require('metalsmith-markdown');
-var replace = require('metalsmith-text-replace');
-var layouts = require('metalsmith-layouts');
-var collections = require('metalsmith-collections');
+var msMarkdown = require('metalsmith-markdown');
+var msReplace = require('metalsmith-text-replace');
+var msLayouts = require('metalsmith-layouts');
+var msCollections = require('metalsmith-collections');
 
 
 var
@@ -188,8 +188,8 @@ gulp.task('docs', function () {
         .source('./docs')
         .ignore('templates')
         .destination('./dist/docs')
-        .use(markdown())
-        .use(replace({
+        .use(msMarkdown())
+        .use(msReplace({
           '**/*.html': [
             {
               find: /.md"/gi,
@@ -201,7 +201,7 @@ gulp.task('docs', function () {
             }
           ]
         }))
-        .use(collections({
+        .use(msCollections({
           'Home': {
             pattern: 'index.html'
           },
@@ -222,7 +222,7 @@ gulp.task('docs', function () {
             sortBy: 'title'
           }
         }))
-        .use(layouts({
+        .use(msLayouts({
           engine: 'handlebars',
           directory: 'docs/templates',
           default: 'main.hbs'
