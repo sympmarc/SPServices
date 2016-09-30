@@ -42,6 +42,7 @@
     "metalsmith-collections": "^0.7.0",
     "metalsmith-layouts": "^1.6.5",
     "metalsmith-markdown": "^0.2.1",
+    "metalsmith-navigation": "^0.2.9",
     "metalsmith-text-replace": "^1.0.1",
     "qunit": "^0.9.0",
     "webpack-stream": "^3.2.0"

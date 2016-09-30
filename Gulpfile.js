@@ -20,6 +20,7 @@ var msMarkdown = require('metalsmith-markdown');
 var msReplace = require('metalsmith-text-replace');
 var msLayouts = require('metalsmith-layouts');
 var msCollections = require('metalsmith-collections');
+var msNavigation = require('metalsmith-navigation');
 
 
 var
@@ -200,6 +201,9 @@ gulp.task('docs', function () {
               replace: '.html#'
             }
           ]
+        }))
+        .use(msNavigation({
+          all: {}
         }))
         .use(msCollections({
           'Home': {
