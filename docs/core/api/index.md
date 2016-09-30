@@ -70,7 +70,7 @@ _operation_
 The name of the Web Service operation (see the SDK documentation links above). Because the Web Services operations are named uniquely, you only need to specify the operation.
 
 _webURL_
-For Web Service operations where it makes sense, you can pass in a webURL to change the context for the AJAX call. By default, the current site (as determined by [$().SPServices.SPGetCurrentSite](/docs/utilities/SPGetCurrentSite.md)) is used.
+For Web Service operations where it makes sense, you can pass in a webURL to change the context for the AJAX call. By default, the current site (as determined by [$().SPServices.SPGetCurrentSite](../../utilities/SPGetCurrentSite.md)) is used.
 
 _options_
 The options vary based on which Web Service and operation you are calling. In all instances, the options will take the same names as those described in the SDK.
