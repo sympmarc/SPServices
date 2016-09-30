@@ -17,6 +17,7 @@ var ghPages = require('gulp-gh-pages');
 var tap = require('gulp-tap');
 var metalsmith = require('metalsmith');
 var markdown = require('metalsmith-markdown');
+var replace = require('metalsmith-text-replace');
 var layouts = require('metalsmith-layouts');
 
 
@@ -131,6 +132,18 @@ gulp.task('docs', function () {
         .ignore('templates')
         .destination('./dist/docs')
         .use(markdown())
+        .use(replace({
+          '**/*.html': [
+            {
+              find: /.md"/gi,
+              replace: '.html"'
+            },
+            {
+              find: /.md#/,
+              replace: '.html#'
+            }
+          ]
+        }))
         .use(layouts({
           engine: 'handlebars',
           directory: 'docs/templates',
