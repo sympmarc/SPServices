@@ -24,7 +24,7 @@ You can also reference the js files from a CDN, like so:
 ```
 See [this post](http://sympmarc.com/2013/02/07/referencing-jquery-jqueryui-and-spservices-from-cdns-revisited/) for more info on using CDNs.
 
-[Debug Mode](/docs/glossary/index.md#DebugMode), first implemented in [v0.4.5](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=35706), also can be helpful in implementing solutions with the library.
+[Debug Mode](glossary/index.md#DebugMode), first implemented in [v0.4.5](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=35706), also can be helpful in implementing solutions with the library.
 
 Here's a small example. If you want to add functionality to NewForm.aspx, then take a copy of the form, call it something like NewFormCustom.aspx, and add your script into it. I like to put my scripts below this line:
 ``` html
