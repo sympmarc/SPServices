@@ -8,7 +8,7 @@ $().SPServices
 
 ### Certification
 
-![Certified for SharePoint 2007](../../img/sp2007-cert.jpg)](../../glossary/index.md#Certification) [![Works with Caveats with SharePoint 2010](../../img/sp2010-works.jpg)](../../glossary/index.md##Certification)
+[![Certified for SharePoint 2007](../../img/sp2007-cert.jpg)](../../glossary/index.md#Certification) [![Works with Caveats with SharePoint 2010](../../img/sp2010-works.jpg)](../../glossary/index.md##Certification)
 See individual Web Services pages for certification specifics.
 
 ### Notes
