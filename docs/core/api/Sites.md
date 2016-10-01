@@ -12,7 +12,7 @@ title: 'Sites'
 
 ### Notes
 
-The Sites Web Service is available in SharePoint 2007, but only minimally. Please be aware of the differences between the [2007](http://msdn.microsoft.com/en-us/library/sites.sites_methods(v=office.12).aspx) and [2010](http://msdn.microsoft.com/en-us/library/websvcsites.sites_methods.aspx) versions.
+The Sites Web Service is available in SharePoint 2007, but only minimally. Please be aware of the differences between the [2007](http://msdn.microsoft.com/en-us/library/sites.sites_methods%28v=office.12%29.aspx) and [2010](http://msdn.microsoft.com/en-us/library/websvcsites.sites_methods.aspx) versions.
 
 ### Supported Operations
 
