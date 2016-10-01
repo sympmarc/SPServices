@@ -228,7 +228,7 @@ gulp.task('docs', function () {
               replace: '.html"'
             },
             {
-              find: /.md#/,
+              find: /.md#/gi,
               replace: '.html#'
             }
           ]
