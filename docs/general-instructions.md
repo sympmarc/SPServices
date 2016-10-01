@@ -8,7 +8,7 @@ First, please read [this blog post](http://sympmarc.com/2011/07/08/adding-jquery
 
 The library can be implemented by adding a reference to it into a single page, a page layout, or a master page, depending upon your desired scope of use. The SPServices library requires the [jQuery library](http://jquery.com/). See the System Requirements section for required versions.
 
-Most releases of the library include both a [minified](/wikipage?title=Glossary&referringTitle=Documentation&ANCHOR#minified) and a normal version of the release. If you would like to understand the workings of the library, look at the normal version, but use the minified version for any production use.
+Most releases of the library include both a [minified](glossary/index.md#minified) and a normal version of the release. If you would like to understand the workings of the library, look at the normal version, but use the minified version for any production use.
 
 I recommend storing the jQuery library and SPServices in a Document Library in your Site Collection and referencing it as needed, like this:
 ``` html
