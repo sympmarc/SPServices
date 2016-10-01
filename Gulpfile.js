@@ -260,6 +260,7 @@ gulp.task('docs', function () {
         .use(msLayouts({
           engine: 'handlebars',
           directory: 'docs/templates',
+          partials: 'docs/templates/partials',
           default: 'main.hbs'
         }))
         .build(function (err) {
