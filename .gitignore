@@ -34,3 +34,5 @@ _$*
 node_modules
 me.*
 .idea/
+tmp
+.publish

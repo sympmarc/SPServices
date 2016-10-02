@@ -22,6 +22,8 @@ var msLayouts = require('metalsmith-layouts');
 var msCollections = require('metalsmith-collections');
 var msNavigation = require('metalsmith-navigation');
 var Handlebars = require('handlebars');
+var gulpSequence = require('gulp-sequence');
+var zip = require('gulp-zip');
 
 
 var
@@ -68,6 +70,11 @@ gulp.task('config', function() {
 gulp.task('clean:build', function() {
     // You can use multiple globbing patterns as you would with `gulp.src`
     return del(['build']);
+});
+
+gulp.task('clean:tmp', function() {
+    // You can use multiple globbing patterns as you would with `gulp.src`
+    return del(['tmp']);
 });
 
 // Convert .less files to .css
@@ -294,11 +301,19 @@ gulp.task('build', function() {
 });
 
 // Deploy to gh-pages
-gulp.task('deploydocs', function() {
-    return gulp.src(paths.dist)
+gulp.task('deploydocs', ['zip'], function() {
+    return gulp.src('tmp/**/*')
         .pipe(ghPages());
 });
 
+// Zip dist folder for distribution
+gulp.task('zip', ['clean:tmp'], function() {
+    return gulp.src(paths.dist)
+        .pipe(zip('SPServices.zip'))
+        .pipe(gulp.dest('tmp'))
+        .pipe(gulp.src('dist/docs/**/*'))
+        .pipe(gulp.dest('tmp'));
+});
 
 // Default task(s).
 gulp.task('default', [
