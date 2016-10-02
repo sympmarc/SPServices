@@ -21,9 +21,6 @@ As of v0.7.2, the core `$().SPServices()` function allows for simple caching of 
 
 The table below shows the Web Services for which we have implemented at least one operation (or have operations coming in planned releases) with a link to more detailed documentation, indicators for whether the Web Service is available in WSS 3.0 and/or MOSS, and links to the MSDN documentation pages. Note that there are some [general syntax instructions](#GeneralSyntax) below the table.
 
-| SharePoint 2007 | SharePoint 2010 |
-| --------------- | --------------- |
-
 | Web Service | WSS 3.0 | MOSS | MSDN Documentation | Foundation | SP2010 |
 | ----------- | ------- | ---- | ------------------ | ---------- | ------ |
 | [Alerts](Alerts.md) | ![](../../img/checkmark.gif) | ![](../../img/checkmark.gif) | [Alerts Web Service](http://msdn.microsoft.com/en-us/library/alerts.aspx) | ![](../../img/checkmark.gif) | ![](../../img/checkmark.gif) |
@@ -41,15 +38,15 @@ The table below shows the Web Services for which we have implemented at least on
 | [Views](Views.md) | ![](../../img/checkmark.gif) | ![](../../img/checkmark.gif) | [Views Web Service](http://msdn.microsoft.com/en-us/library/views.aspx) | ![](../../img/checkmark.gif) | ![](../../img/checkmark.gif) |
 | [WebPartPages](WebPartPages.md) | ![](../../img/checkmark.gif) | ![](../../img/checkmark.gif) | [Web Part Pages Web Service](http://msdn.microsoft.com/en-us/library/ms774569.aspx) | ![](../../img/checkmark.gif) | ![](../../img/checkmark.gif) |
 | [Webs](Webs.md) | ![](../../img/checkmark.gif) | ![](../../img/checkmark.gif) | [Webs Web Service](http://msdn.microsoft.com/en-us/library/webs.aspx) | ![](../../img/checkmark.gif) | ![](../../img/checkmark.gif) |
-| [PublishedLinksService](PublishedLinksService.md) | | ![](../../img/checkmark.gif) | [PublishedLinksService Web Service](http://msdn.microsoft.com/en-us/library/aa981003.aspx) | ![](../../img/checkmark.gif) |
-| [Official File (Records Repository)](OfficialFile.md) | | ![](../../img/checkmark.gif) | [Official File Web Service](http://msdn.microsoft.com/en-us/library/aa981147%28v=office.12%29.aspx) | ![](../../img/checkmark.gif) |
-| [Search](Search.md) | | ![](../../img/checkmark.gif) | [Search Web Service](http://msdn.microsoft.com/en-us/library/search.aspx) | ![](../../img/checkmark.gif) |
-| [SpellChecker](SpellChecker.md) | | ![](../../img/checkmark.gif) | [SpellChecker Web Service](http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.publishing.spellchecker.spellcheck.aspx) | ![](../../img/checkmark.gif) |
-| [UserProfileService](UserProfileService.md) | | ![](../../img/checkmark.gif) | [User Profile Web Service](http://msdn.microsoft.com/en-us/library/aa981571.aspx) | ![](../../img/checkmark.gif) |
-| [Workflow](Workflow.md) | | ![](../../img/checkmark.gif) | [Workflow Web Service](http://msdn.microsoft.com/en-us/library/aa981383.aspx) | ![](../../img/checkmark.gif) |
+| [PublishedLinksService](PublishedLinksService.md) | | ![](../../img/checkmark.gif) | [PublishedLinksService Web Service](http://msdn.microsoft.com/en-us/library/aa981003.aspx) | | ![](../../img/checkmark.gif) |
+| [Official File (Records Repository)](OfficialFile.md) | | ![](../../img/checkmark.gif) | [Official File Web Service](http://msdn.microsoft.com/en-us/library/aa981147%28v=office.12%29.aspx) | | ![](../../img/checkmark.gif) |
+| [Search](Search.md) | | ![](../../img/checkmark.gif) | [Search Web Service](http://msdn.microsoft.com/en-us/library/search.aspx) | | ![](../../img/checkmark.gif) |
+| [SpellChecker](SpellChecker.md) | | ![](../../img/checkmark.gif) | [SpellChecker Web Service](http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.publishing.spellchecker.spellcheck.aspx) | | ![](../../img/checkmark.gif) |
+| [UserProfileService](UserProfileService.md) | | ![](../../img/checkmark.gif) | [User Profile Web Service](http://msdn.microsoft.com/en-us/library/aa981571.aspx) | | ![](../../img/checkmark.gif) |
+| [Workflow](Workflow.md) | | ![](../../img/checkmark.gif) | [Workflow Web Service](http://msdn.microsoft.com/en-us/library/aa981383.aspx) | | ![](../../img/checkmark.gif) |
 | [Diagnostics](Diagnostics.md) | | | [Diagnostics Web Service](http://msdn.microsoft.com/en-us/library/ee551419.aspx) | ![](../../img/checkmark.gif) | ![](../../img/checkmark.gif) |
-| [SocialDataService](SocialDataService) | | | [SocialDataService Web Service](http://msdn.microsoft.com/en-us/library/ee590294.aspx) | ![](../../img/checkmark.gif) |
-| [TaxonomyClientService](TaxonomyClientService) | | | [TaxonomyClientService Web Service](http://msdn.microsoft.com/en-us/library/ee586638.aspx) | ![](../../img/checkmark.gif) |
+| [SocialDataService](SocialDataService) | | | [SocialDataService Web Service](http://msdn.microsoft.com/en-us/library/ee590294.aspx) | | ![](../../img/checkmark.gif) |
+| [TaxonomyClientService](TaxonomyClientService) | | | [TaxonomyClientService Web Service](http://msdn.microsoft.com/en-us/library/ee586638.aspx) | | ![](../../img/checkmark.gif) |
 
 ### General Syntax
 
