@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SiteData - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SiteData</h1>
+
+      <h3 id="function">Function</h3>
+<p><strong>$().SPServices</strong></p>
+<h3 id="web-service">Web Service</h3>
+<p><strong>SiteData</strong></p>
+<h3 id="supported-operations">Supported Operations</h3>
+<table class="table">
+<thead>
+<tr>
+<th>Operation</th>
+<th>Options</th>
+<th>MSDN Documentation</th>
+<th>Introduced</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="SiteData-EnumerateFolder.html">EnumerateFolder</a></td>
+<td><code>strFolderUrl</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774758%28v=office.12%29.aspx">SiteData.EnumerateFolder Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/47136">0.5.7</a></td>
+</tr>
+<tr>
+<td>GetList -&gt; Must be called as <strong>SiteDataGetList</strong></td>
+<td><code>[webURL], strListName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774793%28v=office.12%29.aspx">SiteData.GetList Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>GetListCollection -&gt; Must be called as <strong>SiteDataGetListCollection</strong></td>
+<td><code>[webURL]</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774864%28v=office.12%29.aspx">SiteData.GetListCollection Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>GetSite -&gt; Must be called as <strong>SiteDataGetSite</strong></td>
+<td><code>[webURL]</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms773417%28v=office.12%29.aspx">SiteData.GetSite Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/77486" title="0.7.1">0.7.1</a></td>
+</tr>
+<tr>
+<td>GetSiteUrl -&gt; Must be called as <strong>SiteDataGetSiteUrl</strong></td>
+<td><code>Url</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms774895%28v=office.12%29.aspx">SiteData.GetSiteUrl Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/77486" title="0.7.1">0.7.1</a></td>
+</tr>
+<tr>
+<td><a href="SiteData-GetWeb.html">GetWeb</a> -&gt; Must be called as <strong><a href="SiteData.SiteDataGetWeb">SiteDataGetWeb</a></strong></td>
+<td><code>[webURL]</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ms772798%28v=office.12%29.aspx">SiteData.GetWeb Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/77486" title="0.7.1">0.7.1</a></td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

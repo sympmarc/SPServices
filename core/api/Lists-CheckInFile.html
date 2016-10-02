@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Lists-CheckInFile - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>Lists-CheckInFile</h1>
+
+      <h3 id="function">Function</h3>
+<p><strong>$().SPServices</strong></p>
+<h3 id="web-service">Web Service</h3>
+<p><strong>Lists</strong></p>
+<h3 id="operation">Operation</h3>
+<p><strong>CheckInFile</strong></p>
+<h3 id="example">Example</h3>
+<p>As an example, here is a call I made to CheckInFile in a real client project. It comes from a page where I was allowing the user to edit the metadata and check in files after a bulk upload.  </p>
+<pre><code class="language-javascript">// Check in a single document, disable all of the column controls and give a visual cue that it is checked in
+ function checkInDocument(obj, pageUrl) {
+  var success = true;
+  $().SPServices({
+   operation: &quot;CheckInFile&quot;,
+   async: false,
+   pageUrl: pageUrl,
+   comment: &quot;Checked in during bulk upload&quot;,
+   CheckinType: 1,
+   completefunc: function (xData, Status) {
+    $(xData.responseXML).find(&quot;errorstring&quot;).each(function() {
+     alert($(this).text() + &quot; Please save all of your changes before attempting to check in the document.&quot;);
+     success = false;
+    });
+   }
+  });
+  // If we couldn&#39;t check the document in, then don&#39;t disable the item&#39;s row
+  if(!success) return success;
+  // Disable the item and show it is checked in
+  $(obj).closest(&quot;tr&quot;).each(function() {
+   // Mark the item&#39;s row so that the user can see it is checked in
+   $(this).attr(&quot;style&quot;, &quot;background-color:#bee1aa&quot;);
+   // Remove the Check In link
+   $(this).find(&quot;td:first&quot;).remove();
+   $(this).prepend(&quot;&lt;td class=&#39;actiondone&#39;&gt;&lt;/td&gt;&quot;);
+   // Disable the Name column
+   $(this).find(&quot;input:[Title=&#39;Name&#39;]&quot;).attr(&quot;disabled&quot;, &quot;disabled&quot;);
+   // Disable the RequestID column
+   $(this).find(&quot;input:[Title=&#39;RequestID&#39;]&quot;).each(function() {
+    $(this).attr(&quot;disabled&quot;, &quot;disabled&quot;);
+    $(this).parent().find(&quot;img&quot;).remove();
+   });
+   // Disable the Artifact Type column
+   $(this).find(&quot;input:[Title=&#39;ArtifactType&#39;]&quot;).each(function() {
+    $(this).attr(&quot;disabled&quot;, &quot;disabled&quot;);
+    $(this).parent().find(&quot;img&quot;).remove();
+   });
+   // Disable the AuditRequired column
+   $(this).find(&quot;[id^=&#39;AuditRequired&#39;] input&quot;).each(function() {
+    $(this).attr(&quot;disabled&quot;, &quot;disabled&quot;);
+   });
+  });
+  return success;
+ }
+</code></pre>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>
