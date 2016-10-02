@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPDebugXMLHttpResult - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SPDebugXMLHttpResult</h1>
+
+      <h2 id="function">Function</h2>
+<p><strong>$().SPServices.SPDebugXMLHttpResult</strong></p>
+<h2 id="certification">Certification</h2>
+<p><a href="../glossary/index.html#Certification"><img src="../img/sp2007-cert.jpg" alt="Certified for SharePoint 2007" title="Certified for SharePoint 2007"></a> <a href="../glossary/index.html#Certification"><img src="../img/sp2010-cert.jpg" alt="Certified for SharePoint 2010" title="Certified for SharePoint 2010"></a></p>
+<h2 id="functionality">Functionality</h2>
+<p>This function displays the XMLHttpResult from an AJAX call formatted for easy debugging. You can call it manually as part of your completefunc. The function returns an HTML string which contains a parsed version of the XMLHttpResult object.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p><em>None</em></p>
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">var out = $().SPServices.SPDebugXMLHttpResult({
+    node: xData.responseXML
+});
+</code></pre>
+<h3 id="node">node</h3>
+<p>An XMLHttpResult object returned from an AJAX call</p>
+<h2 id="example">Example</h2>
+<pre><code class="language-javascript">$().SPServices({
+    operation: &quot;GetList&quot;,
+    listName: &quot;States&quot;,
+    completefunc: function (xData, Status) {
+        var out = $().SPServices.SPDebugXMLHttpResult({
+            node: xData.responseXML
+        });
+        $(&quot;#WSOutput&quot;).html(&quot;&quot;).append(&quot;&lt;b&gt;This is the output from the GetList operation:&lt;/b&gt;&quot; + out);
+    }
+});
+</code></pre>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

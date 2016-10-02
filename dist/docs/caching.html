@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Caching - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>Caching</h1>
+
+      <p>I&#39;ve added a caching option into SPServices v0.7.2 and it can save a decent amount of traffic back and forth with the server, depending on how you are using things. It uses <a href="http://api.jquery.com/category/data/">jQuery’s <code>.data()</code> functions</a> to cache the XML for each request which has the option <code>cacheXML: true</code>.</p>
+<p>This is basically brute force. If <code>cacheXML: true</code>, then the returned XML is saved as a data object on the body of the page with the request XML as the key. If you make the exact same call again, then the request is fulfilled from that cache. Note that it has to be the “exact same call”. This means that the request XML has to match exactly.</p>
+<p>in v0.7.2, I’ve set the option to true for some of the internal calls to the Web Services operations to speed things up when you use functions multiple times. For instance, quite a few of the value-added functions make a call to GetList to get details about the current list, and there’s no need to make that call more than once during the page life. If you are creating more than one cascade with <a href="value-added/SPCascadeDropdowns.html">SPCascadeDropdowns</a>, for example, you’ll see an immediate improvement. However, since I can’t predict how many values you may have coming back from <code>GetListItems</code> calls, I haven’t turned on caching pervasively, since I didn’t want to break things in an effort to be more efficient. Some client machines may not have the horsepower to cache large volumes of data, etc. If you know your data and your client machine capabilities well, you can set the option to true in the defaults:</p>
+<pre><code class="language-javascript">$().SPServices.defaults.cacheXML = true;
+</code></pre>
+<p>which will affect all Web Service operation calls in the current page lifecycle.</p>
+<p>You can use the <code>cacheXML: true</code> option with any Web Service operation in <a href="core/api/index.html">SPServices Core</a>, though as you can imagine some operations will benefit more than others.</p>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

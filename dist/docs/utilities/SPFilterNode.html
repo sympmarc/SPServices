@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPFilterNode - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SPFilterNode</h1>
+
+      <h2 id="function">Function</h2>
+<p><strong>$().SPFilterNode</strong></p>
+<h2 id="certification">Certification</h2>
+<p><a href="../glossary/index.html#Certification"><img src="../img/sp2007-cert.jpg" alt="Certified for SharePoint 2007" title="Certified for SharePoint 2007"></a> <a href="../glossary/index.html#Certification"><img src="../img/sp2010-cert.jpg" alt="Certified for SharePoint 2010" title="Certified for SharePoint 2010"></a></p>
+<h2 id="functionality">Functionality</h2>
+<div class="alert alert-danger"><strong>IMPORTANT NOTE: This function was introduced in v0.7.0 because of a change that the jQuery team made in jQuery 1.7. See my blog posts <a href="http://sympmarc.com/2011/11/08/problem-with-jquery-1-7-and-spservices/">here</a> and <a href="http://sympmarc.com/2011/11/23/jquery-library-for-sharepoint-web-services-spservices-v0-7-0-beta-1-available/">here</a> for details. If you are using a version of SPServices prior to v0.7.0, you do not have this function.</strong></div>
+
+<p>Can be used to find namespaced elements in returned XML, such as <code>rs:data</code> or <code>z:row</code> from GetListItems.</p>
+<p>My hope is that by having this function in place, SPServices will be a bit more future-proof against changes made by the jQuery team. The function is only required if you want your script to work reliably cross-browser, as Internet Explorer will reliably find the elements with the simpler <code>.find(&quot;z:row&quot;)</code> syntax.</p>
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">$(xData.responseXML).SPFilterNode(somenode)
+</code></pre>
+<h2 id="example">Example</h2>
+<pre><code class="language-javascript">$(xData.responseXML).SPFilterNode(&quot;z:row&quot;).each(function() {
+   // Do something
+});
+</code></pre>
+<h2 id="additional-notes">Additional Notes</h2>
+<p>Because the SPFilterNode function may be so widely used, I did not namepsace it with SPServices to keep replacement of .find(&quot;z:row&quot;) or .find(&quot;[nodeName=&#39;z:row&#39;]&quot;) as straightforward as possible.</p>
+<p>The function is very simple, and is reproduced here. Thanks to Steve Workman for devising, testing, and documenting this approach.</p>
+<pre><code class="language-javascript">// This method for finding specific nodes in the returned XML was developed by Steve Workman. See his blog post
+// http://www.steveworkman.com/html5-2/javascript/2011/improving-javascript-xml-node-finding-performance-by-2000/
+// for performance details.
+$.fn.SPFilterNode = function(name) {
+  return this.find(&#39;*&#39;).filter(function() {
+    return this.nodeName === name;
+  });
+};
+</code></pre>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

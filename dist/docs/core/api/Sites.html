@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Sites - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>Sites</h1>
+
+      <h3 id="function">Function</h3>
+<p><strong>$().SPServices</strong></p>
+<h3 id="web-service">Web Service</h3>
+<p><strong>Sites</strong></p>
+<h3 id="notes">Notes</h3>
+<p>The Sites Web Service is available in SharePoint 2007, but only minimally. Please be aware of the differences between the <a href="http://msdn.microsoft.com/en-us/library/sites.sites_methods%28v=office.12%29.aspx">2007</a> and <a href="http://msdn.microsoft.com/en-us/library/websvcsites.sites_methods.aspx">2010</a> versions.</p>
+<h3 id="supported-operations">Supported Operations</h3>
+<table class="table">
+<thead>
+<tr>
+<th>Operation</th>
+<th>Options</th>
+<th>MSDN Documentation</th>
+<th>Introduced</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CreateWeb</td>
+<td><code>urlType, titleType, descriptionType, templateNameType, languageType, languageSpecifiedType, localeType, localeSpecifiedType, collationLocaleType, collationLocaleSpecifiedType, uniquePermissionsType, uniquePermissionsSpecifiedType, anonymousType, anonymousSpecifiedType, presenceType, presenceSpecifiedType</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/ee658286">Sites.CreateWeb Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/81401">0.7.2</a></td>
+</tr>
+<tr>
+<td>DeleteWeb</td>
+<td><code>url</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/websvcsites.sites.deleteweb">Sites.DeleteWeb Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/81401">0.7.2</a></td>
+</tr>
+<tr>
+<td>GetSite</td>
+<td><code>SiteUrl</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/websvcsites.sites.getsite">Sites.GetSite Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/81401">0.7.2</a></td>
+</tr>
+<tr>
+<td>GetSiteTemplates</td>
+<td><code>LCID, TemplateList</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/websvcsites.sites.getsitetemplates">Sites.GetSiteTemplates</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/81401">0.7.2</a></td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPGetCurrentUser - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SPGetCurrentUser</h1>
+
+      <h2 id="function">Function</h2>
+<p><strong>$().SPServices.SPGetCurrentUser</strong></p>
+<h2 id="certification">Certification</h2>
+<p><a href="../glossary/index.html#Certification"><img src="../img/sp2007-cert.jpg" alt="Certified for SharePoint 2007" title="Certified for SharePoint 2007"></a> <a href="../glossary/index.html#Certification"><img src="../img/sp2010-cert.jpg" alt="Certified for SharePoint 2010" title="Certified for SharePoint 2010"></a>*</p>
+<h2 id="functionality">Functionality</h2>
+<p>This utility function, which is also publicly available, returns information about the current user.</p>
+<h2 id="how-it-works">How It Works</h2>
+<p>The SPGetCurrentUser function does an AJAX call to grab <code>/_layouts/userdisp.aspx?Force=True</code> and &quot;scrapes&quot; the values from the page based on the internal field name (aka StaticName).</p>
+<div class="alert alert-danger"><strong>Note</strong>: There is a bug in the versions 2013.01, 2013.02, and 2014.01 where only the relative path (<code>&quot;/&quot;</code>) is returned from <a href="https://spservices.codeplex.com/wikipage?title=%24%28%29.SPServices.SPGetCurrentSite">$().SPServices.SPGetCurrentSite</a> rather than the full path (<code>&quot;http://servername/sitename&quot;</code>). This causes problems in the root site for $().SPServices.SPGetCurrentUser.</div>
+
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">$().SPServices.SPGetCurrentUser({
+  webURL: &quot;&quot;,        // Added in 2013.01  
+  fieldName: &quot;Name&quot;&lt;/span&gt;,
+  fieldNames: {},         // Added in v0.7.2 to allow multiple columns  
+  debug: false
+});
+</code></pre>
+<h3 id="weburl">webURL</h3>
+<p>URL of the target Site Collection.  If not specified, the current Web is used.</p>
+<h3 id="fieldname">fieldName</h3>
+<p>You can specify which value from <code>userdisp.aspx</code> you&#39;d like returned with this option. The default is the user&#39;s account (<code>Name</code> in the <code>Field Internal Name</code> column below). You can specify any of the <code>Field Internal Name</code>s for option <code>fieldName</code>. The fields listed below are the default out-of-the-box fields. If you’ve got custom fields which are exposed on the <code>userdisp.aspx</code> page, then you should be able to retrieve them with this function as well.  </p>
+<p>Note that, as of <a href="http://spservices.codeplex.com/releases/view/62021">v0.6.1</a>, you can also request the ID of the user by specifying <code>fieldName: &quot;ID&quot;</code>.  </p>
+<table class="table">
+<thead>
+<tr>
+<th>Field Name</th>
+<th>Field Internal Name</th>
+<th>WSS</th>
+<th>MOSS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Account</td>
+<td>Name</td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+</tr>
+<tr>
+<td>Name</td>
+<td>Title</td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+</tr>
+<tr>
+<td>Work e-mail</td>
+<td>EMail</td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+</tr>
+<tr>
+<td>About me</td>
+<td>Notes</td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+</tr>
+<tr>
+<td>Picture</td>
+<td>Picture</td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+</tr>
+<tr>
+<td>Department</td>
+<td>Department</td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+</tr>
+<tr>
+<td>Job Title</td>
+<td>JobTitle</td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+</tr>
+<tr>
+<td>SIP Address</td>
+<td>SipAddress</td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+</tr>
+<tr>
+<td>First name</td>
+<td>FirstName</td>
+<td></td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+</tr>
+<tr>
+<td>Last Name</td>
+<td>LastName</td>
+<td></td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+</tr>
+<tr>
+<td>Work phone</td>
+<td>WorkPhone</td>
+<td></td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+</tr>
+<tr>
+<td>Office</td>
+<td>Office</td>
+<td></td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+</tr>
+<tr>
+<td>User name</td>
+<td>UserName</td>
+<td></td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+</tr>
+<tr>
+<td>Web site</td>
+<td>WebSite</td>
+<td></td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+</tr>
+<tr>
+<td>Responsibilities</td>
+<td>SPResponsibility</td>
+<td></td>
+<td><img src="http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif" alt=""></td>
+</tr>
+</tbody>
+</table>
+<h3 id="fieldnames">fieldNames</h3>
+<p>Added in v0.7.2 to allow requesting multiple column values. The column names can be passed in as an array, such as [&quot;ID&quot;, &quot;Last Name&quot;]</p>
+<h3 id="debug">debug</h3>
+<p>Setting <code>debug: true</code> indicates that you would like to receive messages if anything obvious is wrong with the function call, like specifying a value which doesn&#39;t exist. I call this <a href="../glossary/index.html#DebugMode">debug mode</a>.</p>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-javascript">var thisUserAccount = $().SPServices.SPGetCurrentUser({
+    fieldName: &quot;Name&quot;,
+    debug: false
+});
+</code></pre>
+<pre><code class="language-javascript">var thisUserName = $().SPServices.SPGetCurrentUser({
+    fieldName: &quot;Title&quot;,
+    debug: false
+});
+</code></pre>
+<pre><code class="language-javascript">var thisUserID = $().SPServices.SPGetCurrentUser({
+    fieldName: &quot;ID&quot;,
+    debug: false
+});
+</code></pre>
+<pre><code class="language-javascript">var thisUsersValues = $().SPServices.SPGetCurrentUser({
+    fieldNames: [&quot;ID&quot;, &quot;Name&quot;, &quot;SIP Address&quot;],
+    debug: false
+});
+</code></pre>
+<p>* Attested by Geoff Varosky</p>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

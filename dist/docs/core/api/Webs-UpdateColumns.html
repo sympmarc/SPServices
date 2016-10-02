@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Webs-UpdateColumns - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>Webs-UpdateColumns</h1>
+
+      <h3 id="function">Function</h3>
+<p><strong>$().SPServices</strong></p>
+<h3 id="web-service">Web Service</h3>
+<p><strong>Webs</strong></p>
+<h3 id="operation">Operation</h3>
+<p><strong>UpdateColumns</strong></p>
+<h3 id="example">Example</h3>
+<p>Thanks to <a href="http://www.codeplex.com/site/users/view/fereko">fereko</a> for providing this example. See <a href="Webs-CreateContentType.html">CreateContentType</a> for the addContentType code.</p>
+<pre><code class="language-javascript">function addColumns(){
+  var fieldArray=new Array();
+  fieldArray.push(&#39;&lt;Field Type=&quot;User&quot; DisplayName=&quot;GroupABC&quot; FromBaseType=&quot;TRUE&quot; AllowDeletion=&quot;TRUE&quot;&gt;&lt;Default&gt;&lt;/Default&gt;&lt;/Field&gt;&#39;);
+  fieldArray.push(&#39;&lt;Field Type=&quot;User&quot; DisplayName=&quot;GroupXYZ&quot; FromBaseType=&quot;TRUE&quot; AllowDeletion=&quot;TRUE&quot;&gt;&lt;Default&gt;&lt;/Default&gt;&lt;/Field&gt;&#39;);
+  var newFields=&#39;&#39;;
+  for(var i=0; i&lt;fieldArray.length; i++){
+    newFields+=&#39;&lt;Method ID=&quot;1&quot;&gt;&#39;+fieldArray[i]+&#39;&lt;/Method&gt;&#39;;
+  }
+  newFields=&#39;&lt;Fields&gt;&#39;+newFields+&#39;&lt;/Fields&gt;&#39;;
+  $().SPServices({
+    operation: &quot;UpdateColumns&quot;,
+    newFields: newFields,
+    completefunc: function (xData, Status) {
+      var fields=&#39;&#39;;
+      $(xData.responseXML).SPFilterNode(&quot;z:row&quot;).each(function() {
+        fields=fields+&#39;&lt;Method ID=&quot;1&quot;&gt;&lt;Field ID=&quot;&#39;+$(this).attr(&quot;ID&quot;)+&#39;&quot; Name=&quot;&#39;+$(this).attr(&quot;Name&quot;)+&#39;&quot; DisplayName=&quot;&#39;+$(this).attr(&quot;DisplayName&quot;)+&#39;&quot;/&gt;&lt;/Method&gt;&#39;;
+      });
+      addContentType(fields);
+    }
+  });
+}
+</code></pre>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

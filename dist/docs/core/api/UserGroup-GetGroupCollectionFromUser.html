@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>UserGroup-GetGroupCollectionFromUser - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>UserGroup-GetGroupCollectionFromUser</h1>
+
+      <h3 id="function">Function</h3>
+<p><strong>$().SPServices</strong></p>
+<h3 id="web-service">Web Service</h3>
+<p><strong>Users and Groups</strong></p>
+<h3 id="operation">Operation</h3>
+<p><strong>GetGroupCollectionFromUser</strong></p>
+<h3 id="example">Example</h3>
+<p>Here&#39;s an example from greginchicago on <a href="http://www.endusersharepoint.com/STP/viewtopic.php?f=7&amp;t=983&amp;start=0">EndUserSharePoint&#39;s Stump the Panel</a>. We worked through it together and it&#39;s a nice use of GetGroupCollectionFromUser to disable the &#39;Change Password&#39; option for users belonging to a given Permission group in the &#39;Welcome&#39; drop down located on the top right corner of the default SharePoint page.</p>
+<p>Here&#39;s the code:</p>
+<pre><code class="language-javascript">&lt;script type=&quot;text/javascript&quot; src=&quot;/SRC/SRCjQuery/jquery-1.4.2.min.js&quot;&gt;&lt;/script&gt;
+&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot; src=&quot;/SRC/SRCjQuery/jquery.SPServices-0.5.4.min.js&quot;&gt;&lt;/script&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+/* place code right before the matching closing tag &lt;/asp:Content&gt; for &lt;asp:Content ContentPlaceHolderId=&quot;PlaceHolderMain&quot; runat=&quot;server&quot;&gt;*/
+  $(document).ready(function() {
+    $().SPServices({
+      operation: &quot;GetGroupCollectionFromUser&quot;,
+      userLoginName: $().SPServices.SPGetCurrentUser(),
+      async: false,
+      completefunc: function(xData, Status) {
+        if($(xData.responseXML).find(&quot;Group[Name=&#39;GroupName&#39;]&quot;).length == 1) {
+          $(&quot;#zz9_ID_PersonalizePage&quot;).remove();
+          /*   zz5_ID_LoginAsDifferentUser
+               zz6_ID_RequestAccess
+               zz7_ID_Logout
+               zz8_MSOMenu_ChangePassword
+               zz9_ID_PersonalizePage   */
+        }
+      }
+   }); /*close().SPServices({ */
+}); /* close (document).ready(function() { */
+&lt;/script&gt;
+</code></pre>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

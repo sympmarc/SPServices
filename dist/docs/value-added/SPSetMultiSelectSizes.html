@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPSetMultiSelectSizes - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SPSetMultiSelectSizes</h1>
+
+      <h2 id="function">Function</h2>
+<p><strong>$().SPServices.SPSetMultiSelectSizes</strong></p>
+<h2 id="certification">Certification</h2>
+<p><a href="../glossary/index.html#Certification"><img src="../img/sp2007-cert.jpg" alt="Certified for SharePoint 2007"></a> <a href="../glossary/index.html#Certification"><img src="../img/sp2010-cert.jpg" alt="Certified for SharePoint 2010" title="Certified for SharePoint 2010"></a></p>
+<h2 id="functionality">Functionality</h2>
+<p>The SPSetMultiSelectSizes function sets the sizes of the multi-select boxes for a column on a form automagically based on the values they contain. The function takes into account the fontSize, fontFamily, fontWeight, etc., in its algorithm.</p>
+<p><strong>NOTE</strong>: If you are also calling SPCascadeDropdowns for a column, it&#39;s best to call SPSetMultiSelectSizes first. This way, SPSetMultiSelectSizes will take into account all of the potentially available values and adjust the multi-select boxes accordingly. SPSetMultiSelectSizes does not re-fire as the selection is changed.</p>
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">$().SPServices.SPSetMultiSelectSizes({
+    multiSelectColumn: &quot;&quot;,
+    minWidth: 0,
+    maxWidth: 0
+});
+</code></pre>
+<h3 id="multiselectcolumn">multiSelectColumn</h3>
+<p>The <a href="../glossary/index.html#DisplayName">DisplayName</a> of the multi-select column in the form.</p>
+<h3 id="minwidth">minWidth</h3>
+<p>If present, the width of the multi-select boxes will not be set narrower than this number of pixels. If <strong>either</strong> minWidth or maxWidth is greater than zero, then they provide the lower and upper bounds (in pixels) for the width of the multi-select boxes.</p>
+<h3 id="maxwidth">maxWidth</h3>
+<p>If present, the width of the multi-select boxes will not be set wider than this number of pixels. If <strong>either</strong> minWidth or maxWidth is greater than zero, then they provide the lower and upper bounds (in pixels) for the width of the multi-select boxes.</p>
+<h2 id="examples">Examples</h2>
+<p>In the example below, I&#39;m calling the function for the Web Service Operations multi-select column. As you can see in the image below, quite a few of the available options are too long for the multi-select picker as it is rendered out of the box. While you can scroll to the right to see the rest of the values, this can often lead to mistakes in data entry. As you can see, it would be very easy to choose the wrong value from among those which start with &quot;GetGroupCollection&quot; unless you scroll to the right.</p>
+<p><img src="img/SPSetMultiSelectSizes1.png" alt=""></p>
+<pre><code class="language-javascript">$(document).ready(function() {
+  $().SPServices.SPSetMultiSelectSizes({
+    multiSelectColumn: &quot;Web Service Operation&quot;
+  });
+  // You can include other script which you want to run at page load in this block as well
+});
+</code></pre>
+<p>After the function call, the multi-select picker is widened appropriately based on the contents of the picker, regardless of the font characteristics. (Note that there is an even longer option below for GetRolesAndPermissionsForCurrentUser.) Because the function&#39;s algorithm works based on a jQuery clone() of the original select, it works fine with any font, whether it is proportionally or fix spaced.</p>
+<p><img src="img/SPSetMultiSelectSizes2.png" alt=""></p>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPRequireUnique - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SPRequireUnique</h1>
+
+      <h2 id="function">Function</h2>
+<p><strong>$().SPServices.SPRequireUnique</strong></p>
+<h2 id="certification">Certification</h2>
+<p><a href="../glossary/index.html#Certification"><img src="../img/sp2007-cert.jpg" alt="Certified for SharePoint 2007"></a> <a href="../glossary/index.html#Certification"><img src="../img/sp2010-cert.jpg" alt="Certified for SharePoint 2010" title="Certified for SharePoint 2010"></a></p>
+<h2 id="functionality">Functionality</h2>
+<p>Checks to see if the value for a column on the form is unique in the list. The idea for this function came from testing <a href="SPCascadeDropdowns.html">$().SPServices.SPCascadeDropdowns</a>. When using lists like relational tables, you want to be sure that at least one column contains unique values. Currently, the function works only with Single line of text columns, and will generally be used with the Title column. There is considerable flexibility in the use of this function based on the combination of options and the ability to change the messages and their formatting.</p>
+<p>Note that this function will work on the NewForm and EditForm for a list, but not in the datasheet view. The intent is to put some rigor around the normal item creation process. Because this is a client-side function, it does not pervasively enforce the uniqueness rule.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>None</li>
+</ul>
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">$().SPServices.SPRequireUnique({
+  columnStaticName: &quot;Title&quot;,
+  duplicateAction: 0,
+  ignoreCase: false,
+  initMsg: &quot;This value must be unique.&quot;,
+  initMsgCSSClass: &quot;ms-vb&quot;,
+  errMsg: &quot;This value is not unique.&quot;,
+  errMsgCSSClass: &quot;ms-formvalidation&quot;,
+  showDupes: false,
+  completefunc: null
+});
+</code></pre>
+<h3 id="columnstaticname">columnStaticName</h3>
+<p>The <a href="../glossary/index.html#StaticName">StaticName</a> of the column on the form. The default value is &quot;Title&quot;.</p>
+<h3 id="duplicateaction">duplicateAction</h3>
+<p>This indicates what should happen if the user enters a value which already exists. The default is 0 (warn).</p>
+<ul>
+<li>0 = warn means that a warning message will be placed on the screen, but the user can save the item</li>
+<li>1 = prevent means that a warning message will be placed on the screen and the user will be prevented from saving the item (the OK button will be disabled until a unique value is entered)</li>
+</ul>
+<h3 id="ignorecase">ignoreCase</h3>
+<p>If set to true, the function ignores case, if false it looks for an exact match. The default is false.</p>
+<h3 id="initmsg">initMsg</h3>
+<p>The initial message to display after setup. The message is displayed below in input control, but above the column description, if any. The default value is &quot;This value must be unique.&quot;</p>
+<h3 id="initmsgcssclass">initMsgCSSClass</h3>
+<p>The CSS class for the initial message specified in initMsg. The default value is &quot;ms-vb&quot;.</p>
+<h3 id="errmsg">errMsg</h3>
+<p>The error message to display if the value is not unique. The message is displayed below in input control, but above the column description, if any. (This is the same location as the initMsg.) The default value is &quot;This value is not unique.&quot;</p>
+<h3 id="errmsgcssclass">errMsgCSSClass</h3>
+<p>The CSS class for the error message specified in errMsg. The default value is &quot;ms-formvalidation&quot;.</p>
+<h3 id="showdupes">showDupes</h3>
+<p>If true, the function will show the other items in the list which are duplicates as links so that one can easily research what they are and potentially clean them up.</p>
+<h3 id="completefunc">completefunc</h3>
+<p>If specified, the completefunc will be called upon successful completion of the call to SPRequireUnique. Potential uses for the completefunc: consistent default formatting overrides, additional lookup customizations, image manipulations, etc. You can pass your completefunc in either of these two ways:</p>
+<pre><code class="language-javascript">completefunc: function() {
+  ...do something...
+},
+</code></pre>
+<p>or</p>
+<pre><code class="language-javascript">completefunc: doSomething,                  // Where doSomething is the name of your function
+</code></pre>
+<h2 id="example">Example</h2>
+<p>The following example will require the Title column to be unique.</p>
+<pre><code class="language-html">&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot; src=&quot;../../jQuery%20Libraries/jquery-1.3.2.min.js&quot;&gt;&lt;/script&gt;
+&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot; src=&quot;../../jQuery%20Libraries/jquery.SPServices-0.4.6.min.js&quot;&gt;&lt;/script&gt;
+&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot;&gt;
+    $(document).ready(function() {
+        $().SPServices.SPRequireUnique({
+            columnStaticName: &quot;Title&quot;,
+            duplicateAction: 0,
+            ignoreCase: &quot;false&quot;,
+            initMsg: &quot;This value must be unique.&quot;,
+            initMsgCSSClass: &quot;ms-vb&quot;,
+            errMsg: &quot;This value is not unique.&quot;,
+            errMsgCSSClass: &quot;ms-formvalidation&quot;
+        });
+    });
+&lt;/script&gt;
+</code></pre>
+<p>This screenshot shows how the initMsg is displayed below the State column (State is the DisplayName for the Title column in this list):</p>
+<p><img src="img/sprequireunique1.jpg" alt=""></p>
+<p>This screenshot shows the errMsg being displayed because the value &#39;Alabama&#39; already exists in the State column of an existing item. Note also that the OK buttons are disabled, preventing the user from saving the duplicate value.  </p>
+<p><img src="img/sprequireunique2.jpg" alt=""></p>
+<p>And with showDupes set to true:</p>
+<p><img src="img/sprequireunique3.png" alt=""></p>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

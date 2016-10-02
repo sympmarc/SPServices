@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>UserProfileService - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>UserProfileService</h1>
+
+      <h3 id="function">Function</h3>
+<p><strong>$().SPServices</strong></p>
+<h3 id="web-service">Web Service</h3>
+<p><strong>UserProfileService</strong></p>
+<p>A big thanks to Matt Bramer for his help in wrapping the remaining operations for this Web Service.</p>
+<h3 id="supported-operations">Supported Operations</h3>
+<table class="table">
+<thead>
+<tr>
+<th>Operation</th>
+<th>Options</th>
+<th>MSDN Documentation</th>
+<th>Introduced</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AddColleague</td>
+<td><code>accountName, colleagueAccountName, group, privacy, isInWorkGroup</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981615%28v=office.12%29.aspx">UserProfileService.AddColleague Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>AddLink</td>
+<td><code>accountName, name, url, group, privacy</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/websvcuserprofileservice.userprofileservice.addlink%28v=office.12%29.aspx">UserProfileService.AddLink Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>AddMembership</td>
+<td><code>accountName, membershipInfo, group, privacy</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981520%28v=office.12%29.aspx">UserProfileService.AddMembership Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>AddPinnedLink</td>
+<td><code>accountName, name, url</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981075%28v=office.12%29.aspx">UserProfileService.AddPinnedLink Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>CreateMemberGroup</td>
+<td><code>membershipInfo</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981363%28v=office.12%29.aspx">UserProfileService.CreateMemberGroup Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>CreateUserProfileByAccountName</td>
+<td><code>accountName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981026%28v=office.12%29.aspx">UserProfileService.CreateUserProfileByAccountName Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>GetCommonColleagues</td>
+<td><code>accountName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981308%28v=office.12%29.aspx">UserProfileService.GetCommonColleagues Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>GetCommonManager</td>
+<td><code>accountName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981607%28v=office.12%29.aspx">UserProfileService.GetCommonManager Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>GetCommonMemberships</td>
+<td><code>accountName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/microsoft.office.server.userprofiles.userprofileservice.getcommonmemberships.aspx">UserProfileService.GetCommonMemberships Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=33030">0.3.0</a></td>
+</tr>
+<tr>
+<td>GetInCommon</td>
+<td><code>accountName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981053%28v=office.12%29.aspx">UserProfileService.GetInCommon Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>GetPropertyChoiceList</td>
+<td><code>propertyName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981557%28v=office.12%29.aspx">UserProfileService.GetPropertyChoiceList Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>GetUserColleagues</td>
+<td><code>accountName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/websvcuserprofileservice.userprofileservice.getusercolleagues%28v=office.14%29.aspx">UserProfileService.GetUserColleagues Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=33030">0.3.0</a></td>
+</tr>
+<tr>
+<td>GetUserLinks</td>
+<td><code>accountName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/websvcuserprofileservice.userprofileservice.getuserlinks">UserProfileService.GetUserLinks Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=33030">0.3.0</a></td>
+</tr>
+<tr>
+<td>GetUserMemberships</td>
+<td><code>accountName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/microsoft.office.server.userprofiles.userprofileservice.getusermemberships.aspx">UserProfileService.GetUserMemberships Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=33030">0.3.0</a></td>
+</tr>
+<tr>
+<td>GetUserPinnedLinks</td>
+<td><code>accountName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/microsoft.office.server.userprofiles.userprofileservice.getuserpinnedlinks.aspx">UserProfileService.GetUserPinnedLinks Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=33030">0.3.0</a></td>
+</tr>
+<tr>
+<td>GetUserProfileByGuid</td>
+<td>guid</td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981445%28v=office.12%29.aspx">UserProfileService.GetUserProfileByGuid Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>GetUserProfileByIndex</td>
+<td>index</td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981288%28v=office.12%29.aspx">UserProfileService.GetUserProfileByIndex Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td><a href="UserProfileService-GetUserProfileByName.html">GetUserProfileByName</a></td>
+<td><code>AccountName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/microsoft.office.server.userprofiles.userprofileservice.getuserprofilebyname.aspx">UserProfileService.GetUserProfileByName Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=33030">0.3.0</a></td>
+</tr>
+<tr>
+<td>GetUserProfileCount</td>
+<td><em>None</em></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/microsoft.office.server.userprofiles.userprofileservice.getuserprofilecount.aspx">UserProfileService.GetUserProfileCount Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=33030">0.3.0</a></td>
+</tr>
+<tr>
+<td>GetUserProfileSchema</td>
+<td><em>None</em></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/microsoft.office.server.userprofiles.userprofileservice.getuserprofileschema.aspx">UserProfileService.GetUserProfileSchema Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=33030">0.3.0</a></td>
+</tr>
+<tr>
+<td><a href="UserProfileService-ModifyUserPropertyByAccountName.html">ModifyUserPropertyByAccountName</a></td>
+<td><code>accountName, newData</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981350.aspx">UserProfileService.ModifyUserPropertyByAccountName Method</a></td>
+<td><a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=34865">0.5.0</a></td>
+</tr>
+<tr>
+<td>RemoveAllColleagues</td>
+<td><code>accountName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa980899%28v=office.12%29.aspx">UserProfileService.RemoveAllColleagues Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>RemoveAllLinks</td>
+<td><code>accountName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981279%28v=office.12%29.aspx">UserProfileService.RemoveAllLinks Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>RemoveAllMemberships</td>
+<td><code>accountName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981195%28v=office.12%29.aspx">UserProfileService.RemoveAllMemberships Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>RemoveAllPinnedLinks</td>
+<td><code>accountName</code></td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981074%28v=office.12%29.aspx">UserProfileService.RemoveAllPinnedLinks Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>RemoveColleague</td>
+<td><code>accountName</code>, colleagueAccountName</td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa980880%28v=office.12%29.aspx">UserProfileService.RemoveColleague Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>RemoveLink</td>
+<td><code>accountName</code>, id</td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981178%28v=office.12%29.aspx">UserProfileService.RemoveLink Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>RemoveMembership</td>
+<td><code>accountName</code>, sourceInternal, sourceReference</td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981247%28v=office.12%29.aspx">UserProfileService.RemoveMembership Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>RemovePinnedLink</td>
+<td><code>accountName</code>, id</td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981494%28v=office.12%29.aspx">UserProfileService.RemovePinnedLink Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>UpdateColleaguePrivacy</td>
+<td>accountName, colleagueAccountName, newPrivacy</td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981431%28v=office.12%29.aspx">UserProfileService.UpdateColleaguePrivacy Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>UpdateLink</td>
+<td><code>accountName</code>, data</td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981510%28v=office.12%29.aspx">UserProfileService.UpdateLink Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>UpdateMembershipPrivacy</td>
+<td><code>accountName</code>, sourceInternal, sourceReference, newPrivacy</td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa981139%28v=office.12%29.aspx">UserProfileService.UpdateMembershipPrivacy Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+<tr>
+<td>UpdatePinnedLink</td>
+<td><code>accountName</code>, data</td>
+<td><a href="http://msdn.microsoft.com/en-us/library/aa980870%28v=office.12%29.aspx">UserProfileService.UpdatePinnedLink Method</a></td>
+<td><a href="http://spservices.codeplex.com/releases/view/55660">0.6.0</a></td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

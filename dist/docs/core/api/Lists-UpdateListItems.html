@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Lists-UpdateListItems - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>Lists-UpdateListItems</h1>
+
+      <h3 id="function">Function</h3>
+<p><strong>$().SPServices</strong></p>
+<h3 id="web-service">Web Service</h3>
+<p><strong>Lists</strong></p>
+<h3 id="operation">Operation</h3>
+<p><strong>UpdateListItems</strong></p>
+<h3 id="notes">Notes</h3>
+<ul>
+<li>This operation accepts a webURL option. This allows you to change the context for the operation to a different site. Using a GUID for the listName does NOT change the context as it does with the Object Model, so you need to use the webURL option as well if your list is in a different site.</li>
+</ul>
+<h3 id="additional-syntax">Additional Syntax</h3>
+<p>If you want to update a single list item, rather than using the CAML syntax in updates you can specify valuepairs and the item&#39;s ID. If you specify valuepairs then updates should not be specified. The way it works is that it lets you specify an array of column <a href="../../glossary/index.html#StaticName">StaticNames</a> and values. So if you wanted to update the Title and the Body:</p>
+<pre><code class="language-javascript">batchCmd: &quot;Update&quot;,
+valuepairs: [[&quot;Title&quot;, &quot;New Title Value&quot;], [&quot;Body&quot;, &quot;Here is a the new text for the body column.&quot;]],
+ID: 1234,
+</code></pre>
+<p>All that happens here is that the valuepairs are used to build up the CAML for UpdateListItems rather than requiring you to specify the full CAML syntax, which in this case would be:</p>
+<pre><code class="language-javascript">&lt;Batch OnError=&#39;Continue&#39;&gt;
+  &lt;Method ID=&#39;1&#39; Cmd=&#39;Update&#39;&gt;
+    &lt;Field Name=&#39;Title&#39;&gt;New Title Value&lt;/Field&gt;
+    &lt;Field Name=&#39;Body&#39;&gt;Here is a the new text for the body column.&lt;/Field&gt;
+    &lt;Field Name=&#39;ID&#39;&gt;1234&lt;/Field&gt;
+  &lt;/Method&gt;
+&lt;/Batch&gt;
+</code></pre>
+<p>Note that if you decide to use the valuepairs approach, you also need to specify the ID option. The default for the batchCmd option is &#39;Update&#39;. Also, the choices for Cmd are [New, Update, Delete, Moderate].</p>
+<h3 id="example">Example</h3>
+<p>This is an example from my test harness. If you have a better, real life example, please create an issue or an PR.</p>
+<pre><code class="language-javascript">$(divId).html(waitMessage).SPServices({
+    operation: &quot;UpdateListItems&quot;,
+    listName: testList,
+    ID: ID,
+    valuepairs: [[&quot;Title&quot;, now]],
+    completefunc: function (xData, Status) {
+        var out = $().SPServices.SPDebugXMLHttpResult({
+            node: xData.responseXML,
+            outputId: divId
+        });
+        $(divId).html(&quot;&quot;).append(&quot;&lt;b&gt;This is the output from the UpdateListItems operation:&lt;/b&gt;&quot; + out);
+        $(divId).append(&quot;&lt;b&gt;Refresh to see the change in the list above.&lt;/b&gt;&quot;);
+    }
+});
+</code></pre>
+<p>Here&#39;s an example of creating a folder in a Document Library using the PreSaveAction which came from a discussion with <a href="http://www.codeplex.com/site/users/view/LeSanglier">LeSanglier</a>.  (The PreSaveAction is called when the form is submitted and is a useful place to put business logic.)</p>
+<pre><code class="language-javascript">&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot; src=&quot;/HRD/JQuery/jquery-1.3.2.min.js&quot;&gt;&lt;/script&gt;
+&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot; src=&quot;/HRD/JQuery/spservices/jquery.SPServices-0.4.7.min.js&quot;&gt;&lt;/script&gt;
+
+&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot; &gt;
+function PreSaveAction() {
+    var folderName = &quot;essai&quot;;
+    $().SPServices({
+        operation: &quot;UpdateListItems&quot;,
+        async: false,
+        listName: &quot;documents&quot;,
+        updates: &quot;&lt;Batch OnError=&#39;Continue&#39; PreCalc=&#39;TRUE&#39;&gt;&quot; +
+                &quot;&lt;Method ID=&#39;1&#39; Cmd=&#39;New&#39;&gt;&quot; +
+                    &quot;&lt;Field Name=&#39;FSObjType&#39;&gt;1&lt;/Field&gt;&quot; +
+                    &quot;&lt;Field Name=&#39;BaseName&#39;&gt;&quot; + folderName + &quot;&lt;/Field&gt;&quot; +
+                &quot;&lt;/Method&gt;&quot; +
+            &quot;&lt;/Batch&gt;&quot;,
+        completefunc: function(xData, Status) {
+            …
+        }
+    });
+    return true;
+}&lt;/script&gt;
+</code></pre>
+<p>Another example from <a href="http://www.codeplex.com/site/users/view/_tomdaly_"><em>tomdaly</em></a>. This example takes advantage of the valuepairs notation, which is part of SPServices. The List Web Service itself requires the Batch notation shown above.</p>
+<p>This is an example of adding a new list item from a simple feedback type form.</p>
+<pre><code class="language-javascript">$(document).ready(function() {
+    $(&quot;#feedback-submit input&quot;).click(function() {
+
+        var subject = $(&quot;#feedback-subject-input input&quot;).val();
+        var message = $(&quot;#feedback-message-input textarea&quot;).text();
+
+        CreateNewItem(subject, message);        
+
+    });
+});
+
+function CreateNewItem(subject, message) {
+    $().SPServices({
+        operation: &quot;UpdateListItems&quot;,
+        async: false,
+        batchCmd: &quot;New&quot;,
+        listName: &quot;Feedback&quot;,
+        valuepairs: [[&quot;Title&quot;, subject], [&quot;Message&quot;, message]],
+        completefunc: function(xData, Status) {
+          alert(&quot;completed&quot;);
+        }
+    });
+}
+</code></pre>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>
