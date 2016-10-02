@@ -234,6 +234,10 @@ gulp.task('docs', function () {
             {
               find: /<table>/gi,
               replace: '<table class="table">' // Bootstrap table class
+            },
+            {
+              find: /<code class="lang-/gi,
+              replace: '<code class="language-' // Prism.js classes are prefixed with language- instead of -lang
             }
           ]
         }))
