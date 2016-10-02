@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPCascadeDropdowns - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SPCascadeDropdowns</h1>
+
+      <h2 id="function">Function</h2>
+<p><strong>$().SPServices.SPCascadeDropdowns</strong></p>
+<h2 id="certification">Certification</h2>
+<p><a href="../glossary/index.html#Certification"><img src="../img/sp2007-cert.jpg" alt="Certified for SharePoint 2007"></a> <a href="../glossary/index.html#Certification"><img src="../img/sp2010-cert.jpg" alt="Certified for SharePoint 2010" title="Certified for SharePoint 2010"></a></p>
+<h2 id="functionality">Functionality</h2>
+<p>The SPCascadeDropdowns function lets you set up cascading dropdowns on SharePoint forms. What this means is that you can enforce hierarchical relationships between column values. The function uses the GetListItems operation of the Lists Web Service to refresh the allowable values based on relationships which are maintained in reference lists. By implementing this function, there are no coding requirements to manage the hierarchical relationships (once it is in place) and you can let your users manage the content in the reference lists.</p>
+<p>This function works with any number of options in the dropdowns as well as multi-select parent and child columns, as shown in the following table. This is significant because each of the three column types are rendered significantly differently by SharePoint.</p>
+<table class="table">
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th>parentColumn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td>&lt;20 options</td>
+<td>20+ options</td>
+<td>multi-select</td>
+</tr>
+<tr>
+<td>childColumn</td>
+<td>&lt;20 options</td>
+<td><img src="../img/checkmark.gif" alt=""></td>
+<td><img src="../img/checkmark.gif" alt=""></td>
+<td><img src="../img/checkmark.gif" alt=""></td>
+</tr>
+<tr>
+<td></td>
+<td>20+ options</td>
+<td><img src="../img/checkmark.gif" alt=""></td>
+<td><img src="../img/checkmark.gif" alt=""></td>
+<td><img src="../img/checkmark.gif" alt=""></td>
+</tr>
+<tr>
+<td></td>
+<td>multi-select</td>
+<td><img src="../img/checkmark.gif" alt=""></td>
+<td><img src="../img/checkmark.gif" alt=""></td>
+<td><img src="../img/checkmark.gif" alt=""></td>
+</tr>
+</tbody>
+</table>
+<p>When the relationshipList contains lookup columns for both the relationshipListParentColumn and relationshipListChildColumn columns, the function uses the relationshipListParentColumn&#39;s ID rather than the relationshipList item&#39;s ID. This means that &quot;secondary lists&quot; are also supported.</p>
+<p><img src="img/SPCascadeDropdown1.png" alt=""></p>
+<p>Note that &quot;multiple cascades&quot; are supported, such as Country -&gt; Region -&gt; State. In this example, we have two &quot;cascades&quot; in place: Country -&gt; Region, and Region -&gt; State. There&#39;s not a lot to show here, but the available options in the dropdowns will change based on the relationships defined in the lists shown below. So, if you choose <strong>Country</strong> = <code>United States</code>, the options for <strong>Region</strong> will be limited to <code>Northeast, Southeast, Midwest, Mountain, Southwest, Northwest</code>. If you choose <strong>Country</strong> = <code>Canada</code>, the options for <strong>Region</strong> would be <code>Eastern Provinces, Western Provinces</code>.</p>
+<h2 id="demo-page">Demo Page</h2>
+<p>Take a look at our <a href="http://www.sympraxisconsulting.com/Demos/Demo%20Pages/CascadingDropdowns.aspx">demo page </a>.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Relationship list contains at least two columns: relationshipListParentColumn and relationshipListChildColumn</li>
+<li>The dropdown for childColumn is a lookup into relationshipList&#39;s relationshipListChildColumn column OR a list column which is a lookup into another list column (&quot;secondary list&quot;).</li>
+</ul>
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">$().SPServices.SPCascadeDropdowns({
+  relationshipWebURL: &quot;&quot;,
+  relationshipList: &quot;&quot;,
+  relationshipListParentColumn: &quot;&quot;,
+  relationshipListChildColumn: &quot;&quot;,
+  relationshipListSortColumn: &quot;&quot;,
+  parentColumn: &quot;&quot;,
+  childColumn: &quot;&quot;,
+  CAMLQuery: &quot;&quot;,
+  CAMLQueryOptions: &quot;&lt;QueryOptions&gt;&lt;IncludeMandatoryColumns&gt;FALSE&lt;/IncludeMandatoryColumns&gt;&lt;/QueryOptions&gt;&quot;, // Added in 2013.01
+  listName: $().SPServices.SPListNameFromUrl(),
+  promptText: &quot;&quot;,
+  simpleChild: false,            // Added in v0.6.2
+  selectSingleOption: false,    // Added in v0.6.2
+  matchOnId: false,             // Added in v0.7.1
+  completefunc: null,
+  debug: false
+});
+</code></pre>
+<p><em>relationshipWebURL</em></p>
+<p>The URL of the Web (site) which contains the relationshipList. If not specified, the current site is used. Examples would be: &quot;/&quot;, &quot;/Accounting&quot;, &quot;/Departments/HR&quot;, etc. Note: It&#39;s always best to use relative URLs.</p>
+<p><strong><em>relationshipList</em></strong></p>
+<p>The name or GUID of the list which contains the parent/child relationships. If you choose to use the GUID, it should look like: &quot;{E73FEA09-CF8F-4B30-88C7-6FA996EE1706}&quot;. Note also that if you use the GUID, you do not need to specify the <em>relatedWebURL</em> if the list is in another site.</p>
+<p><strong><em>relationshipListParentColumn</em></strong></p>
+<p>The <a href="../glossary/index.html#StaticName">StaticName</a> of the parent column in the <em>relationshipList</em></p>
+<p><strong><em>relationshipListChildColumn</em></strong></p>
+<p>The <a href="../glossary/index.html#StaticName">StaticName</a> of the child column in the <em>relationshipList</em></p>
+<p><em>CAMLQuery</em></p>
+<p>The CAMLQuery option allows you to specify an additional filter on the relationshipList. The additional filter will be <And>ed with the existing CAML which is checking for matching items based on the parentColumn selection. Because it is combined with the CAML required to make the function work, CAMLQuery should contain a CAML <strong>fragment</strong> such as:</p>
+<pre><code class="language-javascript">&lt;Eq&gt;&lt;FieldRef Name=&#39;Country&#39;/&gt;&lt;Value Type=&#39;Text&#39;&gt;United States&lt;/Value&gt;&lt;/Eq&gt;
+</code></pre>
+<p><em>CAMLQueryOptions</em></p>
+<p>This option can be used to specify additional options for retrieval from the sourceList. See the <a href="http://msdn.microsoft.com/en-us/library/lists.lists.getlistitems.aspx">MSDN documentation for GetListItems</a> for the syntax.</p>
+<p><em>relationshipListSortColumn</em></p>
+<p>If specified, sort the options in the dropdown by this column otherwise the options are sorted by <em>relationshipListChildColumn</em></p>
+<p><strong><em>parentColumn</em></strong></p>
+<p>The <a href="../glossary/index.html#DisplayName">DisplayName</a> of the parent column in the <em>form</em></p>
+<p><strong><em>childColumn</em></strong></p>
+<p>The <a href="../glossary/index.html#DisplayName">DisplayName</a> of the child column in the <em>form</em></p>
+<p><em>listName</em></p>
+<p>By default, set to the list name for the current context based on the URL. If your form is outside the context of the list, then you can specify the listName yourself.</p>
+<p><em>promptText</em></p>
+<p>Text to use as prompt. If included, {0} will be replaced with the value of childColumn. The default value is <code>&quot;&quot;</code>.</p>
+<p>NOTE: I discourage the use of this option. Yes, I put it into the function, but if the user doesn&#39;t make a choice, they get an ugly error because SharePoint doesn&#39;t understand it as an option. I&#39;ve left in in for backward compatibility.
+<span style="color: #ff0000;">Deprecated in v0.7.1.</span></p>
+<p><em>simpleChild</em></p>
+<p>If set to true, the child dropdown will be converted to a &quot;simple&quot; dropdown - only if it is a &quot;complex&quot; dropdown on page load. See <a href="http://spservices.codeplex.com/wikipage?title=%24%28%29.SPServices.SPComplexToSimpleDropdown">$().SPServices.SPComplexToSimpleDropdown</a> for details on how this works.  The default value is false.</p>
+<p><em>selectSingleOption</em></p>
+<p>If set to true and there is only a single child option, select it.  The default value is false.</p>
+<p><em>matchOnId</em></p>
+<p>By default, we match on the lookup&#39;s text value. If matchOnId is true, we&#39;ll match on the lookup id instead. The default value is false.</p>
+<p><em>completefunc</em></p>
+<p>If specified, the completefunc will be called each time there is a change to parentColumn. Potential uses for the completefunc: consistent default formatting overrides, additional lookup customizations, image manipulations, etc. You can pass your completefunc in either of these two ways:</p>
+<pre><code class="language-javascript">completefunc: function() {
+  ...do something...
+},
+</code></pre>
+<p>or</p>
+<pre><code class="language-javascript">completefunc: doSomething,    // Where doSomething is the name of your function
+</code></pre>
+<p><em>debug</em></p>
+<p>Setting <code>debug: true</code> indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn&#39;t exist. I call this <a href="../glossary/index.html#DebugMode">debug mode</a>.</p>
+<h2 id="example">Example</h2>
+<p>To make the example shown at the top of the page for Country -&gt; Region -&gt; State work, here&#39;s what you need to do.</p>
+<p>The end result will look like this:</p>
+<p><img src="img/SPCascadeDropdown1.png" alt=""></p>
+<p>You&#39;ll need these three relationship lists:</p>
+<p><strong>Countries List</strong></p>
+<p>The Countries list simply contains all of the country names, stored in the list&#39;s Title column.</p>
+<p><img src="img/SPCascadeDropdown2.png" alt=""></p>
+<p><strong>Regions List</strong></p>
+<p>The Regions list contains all of the Region names in the Title column. The Country column is a Lookup column into the Countries list&#39;s Title column.</p>
+<p><img src="img/SPCascadeDropdown3.png" alt=""> </p>
+<p><strong>States List</strong></p>
+<p>The States list contains all of the State names in the Title column. Note that I&#39;ve changed the DisplayName of the Title column to State, but the StaticName is still Title. The Region Name column is a Lookup column into the Regions list&#39;s Title column. (The State Abbreviation column is only here to show that you can also store additional information about the States in this list. The same is true of the Countries and Regions lists, of course.)</p>
+<p><img src="img/SPCascadeDropdown4.png" alt=""> </p>
+<p>This is the sum total of what you&#39;ll need to add to your page to make the function work for the example above. The first two lines simply pull the script files into the page, and the <code>$(document).ready(function()</code> line is a jQuery function that says &quot;Run this script when the page has been fully rendered&quot;. In the first call to the function, note that we&#39;re turning <a href="../glossary/index.html#DebugMode">debug mode</a> on by setting <code>debug: true</code>.</p>
+<pre><code class="language-html">&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot; src=&quot;../../jQuery%20Libraries/jquery-1.11.3.js&quot;&gt;&lt;/script&gt;
+&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot; src=&quot;../../jQuery%20Libraries/jquery.SPServices-2014.02.min.js&quot;&gt;&lt;/script&gt;
+&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot;&gt;
+
+$(document).ready(function() {
+  $().SPServices.SPCascadeDropdowns({
+    relationshipList: &quot;Regions&quot;,
+    relationshipListParentColumn: &quot;Country&quot;,
+    relationshipListChildColumn: &quot;Title&quot;,
+    CAMLQuery: &quot;&lt;Eq&gt;&lt;FieldRef Name=&#39;Status&#39;/&gt;&lt;Value Type=&#39;Text&#39;&gt;Active&lt;/Value&gt;&lt;/Eq&gt;&quot;,   parentColumn: &quot;Country&quot;,
+    childColumn: &quot;Region&quot;,
+    debug: true
+  });
+  $().SPServices.SPCascadeDropdowns({
+    relationshipList: &quot;States&quot;,
+    relationshipListParentColumn: &quot;Region_x0020_Name&quot;,
+    relationshipListChildColumn: &quot;Title&quot;,
+    relationshipListSortColumn: &quot;ID&quot;,
+    parentColumn: &quot;Region&quot;,
+    childColumn: &quot;State&quot;
+  });
+});
+
+&lt;/script&gt;
+</code></pre>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

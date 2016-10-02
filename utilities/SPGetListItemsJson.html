@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPGetListItemsJson - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SPGetListItemsJson</h1>
+
+      <h2 id="function">Function</h2>
+<p><strong>$().SPServices.SPGetListItemsJson</strong></p>
+<h2 id="certification">Certification</h2>
+<p><a href="../glossary/index.html#Certification"><img src="../img/sp2007-cert.jpg" alt="Certified for SharePoint 2007" title="Certified for SharePoint 2007"></a> <a href="../glossary/index.html#Certification"><img src="../img/sp2010-cert.jpg" alt="Certified for SharePoint 2010" title="Certified for SharePoint 2010"></a></p>
+<h2 id="functionality">Functionality</h2>
+<p>SPGetListItemsJson combines several SPServices capabilities into one powerful function. By calling <a href="http://msdn.microsoft.com/en-us/library/lists.lists.getlistitemchangessincetoken%28v=office.12%29.aspx">GetListItemChangesSinceToken</a>, parsing the list schema, and passing the resulting mapping and data to <a href="SPXmlToJson.html">SPXmlToJson</a> automagically, we have a one-stop shop for retrieving SharePoint list data in JSON format. No manual mapping required!</p>
+<div class="alert alert-warning"><strong>Note:</strong> The function does not handle custom Field Types. If you have custom Field Types, you can create your own mapping to handle them but you are limited to the existing objectTypes. See <a href="https://spservices.codeplex.com/discussions/577590">this discussion</a> for details on one specific case.</div>
+
+<h2 id="prerequisites">Prerequisites</h2>
+<p>None</p>
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">$().SPServices.SPGetListItemsJson({
+  webURL: &quot;&quot;,
+  listName: &quot;&quot;,
+  viewName: &quot;&quot;,
+  CAMLQuery: &quot;&quot;,
+  CAMLViewFields: &quot;&quot;,
+  CAMLRowLimit: &quot;&quot;,
+  CAMLQueryOptions: &quot;&quot;,
+  changeToken: &quot;&quot;,
+  contains: &quot;&quot;,
+  mapping: null,
+  mappingOverrides: null,
+  debug: false
+});
+</code></pre>
+<h3 id="weburl">webURL</h3>
+<p>The URL of the Web (site) which contains the list. If not specified, the current site is used. Examples would be: &quot;/&quot;, &quot;/Accounting&quot;, &quot;/Departments/HR&quot;, etc. Note: It&#39;s always best to use relative URLs.</p>
+<h3 id="listname">listName</h3>
+<p>The name or GUID of the list which contains the parent/child relationships. If you choose to use the GUID, it should look like: &quot;{E73FEA09-CF8F-4B30-88C7-6FA996EE1706}&quot;. Note also that if you use the GUID, you do not need to specify the <em>webURL</em> if the list is in another site.</p>
+<h3 id="camlquery">CAMLQuery</h3>
+<p>The CAMLQuery option allows you to specify the filter on the list. CAMLQuery here should contain valid CAML such as:</p>
+<pre><code class="language-javascript">CAMLQuery: &quot;&lt;Query&gt;&lt;Where&gt;&lt;Eq&gt;&lt;FieldRef Name=&#39;Status&#39;/&gt;&lt;Value Type=&#39;Text&#39;&gt;Active&lt;/Value&gt;&lt;/Eq&gt;&lt;/Where&gt;&lt;/Query&gt;&quot;
+</code></pre>
+<p>See the <a href="http://msdn.microsoft.com/en-us/library/lists.lists.getlistitemchangessincetoken%28v=office.12%29.aspx">MSDN documentation for GetListItemsChangesSinceToken</a> for the syntax.</p>
+<h3 id="camlviewfields">CAMLViewFields</h3>
+<p>If specified, only the columns in CAMLViewFields plus some other required columns are retrieved. This can be very important if your list has a lot of columns, as it can reduce the amount of data returned from the call. See the <a href="http://msdn.microsoft.com/en-us/library/lists.lists.getlistitemchangessincetoken%28v=office.12%29.aspx">MSDN documentation for GetListItemsChangesSinceToken</a> for the syntax.</p>
+<h3 id="camlrowlimit">CAMLRowLimit</h3>
+<p>This option can be used to limit the number of items retrieved from the list. See the <a href="http://msdn.microsoft.com/en-us/library/lists.lists.getlistitemchangessincetoken%28v=office.12%29.aspx">MSDN documentation for GetListItemsChangesSinceToken</a> for the syntax.</p>
+<h3 id="camlqueryoptions">CAMLQueryOptions</h3>
+<p>This option can be used to specify additional options for retrieval from the list. See the <a href="http://msdn.microsoft.com/en-us/library/lists.lists.getlistitemchangessincetoken%28v=office.12%29.aspx">MSDN documentation for GetListItemsChangesSinceToken</a> for the syntax.</p>
+<h3 id="changetoken">changeToken</h3>
+<p>GetListItemChangesSinceToken passes back a <em>changeToken</em> on each call. If you are making calls after the initial one and pass in the <em>changeToken</em> value, only the changes since that token will be retrieved. See the <a href="http://msdn.microsoft.com/en-us/library/lists.lists.getlistitemchangessincetoken%28v=office.12%29.aspx">MSDN documentation for GetListItemsChangesSinceToken</a> for the syntax.</p>
+<h3 id="contains">contains</h3>
+<p>This option allows you to pass in an additional filter for the request. It should be a valid CAML clause. See the <a href="http://msdn.microsoft.com/en-us/library/lists.lists.getlistitemchangessincetoken%28v=office.12%29.aspx">MSDN documentation for GetListItemsChangesSinceToken</a> for the syntax.</p>
+<h3 id="mapping">mapping</h3>
+<p>If you have created your own <em>mapping</em>, as specified in <a href="https://spservices.codeplex.com/wikipage?title=%24%28%29.SPXmlToJson">SPXmltoJson</a>, pass it as this option. If present, the function will use your mapping and ignore the list schema returned by GetListItemChangesSinceToken.</p>
+<h3 id="mappingoverrides">mappingOverrides</h3>
+<p>If you want the function to use the list schema returned by GetListItemChangesSinceToken for the majority of the columns but you would like to specify your own mapping for some of the columns, pass those mappings in using the <em>mappingOverrides</em> option.</p>
+<p>As an example, this <em>mappingOverride</em> would only change the way the two specified columns are converted by the <a href="https://spservices.codeplex.com/wikipage?title=%24%28%29.SPXmlToJson">SPXmlToJson</a> function internally in the call (the <strong>JSON</strong> <em>objectType</em> is not available from the list schema):</p>
+<pre><code class="language-javascript">mappingOverrides: {
+  ows_FiscalPeriodData: {
+    mappedName: &quot;FiscalPeriodData&quot;,
+    objectType: &quot;JSON&quot;
+  },
+  ows_FiscalPeriodNames: {
+    mappedName: &quot;FiscalPeriodNames&quot;,
+    objectType: &quot;JSON&quot;
+  }
+}
+</code></pre>
+<h3 id="debug">debug</h3>
+<p>Setting <code>debug: true</code> indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn&#39;t exist. I call this <a href="../glossary/index.html#DebugMode">debug mode</a>.</p>
+<h2 id="returns">Returns</h2>
+<p>The function returns a JavaScript object like so:</p>
+<pre><code class="language-javascript">{
+  changeToken: &quot;&quot;,
+  mapping: {},
+  data: [],
+  deletedIds: []
+}
+</code></pre>
+<h3 id="changetoken">changeToken</h3>
+<p>The <em>changeToken</em> as returned by GetListItemChangesSinceToken. This token can be passed to subsequent calls to the function. The various parts of the <em>changeToken</em> have specific meaning, but you should treat it as an immutable string.</p>
+<h3 id="mapping">mapping</h3>
+<p>The mapping used to parse the data into JSON. This mapping will include any specific overrides you specified as well as the automatically created mappings. You can pass this mapping into the function on subsequent calls to reduce overhead, though the function saves the mapping in a local data store for reuse.</p>
+<h3 id="data">data</h3>
+<p>The main reason we make the call, the data property is an object containing all of the retrieved data in JSON format, as specified in <a href="https://spservices.codeplex.com/wikipage?title=%24%28%29.SPXmlToJson">SPXmlToJson</a>.</p>
+<h3 id="deletedids">deletedIds</h3>
+<p>If this is call 2-n to the function, <em>deletedIds</em> will contain an array of IDs for list items which have been deleted since the prior call.</p>
+<h2 id="example">Example</h2>
+<p>In this example, I’m reading items from a list containing information about trainees in courses. Two of the columns – Scores and Attendance – are Multiple lines of text columns which contain JSON in text format.</p>
+<pre><code class="language-javascript">var traineePromise = $().SPServices.SPGetListItemsJson({
+    listName: &quot;Trainees&quot;,
+    CAMLQuery: &quot;&lt;Query&gt;&lt;Where&gt;&lt;Eq&gt;&lt;FieldRef Name=&#39;accountName&#39; LookupId=&#39;TRUE&#39;/&gt;&lt;Value Type=&#39;Integer&#39;&gt;&quot; + opt.traineeId + &quot;&lt;/Value&gt;&lt;/Eq&gt;&lt;/Where&gt;&lt;/Query&gt;&quot;,
+    changeToken: opt.changeToken,
+    mappingOverrides: {
+        ows_Scores: {
+            mappedName: &quot;Scores&quot;,
+            objectType: &quot;JSON&quot;
+        },
+        ows_Attendance: {
+            mappedName: &quot;Attendance&quot;,
+            objectType: &quot;JSON&quot;
+        }
+    }
+});
+
+$.when(traineePromise).done(function() {
+
+    thisTraineeUser = this.data;
+
+});
+</code></pre>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPScriptAudit - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SPScriptAudit</h1>
+
+      <h2 id="function">Function</h2>
+<p><strong>$().SPServices.SPScriptAudit</strong></p>
+<h2 id="certification">Certification</h2>
+<p><a href="../glossary/index.html#Certification"><img src="../img/sp2007-cert.jpg" alt="Certified for SharePoint 2007" title="Certified for SharePoint 2007"></a> <a href="../glossary/index.html#Certification"><img src="../img/sp2010-cert.jpg" alt="Certified for SharePoint 2010" title="Certified for SharePoint 2010"></a></p>
+<h2 id="functionality">Functionality</h2>
+<p>The SPScriptAudit function allows you to run an auditing report showing where scripting is in use in a site.</p>
+<h2 id="how-does-it-work-">How Does It Work?</h2>
+<ul>
+<li>Calls <a href="http://msdn.microsoft.com/en-us/library/lists.lists.getlistcollection.aspx">GetListCollection</a> to get all of the lists in the site specified in <code>webURL</code> (or the current site if <code>webURL</code> is not specified).</li>
+<li>For each list, calls <a href="http://msdn.microsoft.com/en-us/library/lists.lists.getlistcontenttypes.aspx">GetListContentTypes</a> to identify the specific forms which have been customized. What we see in the results from GetListContentTypes is any form which has been specified in the Supporting Files tab of the list properties. I&#39;m explicitly excluding the Folder Content Type right now; I&#39;m not sure there&#39;s any real utility in including it.<ul>
+<li>For each customized form, does an AJAX call to fetch the form</li>
+<li>Find each Web Part in the form and looks for internal <code>&lt;script&gt;</code> tags. If any are found, then they are reported. I also look for any occurrences of &quot;<code>$(</code>&quot; within the <code>&lt;script&gt;</code> tags, which should indicate usage of jQuery, but I&#39;m interested in better or more reliable ideas for this.</li>
+<li>Find <code>&lt;script&gt;</code> tags <strong>outside</strong> of Web Parts. If any are found, then they are reported.</li>
+</ul>
+</li>
+<li>Next, go through the same process for the list&#39;s View pages by calling <a href="http://msdn.microsoft.com/en-us/library/forms.forms.getformcollection.aspx">GetFormCollection</a> for the list.</li>
+<li>Finally, the same basic process for the Pages, if requested.</li>
+</ul>
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">$().SPServices.SPScriptAudit({
+    webURL: &quot;&quot;,
+    listName: &quot;&quot;,
+    outputId: &quot;&quot;,
+    auditForms: true,
+    auditViews: true,
+    auditPages: true,
+    auditPagesListName: &quot;Pages&quot;,
+    showHiddenLists: false,
+    showNoScript: false,
+    showSrc: true
+});
+</code></pre>
+<h3 id="weburl">webURL</h3>
+<p>The site on which to run the audit. If no site is specified, the current site is used. Examples would be: &quot;/Departments&quot;, &quot;/Departments/HR&quot;, &quot;/Sites&quot;, etc.</p>
+<h3 id="listname">listName</h3>
+<p>The name of a specific list to audit. If not present, all lists in the site are audited.</p>
+<h3 id="outputid">outputId</h3>
+<p>The ID of an HTML element into which to insert the report. If you would like to see the report within this div: <code>&lt;div id=&quot;MyOutput&quot;&gt;&lt;/div&gt;</code>, then the value would be &quot;MyOutput&quot;.</p>
+<h3 id="auditforms">auditForms</h3>
+<p>Audit the form pages if true. The default is <code>true</code>.</p>
+<h3 id="auditviews">auditViews</h3>
+<p>Audit the view pages if true. The default is <code>true</code>.</p>
+<h3 id="auditpages">auditPages</h3>
+<p>Audit the Pages Document Library if true. The default is <code>true</code>.</p>
+<h3 id="auditpageslistname">auditPagesListName</h3>
+<p>The Pages Document Library, if desired. The default is <code>&quot;Pages&quot;</code>.</p>
+<h3 id="showhiddenlists">showHiddenLists</h3>
+<p><code>true</code> if you would like to see the output for hidden lists; <code>false</code> if not. The default is <code>false</code>.</p>
+<h3 id="shownoscript">showNoScript</h3>
+<p><code>true</code> if you would like to see the output for lists with no scripts (effectively &quot;verbose&quot;); <code>false</code> if not. The default is <code>false</code>.</p>
+<h3 id="showsrc">showSrc</h3>
+<p><code>true</code> if you would like to see the included script files on each page; <code>false</code> if not. The default is <code>true</code>.</p>
+<h2 id="example">Example</h2>
+<pre><code class="language-javascript">$().SPServices.SPScriptAudit({
+    webURL: &quot;&quot;,
+    outputId: &quot;WSOutput&quot;,
+    showHiddenLists: true,
+    showNoScript: false,
+    showSrc: true
+});
+</code></pre>
+<p><img src="img/SPScriptAudit1.jpg" alt="script audit results"></p>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

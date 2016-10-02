@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPFindMMSPicker - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SPFindMMSPicker</h1>
+
+      <h2 id="function">Function</h2>
+<p><strong>$().SPServices.SPFindMMSPicker</strong></p>
+<h2 id="certification">Certification</h2>
+<p><a href="../glossary/index.html#Certification"><img src="../img/sp2010-cert.jpg" alt="Certified for SharePoint 2010" title="Certified for SharePoint 2010"></a></p>
+<h2 id="functionality">Functionality</h2>
+<p>The SPFindMMSPicker function helps you find a Managed Metadata Service (MMS) Picker&#39;s values.</p>
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">$().SPServices.SPFindMMSPicker({  
+  MMSDisplayName: &quot;&quot;  
+});
+</code></pre>
+<h3 id="mmsdisplayname">MMSDisplayName</h3>
+<p>The <a href="../glossary/index.html#DisplayName">DisplayName</a> of the People Picker in the form.</p>
+<h2 id="returns">Returns</h2>
+<p>The function returns an array of terms, with both the guid and the value for each term.</p>
+<h2 id="example">Example</h2>
+<p>Assume there is a MMS Picker in the form for a column named <strong>Office</strong> which allows multiple values and that it is set like so:</p>
+<p><img src="img/SPFindMMSPicker1.png" alt=""></p>
+<p>After the call:</p>
+<pre><code class="language-javascript">var office = $().SPServices.SPFindMMSPicker({
+  MMSDisplayName: &quot;Office&quot;
+});
+</code></pre>
+<p>office will be an object like this:</p>
+<p><img src="img/SPFindMMSPicker2.png" alt=""></p>
+<p>Note that invalid values will have the guid set to &quot;00000000-0000-0000-0000-000000000000&quot;.</p>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

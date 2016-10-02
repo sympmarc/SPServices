@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPArrangeChoices - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SPArrangeChoices</h1>
+
+      <h2 id="function">Function</h2>
+<p><strong>$().SPServices.SPArrangeChoices</strong></p>
+<h2 id="certification">Certification</h2>
+<p><a href="../glossary/index.html#Certification"><img src="../img/sp2007-cert.jpg" alt="Certified for SharePoint 2007"></a> <a href="../glossary/index.html#Certification"><img src="../img/sp2010-cert.jpg" alt="Certified for SharePoint 2010" title="Certified for SharePoint 2010"></a></p>
+<h2 id="functionality">Functionality</h2>
+<p>The SPArrangeChoices rearranges radio buttons or checkboxes in a form from vertical to horizontal display to save page real estate. If the column has &quot;Allow &#39;Fill-in&#39; choices:&quot; set to &#39;Yes&#39;, the fill-in option will always remain at the bottom of the controls.</p>
+<p><strong>Important notes:</strong></p>
+<ul>
+<li>In versions prior to v0.5.8, SPArrangeChoices did not work with Survey questions. If you want to use this function with Surveys, please upgrade to v0.5.8 or greater.</li>
+<li>If you are working with a customized form, you&#39;ll need to use a little trick to get this function to work. (Thanks to <a href="http://www.codeplex.com/site/users/view/alexlee797">alexlee797</a> for pointing this out.) You&#39;ll need to add the following line:<pre><code class="language-html">&lt;xsl:comment&gt;FieldName=&quot;Display Name&quot;&lt;/xsl:comment&gt;
+</code></pre>
+just above the<pre><code class="language-html">&lt;SharePoint:FormField&gt;
+</code></pre>
+in the XSL of the custom form. You should replace &#39;Display Name&#39; with the same value you supply for columnName in the function call.
+This is a little kludgy, but SharePoint doesn&#39;t render anything else for us to &quot;hook into&quot; for the radio button or checkbox columns. In an uncustomized form, this comment is already in the page; when you customize the form you need to add it manually.</li>
+</ul>
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">$().SPServices.SPArrangeChoices({
+    listName: &quot;&quot;,
+    columnName: &quot;&quot;,
+    perRow: 99,
+    randomize: false
+});
+</code></pre>
+<h3 id="listname">listName</h3>
+<p>If specified, this list will be used to look up the column&#39;s attributes. By default, this is set at runtime to the list name for the current form&#39;s context based on the form&#39;s URL. You will not generally need to specify this value.</p>
+<h3 id="columnname">columnName</h3>
+<p>The <a href="../glossary/index.html#DisplayName">DisplayName</a> of the Choice column in the form. This function works with both radio buttons and checkboxes.</p>
+<h3 id="perrow">perRow</h3>
+<p>The maximum number of choices to show per row.</p>
+<h3 id="randomize">randomize</h3>
+<p>If true, randomize the order of the options.</p>
+<h2 id="examples">Examples</h2>
+<p>The screen snips below show the before and after views of columns with checkboxes (Lead Source) and radio buttons (Radio Buttons) when the following calls to SPArrangeChoices are in place.</p>
+<pre><code class="language-javascript">$().SPServices.SPArrangeChoices({
+    columnName: &quot;Lead Source&quot;,
+    perRow: 2
+});
+$().SPServices.SPArrangeChoices({
+    columnName: &quot;Radio Buttons&quot;,
+    perRow: 7
+});
+</code></pre>
+<p>Lead Source before:</p>
+<p><img src="img/SPArrangeChoices1.png" alt=""></p>
+<p>Lead Source after:</p>
+<p><img src="img/SPArrangeChoices2.png" alt=""></p>
+<p>Radio Buttons before:</p>
+<p><img src="img/SPArrangeChoices3.png" alt=""></p>
+<p>Radio Buttons after:</p>
+<p><img src="img/SPArrangeChoices4.png" alt=""></p>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>
