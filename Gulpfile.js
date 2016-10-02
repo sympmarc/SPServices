@@ -230,6 +230,10 @@ gulp.task('docs', function () {
             {
               find: /.md#/gi,
               replace: '.html#'
+            },
+            {
+              find: /<table>/gi,
+              replace: '<table class="table">' // Bootstrap table class
             }
           ]
         }))
