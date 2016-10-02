@@ -1,3 +1,7 @@
+---
+title: 'UserProfileService-GetUserProfileByName'
+---
+
 ### Function
 
 **$().SPServices**
@@ -37,7 +41,7 @@ function get_user_profile_by_login(login) {
       fieldName: "Name"
     });
   }
-  
+
   $().SPServices(params);
   return user;
 }

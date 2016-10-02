@@ -1,3 +1,7 @@
+---
+title: 'People-SearchPrinciples'
+---
+
 ### Function
 
 **$().SPServices**

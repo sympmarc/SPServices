@@ -1,10 +1,6 @@
 ---
-label: TaxonomyClientService
-id: TaxonomyClientService
-categorySlug: 'core'
-categoryLabel: 'core'
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
+title: 'TaxonomyClientService'
+---
 
 ### Function
 

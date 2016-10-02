@@ -1,10 +1,14 @@
+---
+title: 'SPFindPeoplePicker'
+---
+
 ## Function
 
 **$().SPServices.SPFindPeoplePicker**
 
 ## Certification
 
-[![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg "Certified for SharePoint 2007")](/docs/glossary/index.md#Certification) [![Certified for SharePoint 2010](/docs/img/sp2010-cert.jpg "Certified for SharePoint 2010")](/docs/glossary/index.md#Certification)
+[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -12,9 +16,9 @@ The SPFindPeoplePicker function helps you find and set People Picker columns. Th
 
 These are the columns which let us select known users in SharePoint, and they look something like this:
 
-![](/docs/value-added/img/SPFindPeoplePicker1.png)
+![](img/SPFindPeoplePicker1.png)
 
-SPFindPeoplePicker allows you to get or set the values for People Pickers. When you call it with the [DisplayName](/docs/glossary/index.md#DisplayName) of a People Picker, the function returns an object which contains information about the People Picker’s structure and current value.
+SPFindPeoplePicker allows you to get or set the values for People Pickers. When you call it with the [DisplayName](../glossary/index.md#DisplayName) of a People Picker, the function returns an object which contains information about the People Picker’s structure and current value.
 
 **_IMPORTANT NOTE:_** In v0.7.2, this function was mistakenly named $().SPFindPeoplePicker. This was inconsistent with the other function namespacing. As of 2013.01, both $().SPServices.SPFindPeoplePicker and $().SPFindPeoplePicker will work.
 
@@ -29,7 +33,7 @@ $().SPServices.SPFindPeoplePicker({
 ```
 
 ### peoplePickerDisplayName
-The [DisplayName](/docs/glossary/index.md#DisplayName) of the People Picker in the form.   
+The [DisplayName](../glossary/index.md#DisplayName) of the People Picker in the form.   
 
 ### valueToSet
 If you'd like to set the value of the People Picker, optionally provide it here.   
@@ -59,7 +63,7 @@ This is a reference to the checkNames img tag in the People Picker. It’s used 
 
 ### dictionaryEntries
 
-If the browser is Internet Explorer, then this object will contain the full dictionary entry values for each user or group in the People Picker value. If the browser is not IE, then the function calls [GetUserInfo](/docs/core/api/UserGroup.md) to retrieve similar values to mirror the dictionary entry structure.
+If the browser is Internet Explorer, then this object will contain the full dictionary entry values for each user or group in the People Picker value. If the browser is not IE, then the function calls [GetUserInfo](../core/api/UserGroup.md) to retrieve similar values to mirror the dictionary entry structure.
 
 ## Example
 
@@ -73,4 +77,4 @@ var salesRep = $().SPFindPeoplePicker({
 
 `salesRep` will be an object with the following attributes. There are considerable differences between how the People Picker works in different browsers; the example below is from Internet Explorer. In the function I try to "smooth over" those differences.
 
-![](/docs/value-added/img/SPFindPeoplePicker2.png)
+![](img/SPFindPeoplePicker2.png)

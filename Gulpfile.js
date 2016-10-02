@@ -14,8 +14,15 @@ var sourcemaps = require('gulp-sourcemaps');
 var header = require('gulp-header');
 var rename = require('gulp-rename');
 var ghPages = require('gulp-gh-pages');
-var markdown = require('gulp-markdown');
 var tap = require('gulp-tap');
+var metalsmith = require('metalsmith');
+var msMarkdown = require('metalsmith-markdown');
+var msReplace = require('metalsmith-text-replace');
+var msLayouts = require('metalsmith-layouts');
+var msCollections = require('metalsmith-collections');
+var msNavigation = require('metalsmith-navigation');
+var Handlebars = require('handlebars');
+
 
 var
     packageFile = 'package.json',
@@ -123,13 +130,152 @@ gulp.task('scripts', function() {
 */
 
 gulp.task('docs', function () {
-    return gulp.src(paths.docs) //paths.docs
-        .pipe(markdown('index.html', {
-            yamlMeta: true,
-            templatePath: 'docs/index.html',
-            highlightTheme: 'solarized_light'
+
+    /**
+    * Generate a custom sort method for given starting `order`. After the given
+    * order, it will ignore casing and put periods last. So for example a call of:
+    *
+    *   sorter('Overview');
+    *
+    * That is passed:
+    *
+    *   - Analytics.js
+    *   - iOS
+    *   - Overview
+    *   - Ruby
+    *   - .NET
+    *
+    * Would guarantee that 'Overview' ends up first, with the casing in 'iOS'
+    * ignored so that it falls in the normal alphabetical order, and puts '.NET'
+    * last since it starts with a period. See https://gist.github.com/lambtron/c8945d3abd11c783eb67
+    *
+    * @param {Array} order
+    * @return {Function}
+    */
+
+    function sorter(order) {
+        order = order || [];
+
+        return function(one, two) {
+            var a = one.title;
+            var b = two.title;
+
+            if (!a && !b) return 0;
+            if (!a) return 1;
+            if (!b) return -1;
+
+            var i = order.indexOf(a);
+            var j = order.indexOf(b);
+
+            if (~i && ~j) {
+                if (i < j) return -1;
+                if (j < i) return 1;
+                return 0;
+            }
+
+            if (~i) return -1;
+            if (~j) return 1;
+
+            a = a.toLowerCase();
+            b = b.toLowerCase();
+            if (a[0] === '.') return 1;
+            if (b[0] === '.') return -1;
+            if (a < b) return -1;
+            if (b < a) return 1;
+            return 0;
+        };
+    }
+
+    /**
+     * Create Handlebars helper to generate relative links for navigation.
+     * See https://github.com/unstoppablecarl/metalsmith-navigation/blob/master/examples/generic/build.js
+     */
+    var relativePathHelper = function(current, target) {
+       // normalize and remove starting slash from path
+       if(!current || !target){
+           return '';
+       }
+       current = path.normalize(current).slice(0);
+       target = path.normalize(target).slice(0);
+       current = path.dirname(current);
+       return path.relative(current, target).replace(/\\/g, '/');
+    };
+    Handlebars.registerHelper('relative_path', relativePathHelper);
+
+    /**
+     * Create Handlebars helper to create active class for navigation.
+     */
+    var isActiveHelper = function(current, target) {
+       // normalize and remove starting slash from path
+       if(!current || !target){
+           return '';
+       }
+       current = path.normalize(current).slice(0);
+       target = path.normalize(target).slice(0);
+       return current === target ? 'active' : '';
+    };
+    Handlebars.registerHelper('is_active', isActiveHelper);
+
+    return metalsmith(__dirname)
+        .source('./docs')
+        .ignore('templates')
+        .destination('./dist/docs')
+        .use(msMarkdown())
+        .use(msReplace({
+          '**/*.html': [
+            {
+              find: /.md"/gi,
+              replace: '.html"'
+            },
+            {
+              find: /.md#/gi,
+              replace: '.html#'
+            },
+            {
+              find: /<table>/gi,
+              replace: '<table class="table">' // Bootstrap table class
+            },
+            {
+              find: /<code class="lang-/gi,
+              replace: '<code class="language-' // Prism.js classes are prefixed with language- instead of -lang
+            }
+          ]
         }))
-        .pipe(gulp.dest('dist/docs/'));
+        .use(msNavigation({
+          all: {}
+        }))
+        .use(msCollections({
+          'Home': {
+            pattern: 'index.html'
+          },
+          'Core': {
+            pattern: 'core/{/api/index.html,*.html}',
+            sortBy: sorter(['Web Services'])
+          },
+          'WebServices': {
+            pattern: 'core/api/**/*.html',
+            sortBy: 'title'
+          },
+          'Value Added': {
+            pattern: 'value-added/**/*.html',
+            sortBy: 'title'
+          },
+          'Utilities': {
+            pattern: 'utilities/**/*.html',
+            sortBy: 'title'
+          }
+        }))
+        .use(msLayouts({
+          engine: 'handlebars',
+          directory: 'docs/templates',
+          partials: 'docs/templates/partials',
+          default: 'main.hbs'
+        }))
+        .build(function (err) {
+          if (err) {
+            throw err;
+          }
+        });
 });
 
 

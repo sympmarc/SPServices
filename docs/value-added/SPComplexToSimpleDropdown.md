@@ -1,10 +1,14 @@
+---
+title: 'SPComplexToSimpleDropdown'
+---
+
 ## Function
 
 **$().SPServices.SPComplexToSimpleDropdown**
 
 ## Certification
 
-[![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg "Certified for SharePoint 2007")](/docs/glossary/index.md#Certification) [![Certified for SharePoint 2010](/docs/img/sp2010-cert.jpg "Certified for SharePoint 2010")](/docs/glossary/index.md#Certification)
+[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -16,7 +20,7 @@ SharePoint renders dropdowns differently in Internet Explorer depending on wheth
 
 In the example below, Region is a "simple" dropdown. because it has fewer than 20 options. State is a "complex" dropdown because it has 20+ options.
 
-![](/docs/value-added/img/SPComplexToSimpleDropdown1.png)
+![](img/SPComplexToSimpleDropdown1.png)
 
 ## How Does It Work?
 
@@ -47,7 +51,7 @@ $().SPServices.SPComplexToSimpleDropdown({
 
 ### columnName
 
-The [DisplayName](/docs/glossary/index.md#DisplayName) of the column in the form
+The [DisplayName](../glossary/index.md#DisplayName) of the column in the form
 
 ### completefunc
 
@@ -67,7 +71,7 @@ completefunc: doSomething, // Where doSomething is the name of your function
 
 ### debug
 
-Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](/docs/glossary/index.md#debug-mode-).
+Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](../glossary/index.md#debug-mode-).
 
 ## Examples
 
@@ -81,7 +85,7 @@ $().SPServices.SPComplexToSimpleDropdown({
 
 and the complex dropdown (as shown in the image above) is converted to a simple dropdown:
 
-![](/docs/value-added/img/SPComplexToSimpleDropdown2.png)
+![](img/SPComplexToSimpleDropdown2.png)
 
 If you'd like to convert all of the complex dropdowns in a form to simple dropdowns, you can use this trick from [DanKline](https://www.codeplex.com/site/users/view/DanKline), which he posted in this discussion thread [https://spservices.codeplex.com/discussions/443485](https://spservices.codeplex.com/discussions/443485)
 

@@ -1,10 +1,6 @@
 ---
-label: Forms
-id: Forms
-categorySlug: 'core'
-categoryLabel: 'core'
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
+title: 'Forms'
+---
 
 ### Function
 

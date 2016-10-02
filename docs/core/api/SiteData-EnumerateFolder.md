@@ -1,3 +1,7 @@
+---
+title: 'SiteData-EnumerateFolder'
+---
+
 ### Function
 
 **$().SPServices**
@@ -14,10 +18,10 @@
 
 This is an example from [alexuni](http://www.codeplex.com/site/users/view/alexuni).
 
-```javascript 
+```javascript
 $(function(){
   var currentSite = $().SPServices.SPGetCurrentSite();
-  var txt=""; 
+  var txt="";
   $().SPServices({
     operation: "EnumerateFolder",
     async: false,

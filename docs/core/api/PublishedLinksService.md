@@ -1,10 +1,6 @@
 ---
-label: PublishedLinksService
-id: PublishedLinksService
-categorySlug: 'core'
-categoryLabel: 'core'
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
+title: 'PublishedLinksService'
+---
 
 ### Function
 

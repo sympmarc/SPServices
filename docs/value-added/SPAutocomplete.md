@@ -1,10 +1,14 @@
+---
+title: 'SPAutocomplete'
+---
+
 ## Function
 
 **$().SPServices.SPAutocomplete**
 
 ## Certification
 
-[![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg "Certified for SharePoint 2007")](/docs/glossary/index.md#Certification) [![Certified for SharePoint 2010](/docs/img/sp2010-cert.jpg "Certified for SharePoint 2010")](/docs/glossary/index.md#Certification)
+[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -48,11 +52,11 @@ The name or GUID of the list which contains the available values. If you choose 
 
 ### sourceColumn
 
-The [StaticName](/docs/glossary/index.md#StaticName) of the source column in sourceList
+The [StaticName](../glossary/index.md#StaticName) of the source column in sourceList
 
 ### columnName
 
-The [DisplayName](/docs/glossary/index.md#DisplayName) of the column in the form
+The [DisplayName](../glossary/index.md#DisplayName) of the column in the form
 
 ### CAMLQuery
 
@@ -100,11 +104,11 @@ If present, this markup will be shown while Web Service processing is occurring.
 
 ### debug
 
-Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](/docs/glossary/index.md#debug-mode-).
+Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](../glossary/index.md#debug-mode-).
 
 ## Examples
 
-This is the sum total of what you'll need to add to your page to make the function work as it does in the [demo page](http://www.sympraxisconsulting.com/Demos/Demo Pages/SPAutocomplete.aspx). The first two lines simply pull the script files into the page, and the `$(document).ready(function()` line is a jQuery function that says "Run this script when the page has been fully rendered". In the first call to the function, note that we're turning [debug mode](/docs/glossary/index.md#debug-mode-) on by setting `debug: true`.
+This is the sum total of what you'll need to add to your page to make the function work as it does in the [demo page](http://www.sympraxisconsulting.com/Demos/Demo Pages/SPAutocomplete.aspx). The first two lines simply pull the script files into the page, and the `$(document).ready(function()` line is a jQuery function that says "Run this script when the page has been fully rendered". In the first call to the function, note that we're turning [debug mode](../glossary/index.md#debug-mode-) on by setting `debug: true`.
 
 ``` html
 <script language="javascript" type="text/javascript" src="../../jQuery%20Libraries/jquery-1.4.2.js"></script>

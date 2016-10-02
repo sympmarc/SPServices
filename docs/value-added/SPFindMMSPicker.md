@@ -1,10 +1,14 @@
+---
+title: 'SPFindMMSPicker'
+---
+
 ## Function
 
 **$().SPServices.SPFindMMSPicker**
 
 ## Certification
 
-[![Certified for SharePoint 2010](/docs/img/sp2010-cert.jpg "Certified for SharePoint 2010")](/docs/glossary/index.md#Certification)
+[![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -19,7 +23,7 @@ $().SPServices.SPFindMMSPicker({
 ```
 
 ### MMSDisplayName
-The [DisplayName](/docs/glossary/index.md#DisplayName) of the People Picker in the form.
+The [DisplayName](../glossary/index.md#DisplayName) of the People Picker in the form.
 
 ## Returns
 
@@ -29,7 +33,7 @@ The function returns an array of terms, with both the guid and the value for eac
 
 Assume there is a MMS Picker in the form for a column named **Office** which allows multiple values and that it is set like so:
 
-![](/docs/value-added/img/SPFindMMSPicker1.png)
+![](img/SPFindMMSPicker1.png)
 
 After the call:
 
@@ -41,6 +45,6 @@ var office = $().SPServices.SPFindMMSPicker({
 
 office will be an object like this:
 
-![](/docs/value-added/img/SPFindMMSPicker2.png)
+![](img/SPFindMMSPicker2.png)
 
 Note that invalid values will have the guid set to "00000000-0000-0000-0000-000000000000".

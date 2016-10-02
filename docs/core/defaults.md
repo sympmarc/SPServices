@@ -1,10 +1,6 @@
 ---
-label: defaults
-id: defaults
-categorySlug: 'core'
-categoryLabel: 'core'
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
+title: 'Defaults'
+---
 
 ### Function
 

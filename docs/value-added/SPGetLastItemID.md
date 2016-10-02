@@ -1,14 +1,18 @@
+---
+title: 'SPGetLastItemId'
+---
+
 ## Function
 
 **$().SPServices.SPGetLastItemId**
 
 ## Certification
 
-[![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg)](/docs/glossary/index.md#Certification) [![Certified for SharePoint 2010](/docs/img/sp2010-cert.jpg "Certified for SharePoint 2010")](/docs/glossary/index.md#Certification)
+[![Certified for SharePoint 2007](../img/sp2007-cert.jpg)](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
-Function to return the ID of the last item created on a list by a specific user. Useful for maintaining parent/child relationships. This function was built for use by the [$().SPServices.SPRedirectWithID](/docs/value-added/SPRedirectWithID.md) function, but is also useful in other circumstances.
+Function to return the ID of the last item created on a list by a specific user. Useful for maintaining parent/child relationships. This function was built for use by the [$().SPServices.SPRedirectWithID](SPRedirectWithID.md) function, but is also useful in other circumstances.
 
 ## Prerequisites
 
@@ -17,7 +21,7 @@ Function to return the ID of the last item created on a list by a specific user.
 ## Syntax
 
 ``` javascript
-$().SPServices.SPGetLastItemId({	
+$().SPServices.SPGetLastItemId({
 	webURL: "",
 	listName: "",
 	userAccount: "",
@@ -53,8 +57,8 @@ The following example will return the most recently created item's ID for the cu
 <script language="javascript" type="text/javascript" src="../../jQuery%20Libraries/jquery-1.4.1.min.js"></script>
 <script language="javascript" type="text/javascript" src="../../jQuery%20Libraries/jquery.SPServices-0.5.1.min.js"></script>
 <script language="javascript" type="text/javascript">
-  var lastId = $().SPServices.SPGetLastItemId({ 
+  var lastId = $().SPServices.SPGetLastItemId({
     listName: "States"
-  }); 
+  });
 </script>
 ```

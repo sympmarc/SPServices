@@ -1,10 +1,14 @@
+---
+title: 'SPArrangeChoices'
+---
+
 ## Function
 
 **$().SPServices.SPArrangeChoices**
 
 ## Certification
 
-[![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg)](/docs/glossary/index.md#Certification) [![Certified for SharePoint 2010](/docs/img/sp2010-cert.jpg "Certified for SharePoint 2010")](/docs/glossary/index.md#Certification)
+[![Certified for SharePoint 2007](../img/sp2007-cert.jpg)](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -16,8 +20,8 @@ The SPArrangeChoices rearranges radio buttons or checkboxes in a form from verti
 * If you are working with a customized form, you'll need to use a little trick to get this function to work. (Thanks to [alexlee797](http://www.codeplex.com/site/users/view/alexlee797) for pointing this out.) You'll need to add the following line:
 ``` html
 <xsl:comment>FieldName="Display Name"</xsl:comment>
-``` 
-just above the 
+```
+just above the
 ``` html
 <SharePoint:FormField>
 ```
@@ -32,16 +36,16 @@ $().SPServices.SPArrangeChoices({
 	columnName: "",
 	perRow: 99,
 	randomize: false
-}); 
+});
 ```
 
 ### listName
 If specified, this list will be used to look up the column's attributes. By default, this is set at runtime to the list name for the current form's context based on the form's URL. You will not generally need to specify this value.
 
-### columnName 
-The [DisplayName](/docs/glossary/index.md#DisplayName) of the Choice column in the form. This function works with both radio buttons and checkboxes.
+### columnName
+The [DisplayName](../glossary/index.md#DisplayName) of the Choice column in the form. This function works with both radio buttons and checkboxes.
 
-### perRow 
+### perRow
 The maximum number of choices to show per row.
 
 ### randomize
@@ -64,16 +68,16 @@ $().SPServices.SPArrangeChoices({
 
 Lead Source before:
 
-![](/docs/value-added/img/SPArrangeChoices1.png)
+![](img/SPArrangeChoices1.png)
 
 Lead Source after:
 
-![](/docs/value-added/img/SPArrangeChoices2.png)
+![](img/SPArrangeChoices2.png)
 
 Radio Buttons before:
 
-![](/docs/value-added/img/SPArrangeChoices3.png)
+![](img/SPArrangeChoices3.png)
 
 Radio Buttons after:
 
-![](/docs/value-added/img/SPArrangeChoices4.png)
+![](img/SPArrangeChoices4.png)

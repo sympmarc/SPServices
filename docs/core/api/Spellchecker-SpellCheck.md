@@ -1,3 +1,7 @@
+---
+title: 'Spellchecker-SpellCheck'
+---
+
 ### Function
 
 **$().SPServices**
@@ -24,7 +28,7 @@ for (i=0; i<chunks.length; i++){
 var spellResults;
 $().SPServices({
   operation: "SpellCheck",
-  chunksToSpell: chunks, 
+  chunksToSpell: chunks,
   declaredLanguage: 1033, // use 1033 for english
   useLad: false,
   completefunc: function(xData, Status){
