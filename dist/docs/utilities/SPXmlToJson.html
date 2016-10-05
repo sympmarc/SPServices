@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPXmlToJson - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SPXmlToJson</h1>
+
+      <h2 id="function">Function</h2>
+<p><strong>$().SPServices.SPXmlToJson</strong></p>
+<h2 id="certification">Certification</h2>
+<p><a href="../glossary/index.html#Certification"><img src="../img/sp2007-cert.jpg" alt="Certified for SharePoint 2007" title="Certified for SharePoint 2007"></a> <a href="../glossary/index.html#Certification"><img src="../img/sp2010-cert.jpg" alt="Certified for SharePoint 2010" title="Certified for SharePoint 2010"></a></p>
+<h2 id="functionality">Functionality</h2>
+<p>SPXmlToJson is a function to convert XML data into JSON for client-side processing.</p>
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">$(xData.responseXML).SPFilterNode(&quot;z:row&quot;).SPXmlToJson({
+  mapping: {},
+  includeAllAttrs: false,
+  removeOws: true,
+  sparse: false // Added in 2014.01
+});
+</code></pre>
+<p>SPXmlToJson operates on a nodeset from XML returned by a SharePoint Web Services operation. In the current implementation, the nodeset must be &quot;flat&quot;, as in the z:row elements returned by <a href="../core/api/Lists-GetListItems.html">GetListItems</a>. In other words, the function doesn&#39;t handle any nesting.</p>
+<h3 id="mapping">mapping</h3>
+<p>An array of columns to return in the JSON. While you should generally limit the values you request in your Web Services calls where you can, in some cases you won&#39;t have that capability. This option alows you to create &quot;lean&quot; JSON by only including the attributes you need. You can also rename the attributes for better compatibility with other jQuery plugins, for instance. Where it makes sense, the different column types (SPFieldType) are returned as analogous JavaScript objects. If not specified in the mapping, values are returned as strings.</p>
+<p>The default value for mapping is <code>{}</code> (no mappings).</p>
+<p>Currently supported objectTypes (SPFieldTypes):</p>
+<table class="table">
+<thead>
+<tr>
+<th>SPFieldType (Type)</th>
+<th>JavaScript Object Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Counter</td>
+<td>int</td>
+</tr>
+<tr>
+<td>Integer</td>
+<td>int</td>
+</tr>
+<tr>
+<td>DateTime / datetime</td>
+<td>Date()</td>
+</tr>
+<tr>
+<td>User</td>
+<td>user = {userId, userName}</td>
+</tr>
+<tr>
+<td>UserMulti</td>
+<td>Array of User</td>
+</tr>
+<tr>
+<td>Lookup*</td>
+<td>lookup = {lookupId, lookupValue}</td>
+</tr>
+<tr>
+<td>LookupMulti</td>
+<td>Array of Lookup</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>true / false</td>
+</tr>
+<tr>
+<td>MultiChoice</td>
+<td>Array of strings</td>
+</tr>
+<tr>
+<td>Number / float</td>
+<td>flota</td>
+</tr>
+<tr>
+<td>Currency</td>
+<td>float</td>
+</tr>
+<tr>
+<td>Text</td>
+<td>string object</td>
+</tr>
+<tr>
+<td>Attachments**</td>
+<td>Boolean string [&quot;0&quot;, &quot;1&quot;] or Array of urls = {attachment, fileName}</td>
+</tr>
+<tr>
+<td>Calculated</td>
+<td>calculated = {type, value}</td>
+</tr>
+<tr>
+<td>URL</td>
+<td>url = {Url, Description}</td>
+</tr>
+</tbody>
+</table>
+<p>Additional formats are:</p>
+<table class="table">
+<thead>
+<tr>
+<th>objectType</th>
+<th>JavaScript Object Type</th>
+<th>Comments</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JSON</td>
+<td>[object]</td>
+<td>Useful when storing text-based JSON in a Single or Multiple line of text column. Added in 2014.01.</td>
+</tr>
+</tbody>
+</table>
+<p>Both the FileRef and FileDirRef have Type=&quot;Lookup&quot;. I have special cases in the code to parse those two columns out appropriately.</p>
+<pre><code class="language-javascript">mapping: {
+  ows_FileLeafRef: { mappedName: &quot;Name&quot;, objectType: &quot;Lookup&quot; },
+  ows_FileRef: { mappedName: &quot;Url&quot;, objectType: &quot;Lookup&quot; }
+}
+</code></pre>
+<p>If you would like just the text back so that you can parse it yourself, then stick with objectType: &quot;Text&quot; and parse it using <code>.split()</code></p>
+<p><code>myFileRef = data[i].Url.split(&quot;;#&quot;)[1];</code></p>
+<p>By default, the Attachments column simply returns a value indicating whether or not attachments are present [&quot;0&quot;, &quot;1&quot;]. If you specify the QueryOption <code>&lt;IncludeAttachmentUrls&gt;TRUE&lt;/IncludeAttachmentUrls&gt;</code>, links to the attachments are returned instead.</p>
+<h3 id="includeallattrs">includeAllAttrs</h3>
+<p>If true, return all attributes, regardless whether they are in the mapping. The default is false.</p>
+<h3 id="removeows">removeOws</h3>
+<p>Specifically for GetListItems, if true, the leading &quot;ows_&quot; will be stripped from the field name.</p>
+<h3 id="sparse">sparse</h3>
+<p>If true, empty (&quot;&quot;) values will not be returned. The default is false. Added in 2014.01.</p>
+<h2 id="examples">Examples</h2>
+<p>This is the simplest example for using SPComplexToSimpleDropdown. You simply provide the nodeset:</p>
+<pre><code class="language-javascript">$(xData.responseXML).SPFilterNode(&quot;z:row&quot;).SPXmlToJson();
+</code></pre>
+<p>In most cases, you&#39;ll pass in options which determine the structure of the JSON. Here is an example where I have provided mappings for a number of columns and I&#39;m also including all of the attributes.</p>
+<pre><code class="language-javascript">var myJson = $(xData.responseXML).SPFilterNode(&quot;z:row&quot;).SPXmlToJson({
+   mapping: {
+     ows_ID: {mappedName: &quot;ID&quot;, objectType: &quot;Counter&quot;},
+     ows_Title: {mappedName: &quot;Title&quot;, objectType: &quot;Text&quot;},
+     ows_Created: {mappedName: &quot;Created&quot;, objectType: &quot;DateTime&quot;},
+     ows_Author: {mappedName: &quot;Author&quot;, objectType: &quot;User&quot;},
+     ows_Country: {mappedName: &quot;Country&quot;, objectType: &quot;Lookup&quot;},
+     ows_City: {mappedName: &quot;City&quot;, objectType: &quot;LookupMulti&quot;},
+     ows_Lead_x0020_Source: {mappedName: &quot;LeadSource&quot;, objectType: &quot;MultiChoice&quot;},
+     ows_Sales_x0020_Rep: {mappedName: &quot;SalesRep&quot;, objectType: &quot;UserMulti&quot;},
+     ows_Potential_x0020_Value: {mappedName: &quot;PotentialValue&quot;, objectType: &quot;Currency&quot;}
+    },   // name, mappedName, objectType
+   includeAllAttrs: true
+  });
+</code></pre>
+<p>The results of the call above look like this, based on my test Sales Opportunities list:</p>
+<p><img src="img/SPXmlToJson1.png" alt="screenshot of results"></p>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

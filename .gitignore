@@ -34,3 +34,6 @@ _$*
 node_modules
 me.*
 .idea/
+
+# gulp-gh-pages
+.publish

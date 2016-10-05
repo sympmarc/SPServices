@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPFilterDropdown - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SPFilterDropdown</h1>
+
+      <h2 id="function">Function</h2>
+<p><strong>$().SPServices.SPFilterDropdown</strong></p>
+<h2 id="certification">Certification</h2>
+<p><a href="../glossary/index.html#Certification"><img src="../img/sp2007-cert.jpg" alt="Certified for SharePoint 2007" title="Certified for SharePoint 2007"></a> <a href="../glossary/index.html#Certification"><img src="../img/sp2010-cert.jpg" alt="Certified for SharePoint 2010" title="Certified for SharePoint 2010"></a></p>
+<h2 id="functionality">Functionality</h2>
+<p>The SPFilterDropdown function allows you to filter the values available in a Lookup column using CAML against the Lookup column&#39;s source list.  This function works with all three types of &quot;dropdown&quot;: &lt;20 options (simple select), 20+ options (complex select), and multi-select.</p>
+<p>Thanks to Alex Lee (<a href="http://www.codeplex.com/site/users/view/alexlee797">alexlee797</a>) and Ryan (<a href="http://www.codeplex.com/site/users/view/rnshaw">rnshaw</a>) for contributing their versions of this function, which I used to build the one available here. You can see their versions in these two discussion threads: <a href="http://spservices.codeplex.com/discussions/207947">Filter Dropdowns</a> and <a href="http://spservices.codeplex.com/discussions/235579">SPCascadeDropDowns - CAML query on parent column?</a></p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li>The relationship list contains the relationshipListColumn</li>
+<li>The dropdown for columnName is a lookup into relationshipList&#39;s relationshipListColumn OR a list column which is a lookup into another list column (&quot;secondary list&quot;).</li>
+</ul>
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">$().SPServices.SPFilterDropdown({
+  relationshipWebURL: &quot;&quot;,
+  relationshipList: &quot;&quot;,
+  relationshipListColumn: &quot;&quot;,
+  relationshipListSortAscending: true,  // Added in 2013.01
+  relationshipListSortColumn: &quot;&quot;,
+  columnName: &quot;&quot;,
+  listName: $().SPServices.SPListNameFromUrl(),
+  promptText: &quot;&quot;,
+  noneText: &quot;(None)&quot;,
+  CAMLQuery: &quot;&quot;,
+  CAMLQueryOptions: &quot;&lt;QueryOptions&gt;&lt;/QueryOptions&gt;&quot;,
+  completefunc: null,
+  debug: false
+});
+</code></pre>
+<h3 id="relationshipweburl">relationshipWebURL</h3>
+<p>The URL of the Web (site) which contains the relationshipList. If not specified, the current site is used. Examples would be: <code>&quot;/&quot;</code>, <code>&quot;/Accounting&quot;</code>, <code>&quot;/Departments/HR&quot;</code>, etc. <strong>Note</strong>: It&#39;s always best to use relative URLs.</p>
+<h3 id="relationshiplist">relationshipList</h3>
+<p>The name or GUID of the list which contains the parent/child relationships. If you choose to use the GUID, it should look like: <code>&quot;{E73FEA09-CF8F-4B30-88C7-6FA996EE1706}&quot;</code>. Note also that if you use the GUID, you do not need to specify the relationshipWebURL if the list is in another site.</p>
+<h3 id="relationshiplistcolumn">relationshipListColumn</h3>
+<p>The <a href="../glossary/index.html#StaticName">StaticName</a> of the column in the relationshipList which is used for the lookup column</p>
+<h3 id="relationshiplistsortcolumn">relationshipListSortColumn</h3>
+<p>If specified, sort the options in the dropdown by this column otherwise the options are sorted by relationshipListColumn</p>
+<h3 id="relationshiplistsortascending">relationshipListSortAscending</h3>
+<p>Allows sorting either ascending (<code>true</code>) or descending (<code>false</code>). The default is <code>true</code> (ascending).</p>
+<h3 id="columnname">columnName</h3>
+<p>The <a href="../glossary/index.html#DisplayName">DisplayName</a> of the column in the form</p>
+<h3 id="listname">listName</h3>
+<p>By default, set to the list name for the current context based on the URL. If your form is outside the context of the list, then you can specify the listName yourself.</p>
+<h3 id="prompttext">promptText</h3>
+<p>Text to use as prompt. If included, {0} will be replaced with the value of childColumn. The default value is <code>&quot;&quot;</code>.</p>
+<p><strong>NOTE</strong>: I discourage the use of this option. Yes, I put it into the function, but if the user doesn&#39;t make a choice, they get an ugly error because SharePoint doesn&#39;t understand it as an option. I&#39;ve left in in for backward compatibility.</p>
+<p><strong>Deprecated in v0.7.1.</strong></p>
+<h3 id="nonetext">noneText</h3>
+<p>Text to use for the (None) selection. Provided for non-English language support. The default value is <code>&quot;(None)&quot;</code>.</p>
+<h3 id="camlquery">CAMLQuery</h3>
+<p>The CAMLQuery option allows you to specify the filter on the relationshipList. The additional filter will be <code>&lt;And&gt;</code>ed with the existing CAML which is checking for matching items based on the parentColumn selection. The CAMLQuery should contain a CAML <em><strong>fragment</strong></em> such as:</p>
+<pre><code class="language-javascript">CAMLQuery: &quot;&lt;Eq&gt;&lt;FieldRef Name=&#39;Status&#39;/&gt;&lt;Value Type=&#39;Text&#39;&gt;Active&lt;/Value&gt;&lt;/Eq&gt;&quot;
+</code></pre>
+<h3 id="camlqueryoptions">CAMLQueryOptions</h3>
+<p>This option can be used to specify additional options for retrieval from the sourceList. See the <a href="http://msdn.microsoft.com/en-us/library/lists.lists.getlistitems.aspx">MSDN documentation for GetListItems</a> for the syntax.</p>
+<h3 id="completefunc">completefunc</h3>
+<p>If specified, the completefunc will be called upon completion of the filtering. Uses for the completefunc: consistent default formatting overrides, additional lookup customizations, image manipulations, etc. You can pass your completefunc in either of these two ways:</p>
+<pre><code class="language-javascript">completefunc: function() {
+  ...do something...
+},
+</code></pre>
+<p>or</p>
+<pre><code class="language-javascript">completefunc: doSomething, // Where doSomething is the name of your function
+</code></pre>
+<h3 id="debug">debug</h3>
+<p>Setting <code>debug: true</code> indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn&#39;t exist. I call this <a href="../glossary/index.html#debug-mode-">debug mode</a>.</p>
+<h2 id="example">Example</h2>
+<p>In this example, we&#39;ll filter the lookup column called &quot;Country&quot; so that we only include those Countries where the Active column is set to &#39;Yes&#39;. In the screenshot below, you can see that Canada is not currently &#39;Active&#39;.</p>
+<p><img src="img/SPFilterDropdown1.png" alt=""></p>
+<p>In the Sales Opportunities list, we have a lookup column called Country, which gets its values from the Title column in the Countries list.</p>
+<p><img src="img/SPFilterDropdown2.png" alt=""></p>
+<p>If we add the call to SPFilterDropdown below...</p>
+<pre><code class="language-javascript">$().SPServices.SPFilterDropdown({
+  relationshipList: &quot;Countries&quot;,
+  relationshipListColumn: &quot;Title&quot;,
+  columnName: &quot;Country&quot;,
+  CAMLQuery: &quot;&lt;Eq&gt;&lt;FieldRef Name=&#39;Active&#39; /&gt;&lt;Value Type=&#39;Boolean&#39;&gt;1&lt;/Value&gt;&lt;/Eq&gt;&quot;,
+  completefunc: null,
+  debug: false
+});
+</code></pre>
+<p>...then &#39;Canada&#39; is filtered out of the available values because it is not &#39;Active&#39;.</p>
+<p><img src="img/SPFilterDropdown3.png" alt=""></p>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

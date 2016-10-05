@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPUpdateMultipleListItems - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SPUpdateMultipleListItems</h1>
+
+      <h2 id="function">Function</h2>
+<p><strong>$().SPServices.SPUpdateMultipleListItems</strong></p>
+<h2 id="certification">Certification</h2>
+<p><a href="../glossary/index.html#Certification"><img src="../img/sp2007-cert.jpg" alt="Certified for SharePoint 2007" title="Certified for SharePoint 2007"></a> <a href="../glossary/index.html#Certification"><img src="../img/sp2010-cert.jpg" alt="Certified for SharePoint 2010" title="Certified for SharePoint 2010"></a></p>
+<h2 id="functionality">Functionality</h2>
+<p>SPUpdateMultipleListItems allows you to update multiple items in a list based upon some common characteristic or metadata criteria.</p>
+<p><strong>IMPORTANT NOTE:</strong> The first iterations of this function only worked with lists, not Document Libraries. As of <a href="http://spservices.codeplex.com/releases/view/62021">v0.6.1</a>, it works with Document libraries as well.</p>
+<h2 id="how-does-it-work-">How Does It Work?</h2>
+<p>The SPUpdateMultipleListItems function works like this:</p>
+<ul>
+<li>It first calls GetListItems with the provided CAMLQuery to find all off the items which meet the criteria</li>
+<li>Then the function calls UpdateListItems and updates all of the items found with the values provided</li>
+</ul>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>None</p>
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">$().SPServices.SPUpdateMultipleListItems({
+  webURL: &quot;&quot;,
+  listName: &quot;&quot;,
+  CAMLQuery: &quot;&quot;,
+  batchCmd: &quot;Update&quot;,
+  valuepairs: [],
+  debug: false,
+  completefunc: null
+});
+</code></pre>
+<h3 id="weburl">webURL</h3>
+<p>The URL of the Web (site) which contains the list. If not specified, the current site is used. Examples would be: <code>&quot;/&quot;</code>, <code>&quot;/Accounting&quot;</code>, <code>&quot;/Departments/HR&quot;</code>, etc. <strong>Note</strong>: It&#39;s always best to use relative URLs.</p>
+<h3 id="listname">listName</h3>
+<p>The name or GUID of the list. If you choose to use the GUID, it should look like: <code>&quot;{E73FEA09-CF8F-4B30-88C7-6FA996EE1706}&quot;</code>. Note also that if you use the GUID, you do not need to specify the webURL if the list is in another site.</p>
+<h3 id="camlquery">CAMLQuery</h3>
+<p>The CAMLQuery option allows you to specify the filter on the list. CAMLQuery here should contain valid CAML such as:</p>
+<pre><code class="language-javascript">CAMLQuery: &quot;&lt;Query&gt;&lt;Where&gt;&lt;Eq&gt;&lt;FieldRef Name=&#39;Status&#39;/&gt;&lt;Value Type=&#39;Text&#39;&gt;Active&lt;/Value&gt;&lt;/Eq&gt;&lt;/Where&gt;&lt;/Query&gt;&quot;
+</code></pre>
+<h3 id="batch.html">batchCmd</h3>
+<p>The batchCmd option specifies what the action should be. The choices are <code>&quot;Update&quot;</code> or <code>&quot;Delete&quot;</code>. <code>&quot;Update&quot;</code> is the default.</p>
+<h3 id="completefunc">completefunc</h3>
+<p>If specified, the completefunc will be called each time there is a change to parentColumn. Potential uses for the completefunc: consistent default formatting overrides, additional lookup customizations, image manipulations, etc. You can pass your completefunc in either of these two ways:</p>
+<pre><code class="language-javascript">completefunc: function() {
+  ...do something...
+},
+</code></pre>
+<p>or</p>
+<pre><code class="language-javascript">completefunc: doSomething, // Where doSomething is the name of your function
+</code></pre>
+<h3 id="debug">debug</h3>
+<p>Setting <code>debug: true</code> indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn&#39;t exist. I call this <a href="../glossary/index.html#debug-mode-">debug mode</a>.</p>
+<p><strong>NOTE</strong>: Debug mode is not implemented in the initial release of SPUpdateMultipleListItems in v0.5.8.</p>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-javascript">$().SPServices.SPUpdateMultipleListItems({
+  listName: &quot;States&quot;,
+  CAMLQuery: &quot;&lt;Query&gt;&lt;Where&gt;&lt;Eq&gt;&lt;FieldRef Name=&#39;Status&#39;/&gt;&lt;Value Type=&#39;Text&#39;&gt;Active&lt;/Value&gt;&lt;/Eq&gt;&lt;/Where&gt;&lt;/Query&gt;&quot;,
+  valuepairs: [[&quot;Status&quot;, &quot;Inactive&quot;]]
+});
+</code></pre>
+<p>This call to SPUpdateMultipleListItems will update all of the items in the States list which have their Status = &quot;Active&quot;, setting their Status = &quot;Inactive&quot;.</p>
+<pre><code class="language-javascript">$().SPServices.SPUpdateMultipleListItems({
+  listName: &quot;States&quot;,
+  CAMLQuery: &quot;&lt;Query&gt;&lt;Where&gt;&lt;Eq&gt;&lt;FieldRef Name=&#39;Status&#39;/&gt;&lt;Value Type=&#39;Text&#39;&gt;Inactive&lt;/Value&gt;&lt;/Eq&gt;&lt;/Where&gt;&lt;/Query&gt;&quot;,
+  batchCmd: &quot;Delete&quot;
+});
+</code></pre>
+<p>This call to SPUpdateMultipleListItems will delete all of the items in the States list which have their Status = &quot;Inactive&quot;.</p>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

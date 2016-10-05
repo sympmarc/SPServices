@@ -21,7 +21,12 @@ var msReplace = require('metalsmith-text-replace');
 var msLayouts = require('metalsmith-layouts');
 var msCollections = require('metalsmith-collections');
 var msNavigation = require('metalsmith-navigation');
+var msWatch = require('metalsmith-watch');
+var msIgnore = require('metalsmith-ignore');
 var Handlebars = require('handlebars');
+var zip = require('gulp-zip');
+var merge = require('merge-stream');
+var browserSync = require('browser-sync');
 
 
 var
@@ -68,6 +73,10 @@ gulp.task('config', function() {
 gulp.task('clean:build', function() {
     // You can use multiple globbing patterns as you would with `gulp.src`
     return del(['build']);
+});
+
+gulp.task('clean:docs', function() {
+    return del(['dist/docs/**/*']);
 });
 
 // Convert .less files to .css
@@ -129,7 +138,7 @@ gulp.task('scripts', function() {
     });
 */
 
-gulp.task('docs', function () {
+gulp.task('docs', ['clean:docs'], function () {
 
     /**
     * Generate a custom sort method for given starting `order`. After the given
@@ -218,8 +227,16 @@ gulp.task('docs', function () {
 
     return metalsmith(__dirname)
         .source('./docs')
-        .ignore('templates')
+        .clean(false) // Don't delete files while Gulp tasks are running
         .destination('./dist/docs')
+
+        .use(msWatch({
+          paths: {
+            "${source}/**/*": true, // Rebuild a file when it changes
+            "docs/templates/**/*": "**/*.md", // Rebuild all .md files when a template changes
+          }
+        }))
+        .use(msIgnore('templates/**/*')) // Don't output template files in dist/docs
         .use(msMarkdown())
         .use(msReplace({
           '**/*.html': [
@@ -293,12 +310,30 @@ gulp.task('build', function() {
         .pipe(gulp.dest('build/')); // SPServices.min.js
 });
 
-// Deploy to gh-pages
-gulp.task('deploydocs', function() {
-    return gulp.src(paths.dist)
-        .pipe(ghPages());
+// Run local server for viewing docs
+gulp.task('servedocs', ['docs'], function() {
+
+    // Create browser-sync instance
+    var bs = browserSync.create();
+
+    // Start browser-sync server for HTML docs
+    bs.init({
+      files: 'dist/**/*',
+      server: {
+        baseDir: 'dist/docs'
+      },
+      reloadDelay: 300, // Allow all dist/docs HTML files to be updated before reloading
+      reloadDebounce: 1000 // Only reload once per second (avoids multiple reloads when many docs are updated simultaneously e.g. when a template file is updated)
+    });
 });
 
+// Deploy to gh-pages
+gulp.task('deploydocs', function() {
+    return merge(
+        gulp.src(paths.dist).pipe(zip('SPServices.zip')),
+        gulp.src('dist/docs/**/*')
+    ).pipe(ghPages());
+});
 
 // Default task(s).
 gulp.task('default', [

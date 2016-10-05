@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPGetStaticFromDisplay - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SPGetStaticFromDisplay</h1>
+
+      <h2 id="function">Function</h2>
+<p><strong>$().SPServices.SPGetStaticFromDisplay</strong></p>
+<h2 id="certification">Certification</h2>
+<p><a href="../glossary/index.html#Certification"><img src="../img/sp2007-cert.jpg" alt="Certified for SharePoint 2007" title="Certified for SharePoint 2007"></a> <a href="../glossary/index.html#Certification"><img src="../img/sp2010-cert.jpg" alt="Certified for SharePoint 2010" title="Certified for SharePoint 2010"></a></p>
+<h2 id="functionality">Functionality</h2>
+<p>This function returns the <a href="../glossary/index.html#StaticName">StaticName</a> for a column based on the <a href="../glossary/index.html#DisplayName">DisplayName</a>. This simple utility function, which utilizes the GetList operation of the Lists Web Service, seemed useful to expose as a public function.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p><em>None</em></p>
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">var thisStaticName = $().SPServices.SPGetStaticFromDisplay ({
+  webURL: &quot;&quot;,
+  listName: &quot;&quot;,
+  columnDisplayName: &quot;&quot;,
+  columnDisplayNames: {}   // Added in v0.7.2 to allow multiple columns
+});
+</code></pre>
+<h3 id="weburl">webURL</h3>
+<p>The URL of the Web (site) which contains the listName. If not specified, the current site is used. Examples would be: &quot;/&quot;, &quot;/Accounting&quot;, &quot;/Departments/HR&quot;, etc. Note: It&#39;s always best to use relative URLs.</p>
+<h3 id="listname">listName</h3>
+<p>The name or GUID of the list. If you choose to use the GUID, it should look like: &quot;{E73FEA09-CF8F-4B30-88C7-6FA996EE1706}&quot;. Note also that if you use the GUID, you do not need to specify the webURL if the list is in another site.</p>
+<h3 id="columndisplayname">columnDisplayName</h3>
+<p>The <a href="../glossary/index.html#DisplayName">DisplayName</a> of the column.</p>
+<h3 id="columndisplaynames">columnDisplayNames</h3>
+<p>The <a href="../glossary/index.html#DisplayName">DisplayName</a>s of the columns in an array. This option was added in v0.7.2 to allow multiple column conversions at the same time.</p>
+<h2 id="example">Example</h2>
+<p>The following example will return the <a href="../glossary/index.html#StaticName">StaticName</a> for the Title column in the States list in the current site.</p>
+<pre><code class="language-html">&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot; src=&quot;../../jQuery%20Libraries/jquery-1.8.2.min.js&quot;&gt;&lt;/script&gt;
+&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot; src=&quot;../../jQuery%20Libraries/jquery.SPServices-0.7.2.min.js&quot;&gt;&lt;/script&gt;
+&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot;&gt;
+  $(document).ready(function() {
+
+    // Retrieve one value
+    var thisStaticName = $().SPServices.SPGetStaticFromDisplay ({
+      listName: &quot;States&quot;,
+      columnDisplayName: &quot;Title&quot;
+    });
+    alert(&quot;The StaticName for the Title column is: &quot; + thisStaticName);
+    ... do more stuff...
+
+    // Retrieve multiple values
+    var thisStaticNames = $().SPServices.SPGetStaticFromDisplay ({
+      listName: &quot;States&quot;,
+      columnDisplayNames: [&quot;Title&quot;, &quot;State&quot;]
+    });
+    alert(&quot;The StaticNames for the columns are: &quot; + thisStaticNames);
+    ... do more stuff...
+  });
+&lt;/script&gt;
+</code></pre>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

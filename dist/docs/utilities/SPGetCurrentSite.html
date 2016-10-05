@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPGetCurrentSite - SPServices</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+
+  </head>
+  <body>
+
+    <header>
+      <nav class="navbar navbar-default">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html">SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+              <li class=""><a href="../general-instructions.html">General Instructions</a></li>
+              <li><a href="https://github.com/sympmarc/SPServices">View on GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions">Discuss on CodePlex</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container">
+
+        <h1>SPGetCurrentSite</h1>
+
+      <h2 id="function">Function</h2>
+<p><strong>$().SPServices.SPGetCurrentSite</strong></p>
+<h2 id="certification">Certification</h2>
+<p><a href="../glossary/index.html#Certification"><img src="../img/sp2007-cert.jpg" alt="Certified for SharePoint 2007" title="Certified for SharePoint 2007"></a> <a href="../glossary/index.html#Certification"><img src="../img/sp2010-cert.jpg" alt="Certified for SharePoint 2010" title="Certified for SharePoint 2010"></a></p>
+<h2 id="functionality">Functionality</h2>
+<p>This utility function, which is also publicly available, simply returns the current site&#39;s URL. It mirrors the functionality of the WebUrlFromPageUrl operation.</p>
+<div class="alert alert-danger"><strong>Note</strong>: There is a bug in the versions 2013.01, 2013.02, and 2014.01 where only the relative path (<code>&quot;/&quot;</code>) is returned rather than the full path (<code>&quot;http://servername/sitename&quot;</code>). This causes problems in the root site for $().SPServices.SPGetCurrentSite and <a href="SPGetCurrentUser.html">$().SPServices.SPGetCurrentUser</a>.</div>
+
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">$().SPServices.SPGetCurrentSite();
+</code></pre>
+<h2 id="example">Example</h2>
+<pre><code class="language-javascript">var thisSite = $().SPServices.SPGetCurrentSite();
+</code></pre>
+<h2 id="available-options">Available Options</h2>
+<p>None</p>
+<h2 id="returns">Returns</h2>
+<p>The current site URL as a string. For example, if the current page is:  </p>
+<p><code>http://servername/sitename/Pages/default.aspx</code>
+or<br><code>http://servername/sitename/Shared%20Documents/Forms/EditForm.aspx</code>
+or<br><code>http://servername/sitename/Lists/Calendar/NewForm.aspx</code></p>
+<p>the function will return:</p>
+<p><code>http://servername/sitename</code></p>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

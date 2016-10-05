@@ -1,8 +1,16 @@
 ---
-title: 'Home'
+title: 'SPServices'
 ---
 
-** Please read the documentation (starting with the [General Instructions](general-instructions.md)) before asking questions. I'm happy to help out, but it's so much nicer when folks read the documentation.**
+SPServices is a jQuery library which abstracts SharePoint's Web Services and makes them easier to use. It also includes functions which use the various Web Service operations to provide more useful (and cool) capabilities. It works entirely client side and requires no server install.
+
+<p><a class="btn btn-primary btn-lg" href="SPServices.zip">Download .zip</a> <a class="btn btn-info btn-lg" href="https://github.com/sympmarc/SPServices">View on GitHub</a></p>
+
+SPServices is primarily hosted on [Codeplex](http://spservices.codeplex.com), with this repository mirroring most of the downloads there.
+
+<div class="alert alert-info">
+Please read the documentation (starting with the [General Instructions](general-instructions.md)) before asking questions. I'm happy to help out, but it's so much nicer when folks read the documentation.
+</div>
 
 ### Core
 
