@@ -21,7 +21,8 @@ var msReplace = require('metalsmith-text-replace');
 var msLayouts = require('metalsmith-layouts');
 var msCollections = require('metalsmith-collections');
 var msNavigation = require('metalsmith-navigation');
-var msChanged = require('metalsmith-changed');
+var msWatch = require('metalsmith-watch');
+var msIgnore = require('metalsmith-ignore');
 var Handlebars = require('handlebars');
 var zip = require('gulp-zip');
 var merge = require('merge-stream');
@@ -221,10 +222,16 @@ gulp.task('docs', function () {
 
     return metalsmith(__dirname)
         .source('./docs')
-        .clean(false) // Needs to be `false` for metalsmith-changed
-        .ignore('templates')
+        .clean(false) // Don't delete files while Gulp tasks are running
         .destination('./dist/docs')
-        .use(msChanged()) // Only process files that have changed
+
+        .use(msWatch({
+          paths: {
+            "${source}/**/*": true, // Rebuild a file when it changes
+            "docs/templates/**/*": "**/*.md", // Rebuild all .md files when a template changes
+          }
+        }))
+        .use(msIgnore('templates/**/*')) // Don't output template files in dist/docs
         .use(msMarkdown())
         .use(msReplace({
           '**/*.html': [
