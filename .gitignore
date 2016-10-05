@@ -37,6 +37,3 @@ me.*
 
 # gulp-gh-pages
 .publish
-
-# Metalsmith
-dist/docs/metalsmith-changed-ctimes.json
