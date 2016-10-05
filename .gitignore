@@ -34,5 +34,9 @@ _$*
 node_modules
 me.*
 .idea/
-tmp
+
+# gulp-gh-pages
 .publish
+
+# Metalsmith
+dist/docs/metalsmith-changed-ctimes.json

@@ -21,6 +21,7 @@ var msReplace = require('metalsmith-text-replace');
 var msLayouts = require('metalsmith-layouts');
 var msCollections = require('metalsmith-collections');
 var msNavigation = require('metalsmith-navigation');
+var msChanged = require('metalsmith-changed');
 var Handlebars = require('handlebars');
 var zip = require('gulp-zip');
 var merge = require('merge-stream');
@@ -220,8 +221,10 @@ gulp.task('docs', function () {
 
     return metalsmith(__dirname)
         .source('./docs')
+        .clean(false) // Needs to be `false` for metalsmith-changed
         .ignore('templates')
         .destination('./dist/docs')
+        .use(msChanged()) // Only process files that have changed
         .use(msMarkdown())
         .use(msReplace({
           '**/*.html': [
