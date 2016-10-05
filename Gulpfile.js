@@ -26,6 +26,7 @@ var msIgnore = require('metalsmith-ignore');
 var Handlebars = require('handlebars');
 var zip = require('gulp-zip');
 var merge = require('merge-stream');
+var browserSync = require('browser-sync');
 
 
 var
@@ -303,6 +304,23 @@ gulp.task('build', function() {
         .pipe(gulpIf('*.js', uglify())) // Minify all modules
         .pipe(rename('jQuery.SPServices-' + pkg.version + '.min.js'))
         .pipe(gulp.dest('build/')); // SPServices.min.js
+});
+
+// Run local server for viewing docs
+gulp.task('servedocs', ['docs'], function() {
+
+    // Create browser-sync instance
+    var bs = browserSync.create();
+
+    // Start browser-sync server for HTML docs
+    bs.init({
+      files: 'dist/**/*',
+      server: {
+        baseDir: 'dist/docs'
+      },
+      reloadDelay: 300, // Allow all dist/docs HTML files to be updated before reloading
+      reloadDebounce: 1000 // Only reload once per second (avoids multiple reloads when many docs are updated simultaneously e.g. when a template file is updated)
+    });
 });
 
 // Deploy to gh-pages
