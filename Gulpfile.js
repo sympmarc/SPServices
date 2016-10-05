@@ -75,6 +75,10 @@ gulp.task('clean:build', function() {
     return del(['build']);
 });
 
+gulp.task('clean:docs', function() {
+    return del(['dist/docs/**/*']);
+});
+
 // Convert .less files to .css
 gulp.task('less', function () {
     return gulp.src(paths.less)
@@ -134,7 +138,7 @@ gulp.task('scripts', function() {
     });
 */
 
-gulp.task('docs', function () {
+gulp.task('docs', ['clean:docs'], function () {
 
     /**
     * Generate a custom sort method for given starting `order`. After the given
