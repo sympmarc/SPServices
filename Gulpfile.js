@@ -197,6 +197,16 @@ gulp.task('docs', ['clean:docs'], function () {
     }
 
     return metalsmith(__dirname)
+        .metadata({
+          site: {
+            title: pkg.name,
+            description: pkg.description_long
+          },
+          version: pkg.version,
+          copyright: pkg.copyright,
+          repository: pkg.repository.url,
+          license: pkg.licenses[0]
+        })
         .source('./docs')
         .clean(false) // Don't delete files while Gulp tasks are running
         .destination('./dist/docs')
