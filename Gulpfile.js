@@ -18,6 +18,7 @@ var tap = require('gulp-tap');
 var metalsmith = require('metalsmith');
 var msMarkdown = require('metalsmith-markdown');
 var msReplace = require('metalsmith-text-replace');
+var msRegisterHelpers = require('metalsmith-register-helpers');
 var msLayouts = require('metalsmith-layouts');
 var msCollections = require('metalsmith-collections');
 var msNavigation = require('metalsmith-navigation');
@@ -195,36 +196,6 @@ gulp.task('docs', ['clean:docs'], function () {
         };
     }
 
-    /**
-     * Create Handlebars helper to generate relative links for navigation.
-     * See https://github.com/unstoppablecarl/metalsmith-navigation/blob/master/examples/generic/build.js
-     */
-    var relativePathHelper = function(current, target) {
-       // normalize and remove starting slash from path
-       if(!current || !target){
-           return '';
-       }
-       current = path.normalize(current).slice(0);
-       target = path.normalize(target).slice(0);
-       current = path.dirname(current);
-       return path.relative(current, target).replace(/\\/g, '/');
-    };
-    Handlebars.registerHelper('relative_path', relativePathHelper);
-
-    /**
-     * Create Handlebars helper to create active class for navigation.
-     */
-    var isActiveHelper = function(current, target) {
-       // normalize and remove starting slash from path
-       if(!current || !target){
-           return '';
-       }
-       current = path.normalize(current).slice(0);
-       target = path.normalize(target).slice(0);
-       return current === target ? 'active' : '';
-    };
-    Handlebars.registerHelper('is_active', isActiveHelper);
-
     return metalsmith(__dirname)
         .source('./docs')
         .clean(false) // Don't delete files while Gulp tasks are running
@@ -281,6 +252,9 @@ gulp.task('docs', ['clean:docs'], function () {
             pattern: 'utilities/**/*.html',
             sortBy: 'title'
           }
+        }))
+        .use(msRegisterHelpers({
+          directory: 'docs/templates/helpers'
         }))
         .use(msLayouts({
           engine: 'handlebars',
