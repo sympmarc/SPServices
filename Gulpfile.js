@@ -210,11 +210,11 @@ gulp.task('docs', ['clean:docs'], function () {
         .source('./docs')
         .clean(false) // Don't delete files while Gulp tasks are running
         .destination('./dist/docs')
-
         .use(msWatch({
           paths: {
-            "${source}/**/*": true, // Rebuild a file when it changes
-            "docs/templates/**/*": "**/*.md", // Rebuild all .md files when a template changes
+            '${source}/**/*': true, // Rebuild an individual file when it is changed
+            "docs/**/*.md": "**/*.md", // Rebuild all .md files when a .md file is changed
+            "docs/templates**/*.*": "**/*.md" // Rebuild all .md files when a template file is changed
           }
         }))
         .use(msIgnore('templates/**/*')) // Don't output template files in dist/docs
