@@ -214,7 +214,7 @@ gulp.task('docs', ['clean:docs'], function () {
           paths: {
             '${source}/**/*': true, // Rebuild an individual file when it is changed
             "docs/**/*.md": "**/*.md", // Rebuild all .md files when a .md file is changed
-            "docs/templates**/*.*": "**/*.md" // Rebuild all .md files when a template file is changed
+            "docs/templates/**/*.*": "**/*.md" // Rebuild all .md files when a template file is changed
           }
         }))
         .use(msIgnore('templates/**/*')) // Don't output template files in dist/docs
