@@ -7,7 +7,10 @@
 
     <title>{{#if title}}{{title}} - {{/if}}SPServices</title>
 
+    <meta name="description" content="{{#if description}}{{description}}{{else}}{{site.description}}{{/if}}">
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
 
 
@@ -16,14 +19,13 @@
 
     {{> header}}
 
-    <div class="container">
+    {{#if template}}
+      {{> (lookup . 'template')}}
+    {{else}}
+      {{> default}}
+    {{/if}}
 
-      {{#if title}}
-        <h1>{{title}}</h1>
-      {{/if}}
-
-      {{{contents}}}
-    </div>
+    {{> footer}}
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>

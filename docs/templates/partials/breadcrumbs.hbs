@@ -1,0 +1,29 @@
+<ol class="breadcrumb">
+    <li>
+        <a href="{{relative_path @root.nav_path "/index.html"}}">Home</a>
+    </li>
+    {{!--
+        navConfig.breadcrumbProperty = 'breadcrumb_path'
+        currentFileObject.breadcrumb_path = ...
+    --}}
+    {{#each breadcrumb_path}}
+    <li>
+        {{#if file}}
+            {{!--
+                @root === the template scope of the current file object being rendered
+                @root.nav_path === currentFileObject.nav_path
+                ('nav_path' property can be configured by navConfig.pathProperty = 'nav_path')
+
+                path === currentNavNode.path
+                (path property is set to all nav nodes)
+            --}}
+            <a href="{{relative_path @root.nav_path path}}">{{file.title}}</a>
+        {{else}}
+            {{name}}
+        {{/if}}
+    </li>
+    {{/each}}
+    <li class="active">
+        {{title}}
+    </li>
+</ol>

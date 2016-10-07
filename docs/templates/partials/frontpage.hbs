@@ -1,0 +1,45 @@
+<div class="container text-center">
+  <div class="jumbotron">
+    {{#if title}}
+      <h1>{{title}}</h1>
+    {{/if}}
+    <p class="lead">{{description}}</p>
+    <p><a href="{{relative_path nav_path 'SPServices.zip'}}" class="btn btn-lg btn-primary">{{icon 'download'}} Download SPServices.zip</a></p>
+  </div>
+
+  <h2>Getting Started</h2>
+
+  <div class="lead">
+    {{{contents}}}
+  </div>
+
+  <p><a href="{{relative_path nav_path 'getting-started.html'}}" class="btn btn-lg btn-default">Start Here</a></p>
+
+  <hr>
+
+  <h2>Full Documentation</h2>
+
+  <p class="lead">The documentation sections below cover all aspects of SPServices.</p>
+
+  <div class="row">
+    {{#each navs.featured}}
+      <div class="col-sm-4">
+        <div class="h2">
+          {{icon file.icon}}
+        </div>
+        <h3>{{file.title}}</h3>
+        <p>{{file.description}}</p>
+        <p><a href="{{relative_path @root.nav_path path}}">View More {{icon 'chevron-right'}}</a></p>
+      </div>
+    {{/each}}
+  </div>
+
+  <hr>
+
+  <h2>Contribute</h2>
+
+  <p class="lead">SPServices is open source! Help develop it on GitHub.</p>
+
+  <p><a href="https://github.com/sympmarc/SPServices" class="btn btn-lg btn-default">{{icon 'github'}} View on GitHub</a></p>
+
+</div>
