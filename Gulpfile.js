@@ -25,7 +25,6 @@ var msCollectionMetadata = require('metalsmith-collection-metadata');
 var msNavigation = require('metalsmith-navigation');
 var msWatch = require('metalsmith-watch');
 var msIgnore = require('metalsmith-ignore');
-var Handlebars = require('handlebars');
 var zip = require('gulp-zip');
 var merge = require('merge-stream');
 var browserSync = require('browser-sync');
