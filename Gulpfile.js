@@ -21,6 +21,7 @@ var msReplace = require('metalsmith-text-replace');
 var msRegisterHelpers = require('metalsmith-register-helpers');
 var msLayouts = require('metalsmith-layouts');
 var msCollections = require('metalsmith-collections');
+var msCollectionMetadata = require('metalsmith-collection-metadata');
 var msNavigation = require('metalsmith-navigation');
 var msWatch = require('metalsmith-watch');
 var msIgnore = require('metalsmith-ignore');
@@ -239,28 +240,29 @@ gulp.task('docs', ['clean:docs'], function () {
             }
           ]
         }))
-        .use(msNavigation({
-          all: {}
-        }))
         .use(msCollections({
-          'Home': {
-            pattern: 'index.html'
+          'All': {
+            pattern: '**/*.*' // Used by msCollectionMetadata
+          }
+        }))
+        .use(msCollectionMetadata({
+          'collections.All': {
+            nav_group_global: 'global' // Add all pages to 'global' nav; this ensure that every page has a 'nav_path' property
+          }
+        }))
+        .use(msNavigation({
+          global: {
+            filterProperty: 'nav_group_global',
+            sortBy: 'nav_sort',
+            breadcrumbProperty: 'breadcrumb_path'
           },
-          'Core': {
-            pattern: 'core/{/api/index.html,*.html}',
-            sortBy: sorter(['Web Services'])
+          primary: {
+            filterProperty: 'nav_group',
+            sortBy: 'nav_sort'
           },
-          'WebServices': {
-            pattern: 'core/api/**/*.html',
-            sortBy: 'title'
-          },
-          'Value Added': {
-            pattern: 'value-added/**/*.html',
-            sortBy: 'title'
-          },
-          'Utilities': {
-            pattern: 'utilities/**/*.html',
-            sortBy: 'title'
+          featured: {
+            filterProperty: 'nav_group',
+            sortBy: 'nav_sort'
           }
         }))
         .use(msRegisterHelpers({
