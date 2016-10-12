@@ -1,0 +1,40 @@
+{{#if (is_active @root.nav_path file.nav_path)}}
+
+  {{#if children}}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Web Service</th>
+        <th>WSS 3.0</th>
+        <th>MOSS</th>
+        <th>MSDN Documentation</th>
+        <th>Foundation</th>
+        <th>SP2010</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each children}}
+        <tr>
+          <td><a href="{{relative_path @root.nav_path path}}">{{file.title}}</a></td>
+          <td>{{includes file.spsupportedversion 'wss'}}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  {{/if}}
+
+{{else}}
+
+  {{#if (is_active_with_ancestor @root.nav_path file.nav_path @root.breadcrumb_path)}}
+    {{#if children}}
+      {{#each children}}
+          {{> child_webservice_links}}
+      {{/each}}
+    {{/if}}
+  {{/if}}
+
+{{/if}}

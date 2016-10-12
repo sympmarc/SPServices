@@ -160,10 +160,10 @@ gulp.task('docs', ['clean:docs'], function () {
           paths: {
             '${source}/**/*': true, // Rebuild an individual file when it is changed
             "docs/**/*.md": "**/*.md", // Rebuild all .md files when a .md file is changed
-            "docs/templates/**/*.*": "**/*.md" // Rebuild all .md files when a template file is changed
+            "docs/layouts/**/*.*": "**/*.md" // Rebuild all .md files when a template file is changed
           }
         }))
-        .use(msIgnore('templates/**/*')) // Don't output template files in dist/docs
+        .use(msIgnore('layouts/**/*')) // Don't output template files in dist/docs
         .use(msMarkdown())
         .use(msReplace({
           '**/*.html': [
@@ -187,7 +187,7 @@ gulp.task('docs', ['clean:docs'], function () {
         }))
         .use(msCollections({
           'All': {
-            pattern: '**/*.*' // Used by msCollectionMetadata
+            pattern: '**/*' // Used by msCollectionMetadata
           }
         }))
         .use(msCollectionMetadata({
@@ -211,12 +211,12 @@ gulp.task('docs', ['clean:docs'], function () {
           }
         }))
         .use(msRegisterHelpers({
-          directory: 'docs/templates/helpers'
+          directory: 'docs/layouts/helpers'
         }))
         .use(msLayouts({
           engine: 'handlebars',
-          directory: 'docs/templates',
-          partials: 'docs/templates/partials',
+          directory: 'docs/layouts',
+          partials: 'docs/layouts/partials',
           default: 'main.hbs'
         }))
         .use(msAssets({

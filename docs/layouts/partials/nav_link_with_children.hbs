@@ -1,4 +1,4 @@
-<li class="{{is_active @root.nav_path file.nav_path}}">
+<li class="{{is_active_with_ancestor @root.nav_path file.nav_path @root.breadcrumb_path}}">
     {{!--
         currentNavNode.file
     --}}
@@ -11,7 +11,7 @@
             path === currentNavNode.path
             (path property is set to all nav nodes)
         --}}
-        <a href="{{relative_path @root.nav_path path}}">{{file.title}}</a>
+        <a href="{{relative_path @root.nav_path path}}" {{#if file.description}}title="{{file.description}}"{{/if}}>{{file.title}}</a>
 
     {{else}}
         {{name}}

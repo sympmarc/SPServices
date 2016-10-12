@@ -1,0 +1,73 @@
+<div class="masthead">
+  <div class="container">
+    <div class="jumbotron">
+      <h1>{{site.title}}</h1>
+      <p class="lead">{{description}}</p>
+      <p><a href="{{relative_path nav_path 'SPServices.zip'}}" class="btn btn-lg btn-primary">{{icon 'download'}} Download SPServices.zip</a></p>
+      <p class="h6"><small>Or use with a CDN: <a href="https://cdnjs.com/libraries/jquery.SPServices">https://cdnjs.com/libraries/jquery.SPServices</a></small></p>
+    </div>
+  </div>
+</div>
+
+<div class="feature-section">
+  <div class="container">
+    <h2>Getting Started</h2>
+
+    <div class="lead">
+      {{{contents}}}
+    </div>
+
+    <p><a href="{{relative_path nav_path 'general-instructions.html'}}" class="btn btn-lg btn-default">Start Here</a></p>
+  </div>
+</div>
+
+<hr>
+
+<div class="feature-section">
+  <div class="container">
+    <h2>Works with Most SharePoint Environments</h2>
+
+    <p class="lead">SPServices can be used with SharePoint 2007, 2010, and 2013, whether on premises or hosted with Office365 or others.</p>
+
+    <div class="row">
+      <div class="col-sm-4"><p><img src="img/SharePoint2007_thumb.png" alt="SharePoint 2007 logo"></p></div>
+      <div class="col-sm-4"><p><img src="img/SharePoint2010_thumb.jpg" alt="SharePoint 2010 logo"></p></div>
+      <div class="col-sm-4"><p><img src="img/SharePoint2013_thumb.png" alt="SharePoint 2013 logo"></p></div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div class="feature-section">
+  <div class="container">
+    <h2>Full Documentation</h2>
+
+    <p class="lead">The documentation sections below cover all aspects of SPServices.</p>
+
+    <div class="row">
+      {{#each navs.featured}}
+        <div class="col-sm-4">
+          <div class="h2 featured-icon">
+            {{icon file.icon}}
+          </div>
+          <h3 class="featured-heading">{{file.title}}</h3>
+          <p>{{file.description}}</p>
+          <p><a href="{{relative_path @root.nav_path path}}">View More {{icon 'chevron-right'}}</a></p>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div class="feature-section">
+  <div class="container">
+    <h2>Contribute</h2>
+
+    <p class="lead">SPServices is open source! Help develop it on GitHub.</p>
+
+    <p><a href="{{repository}}" class="btn btn-lg btn-default">{{icon 'github'}} View on GitHub</a></p>
+  </div>
+</div>
