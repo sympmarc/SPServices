@@ -1,14 +1,12 @@
 ---
 title: 'SPDropdownCtl'
+function: '$().SPServices.SPDropdownCtl'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'The function finds a dropdown in a form based on the name of the column (either the DisplayName or the StaticName) and returns an object you can use in your own functions.'
+introduced: '2014.01'
 ---
-
-## Function
-
-**$().SPServices.SPDropdownCtl**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -30,7 +28,7 @@ $().SPServices.SPDropdownCtl({
 
 ### displayName
 
-The [DisplayName](../glossary/index.md#DisplayName) of the parent column in the _form_
+The [DisplayName](../glossary.md#displayname) of the parent column in the _form_
 
 ## Returns
 

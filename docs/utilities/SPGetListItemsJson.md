@@ -1,14 +1,12 @@
 ---
 title: 'SPGetListItemsJson'
+function: '$().SPServices.SPGetListItemsJson'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'SPGetListItemsJson combines several SPServices capabilities into one powerful function. By calling GetListItemChangesSinceToken, parsing the list schema, and passing the resulting mapping and data to SPXmlToJson automagically, we have a one-stop shop for retrieving SharePoint list data in JSON format. No manual mapping required!'
+introduced: 2014.01
 ---
-
-## Function
-
-**$().SPServices.SPGetListItemsJson**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -102,7 +100,7 @@ mappingOverrides: {
 
 ### debug
 
-Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](../glossary/index.md#DebugMode).
+Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](../glossary.md#debug-mode).
 
 ## Returns
 

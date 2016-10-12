@@ -1,14 +1,12 @@
 ---
 title: 'SPGetCurrentUser'
+function: '$().SPServices.SPGetCurrentUser'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'This function returns information about the current user. It is based on an insightful trick from Einar Otto Stangvik (see Credits).'
+introduced: 0.3.1
 ---
-
-## Function
-
-**$().SPServices.SPGetCurrentUser**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)*
 
 ## Functionality
 
@@ -42,27 +40,27 @@ Note that, as of [v0.6.1](http://spservices.codeplex.com/releases/view/62021), y
 
 | Field Name | Field Internal Name | WSS | MOSS |
 | ---------- | ------------------- | ----| -----|
-| Account | Name | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) |
-| Name | Title | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) |
-| Work e-mail | EMail | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) |
-| About me | Notes | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) |
-| Picture | Picture | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) |
-| Department | Department | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) |
-| Job Title | JobTitle | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) |
-| SIP Address | SipAddress | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) |
-| First name | FirstName | | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) |
-| Last Name | LastName | | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) |
-| Work phone | WorkPhone | | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) |
-| Office | Office | | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) |
-| User name | UserName | | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) |
-| Web site | WebSite | | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) |
-| Responsibilities | SPResponsibility | | ![](http://mdasblog.files.wordpress.com/2009/09/chkmrk.gif) |
+| Account | Name | ![](../img/checkmark.gif) | ![](../img/checkmark.gif) |
+| Name | Title | ![](../img/checkmark.gif) | ![](../img/checkmark.gif) |
+| Work e-mail | EMail | ![](../img/checkmark.gif) | ![](../img/checkmark.gif) |
+| About me | Notes | ![](../img/checkmark.gif) | ![](../img/checkmark.gif) |
+| Picture | Picture | ![](../img/checkmark.gif) | ![](../img/checkmark.gif) |
+| Department | Department | ![](../img/checkmark.gif) | ![](../img/checkmark.gif) |
+| Job Title | JobTitle | ![](../img/checkmark.gif) | ![](../img/checkmark.gif) |
+| SIP Address | SipAddress | ![](../img/checkmark.gif) | ![](../img/checkmark.gif) |
+| First name | FirstName | | ![](../img/checkmark.gif) |
+| Last Name | LastName | | ![](../img/checkmark.gif) |
+| Work phone | WorkPhone | | ![](../img/checkmark.gif) |
+| Office | Office | | ![](../img/checkmark.gif) |
+| User name | UserName | | ![](../img/checkmark.gif) |
+| Web site | WebSite | | ![](../img/checkmark.gif) |
+| Responsibilities | SPResponsibility | | ![](../img/checkmark.gif) |
 
 ### fieldNames
 Added in v0.7.2 to allow requesting multiple column values. The column names can be passed in as an array, such as ["ID", "Last Name"]
 
 ### debug
-Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like specifying a value which doesn't exist. I call this [debug mode](../glossary/index.md#DebugMode).
+Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like specifying a value which doesn't exist. I call this [debug mode](../glossary.md#debug-mode).
 
 ## Examples
 
@@ -93,5 +91,3 @@ var thisUsersValues = $().SPServices.SPGetCurrentUser({
 	debug: false
 });
 ```
-
-\* Attested by Geoff Varosky

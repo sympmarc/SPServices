@@ -1,18 +1,16 @@
 ---
 title: 'SPGetDisplayFromStatic'
+function: '$().SPServices.SPGetDisplayFromStatic'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'This function returns the DisplayName for a column based on the StaticName.'
+introduced: 0.4.0
 ---
-
-## Function
-
-**$().SPServices.SPGetDisplayFromStatic**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
-This function returns the [DisplayName](../glossary/index.md#DisplayName) for a column based on the [StaticName](../glossary/index.md#StaticName). This simple utility function, which utilizes the GetList operation of the Lists Web Service, seemed useful to expose as a public function.
+This function returns the [DisplayName](../glossary.md#displayname) for a column based on the [StaticName](../glossary.md#staticname). This simple utility function, which utilizes the GetList operation of the Lists Web Service, seemed useful to expose as a public function.
 
 ## Prerequisites
 
@@ -39,15 +37,15 @@ The name or GUID of the list. If you choose to use the GUID, it should look like
 
 ### columnStaticName
 
-The [StaticName](../glossary/index.md#StaticName) of the column.
+The [StaticName](../glossary.md#staticname) of the column.
 
 ### columnStaticNames
 
-The [StaticName](../glossary/index.md#StaticName)s of the columns in an array. This option was added in v0.7.2 to allow multiple column conversions at the same time.
+The [StaticName](../glossary.md#staticname)s of the columns in an array. This option was added in v0.7.2 to allow multiple column conversions at the same time.
 
 ## Example
 
-The following example will return the [DisplayName](../glossary/index.md#DisplayName) for the Title column in the States list in the current site.
+The following example will return the [DisplayName](../glossary.md#displayname) for the Title column in the States list in the current site.
 
 ``` html
 <script language="javascript" type="text/javascript" src="../../jQuery%20Libraries/jquery-1.8.2.min.js"></script>

@@ -1,14 +1,12 @@
 ---
 title: 'SPDebugXMLHttpResult'
+function: '$().SPServices.SPDebugXMLHttpResult'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'This function displays the XMLHttpResult from an Ajax call formatted for easy debugging. You can call it manually as part of your completefunc.'
+introduced: 0.2.10
 ---
-
-## Function
-
-**$().SPServices.SPDebugXMLHttpResult**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 

@@ -1,14 +1,12 @@
 ---
 title: 'SPFindPeoplePicker'
+function: '$().SPServices.SPFindPeoplePicker'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'The SPFindPeoplePicker function helps you find and set People Picker column values.'
+introduced: 0.7.2
 ---
-
-## Function
-
-**$().SPServices.SPFindPeoplePicker**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -18,7 +16,7 @@ These are the columns which let us select known users in SharePoint, and they lo
 
 ![](img/SPFindPeoplePicker1.png)
 
-SPFindPeoplePicker allows you to get or set the values for People Pickers. When you call it with the [DisplayName](../glossary/index.md#DisplayName) of a People Picker, the function returns an object which contains information about the People Picker’s structure and current value.
+SPFindPeoplePicker allows you to get or set the values for People Pickers. When you call it with the [DisplayName](../glossary.md#displayname) of a People Picker, the function returns an object which contains information about the People Picker’s structure and current value.
 
 **_IMPORTANT NOTE:_** In v0.7.2, this function was mistakenly named $().SPFindPeoplePicker. This was inconsistent with the other function namespacing. As of 2013.01, both $().SPServices.SPFindPeoplePicker and $().SPFindPeoplePicker will work.
 
@@ -33,7 +31,7 @@ $().SPServices.SPFindPeoplePicker({
 ```
 
 ### peoplePickerDisplayName
-The [DisplayName](../glossary/index.md#DisplayName) of the People Picker in the form.   
+The [DisplayName](../glossary.md#displayname) of the People Picker in the form.   
 
 ### valueToSet
 If you'd like to set the value of the People Picker, optionally provide it here.   

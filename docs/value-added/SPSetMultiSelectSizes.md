@@ -1,14 +1,12 @@
 ---
 title: 'SPSetMultiSelectSizes'
+function: '$().SPServices.SPSetMultiSelectSizes'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'Sets the size of the boxes in a multi-select picker based on the values they contain.'
+introduced: 0.4.8
 ---
-
-## Function
-
-**$().SPServices.SPSetMultiSelectSizes**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg)](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -28,7 +26,7 @@ $().SPServices.SPSetMultiSelectSizes({
 
 ### multiSelectColumn
 
-The [DisplayName](../glossary/index.md#DisplayName) of the multi-select column in the form.
+The [DisplayName](../glossary.md#displayname) of the multi-select column in the form.
 
 ### minWidth
 

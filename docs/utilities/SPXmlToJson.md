@@ -1,14 +1,12 @@
 ---
 title: 'SPXmlToJson'
+function: '$().SPXmlToJson'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'SPXmlToJson is a function to convert XML data into JSON for client-side processing.'
+introduced: 0.7.1
 ---
-
-## Function
-
-**$().SPServices.SPXmlToJson**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 

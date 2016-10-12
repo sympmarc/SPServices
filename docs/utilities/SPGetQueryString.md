@@ -1,14 +1,12 @@
 ---
 title: 'SPGetQueryString'
+function: '$().SPServices.SPGetQueryString'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'The SPGetQueryString function returns an array containing the Query String parameters and their values.'
+introduced: 0.5.1
 ---
-
-## Function
-
-**$().SPServices.SPGetQueryString**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 

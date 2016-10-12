@@ -1,14 +1,12 @@
 ---
 title: 'SPRedirectWithID'
+function: '$().SPServices.SPRedirectWithID'
+certification:
+  sp2007: 'certified'
+  sp2010: 'nottested'
+description: 'This function allows you to redirect to a another page from a new item form with the new item’s ID. This allows chaining of forms from item creation onward.'
+introduced: 0.4.0
 ---
-
-## Function
-
-**$().SPServices.SPRedirectWithID**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg)](../glossary/index.md#Certification) [![Not tested with SharePoint 2010](../img/sp2010-notest.jpg "Not tested with SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 

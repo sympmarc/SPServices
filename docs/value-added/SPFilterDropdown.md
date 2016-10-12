@@ -1,14 +1,12 @@
 ---
 title: 'SPFilterDropdown'
+function: '$().SPServices.SPFilterDropdown'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'The SPFilterDropdown function allows you to filter the values available in a Lookup column using CAML against the Lookup column’s source list.'
+introduced: 0.6.1
 ---
-
-## Function
-
-**$().SPServices.SPFilterDropdown**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -51,7 +49,7 @@ The name or GUID of the list which contains the parent/child relationships. If y
 
 ### relationshipListColumn
 
-The [StaticName](../glossary/index.md#StaticName) of the column in the relationshipList which is used for the lookup column
+The [StaticName](../glossary.md#staticname) of the column in the relationshipList which is used for the lookup column
 
 ### relationshipListSortColumn
 
@@ -63,7 +61,7 @@ Allows sorting either ascending (`true`) or descending (`false`). The default is
 
 ### columnName
 
-The [DisplayName](../glossary/index.md#DisplayName) of the column in the form
+The [DisplayName](../glossary.md#displayname) of the column in the form
 
 ### listName
 
@@ -111,7 +109,7 @@ completefunc: doSomething, // Where doSomething is the name of your function
 
 ### debug
 
-Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](../glossary/index.md#debug-mode-).
+Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](../glossary.md#debug-mode).
 
 ## Example
 

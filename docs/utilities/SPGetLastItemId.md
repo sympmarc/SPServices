@@ -1,14 +1,12 @@
 ---
 title: 'SPGetLastItemId'
+function: '$().SPServices.SPGetLastItemId'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'Function to return the ID of the last item created on a list by a specific user. Useful for maintaining parent/child relationships.'
+introduced: 0.4.0
 ---
-
-## Function
-
-**$().SPServices.SPGetLastItemId**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 

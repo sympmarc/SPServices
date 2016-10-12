@@ -1,14 +1,12 @@
 ---
 title: 'SPRequireUnique'
+function: '$().SPServices.SPRequireUnique'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'Checks to see if the value for a column on the form is unique in the list.'
+introduced: 0.4.0
 ---
-
-## Function
-
-**$().SPServices.SPRequireUnique**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg)](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -38,7 +36,7 @@ $().SPServices.SPRequireUnique({
 
 ### columnStaticName
 
-The [StaticName](../glossary/index.md#StaticName) of the column on the form. The default value is "Title".
+The [StaticName](../glossary.md#staticname) of the column on the form. The default value is "Title".
 
 ### duplicateAction
 

@@ -1,14 +1,12 @@
 ---
 title: 'SPUpdateMultipleListItems'
+function: '$().SPServices.SPUpdateMultipleListItems'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'SPUpdateMultipleListItems allows you to update multiple items in a list based upon some common characteristic or metadata criteria.'
+introduced: 0.5.8
 ---
-
-## Function
-
-**$().SPServices.SPUpdateMultipleListItems**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -79,7 +77,7 @@ completefunc: doSomething, // Where doSomething is the name of your function
 
 ### debug
 
-Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](../glossary/index.md#debug-mode-).
+Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](../glossary.md#debug-mode).
 
 **NOTE**: Debug mode is not implemented in the initial release of SPUpdateMultipleListItems in v0.5.8.
 

@@ -1,14 +1,15 @@
 ---
 title: 'General Instructions'
+nav_group:
+  - primary
+nav_sort: 1
 ---
-
-### General Instructions
 
 First, please read [this blog post](http://sympmarc.com/2011/07/08/adding-jqueryspservices-to-a-sharepoint-page-step-one-always/), which can help you to be sure that your script file references are correct.
 
 The library can be implemented by adding a reference to it into a single page, a page layout, or a master page, depending upon your desired scope of use. The SPServices library requires the [jQuery library](http://jquery.com/). See the System Requirements section for required versions.
 
-Most releases of the library include both a [minified](glossary/index.md#minified) and a normal version of the release. If you would like to understand the workings of the library, look at the normal version, but use the minified version for any production use.
+Most releases of the library include both a [minified](glossary.md#minified) and a normal version of the release. If you would like to understand the workings of the library, look at the normal version, but use the minified version for any production use.
 
 I recommend storing the jQuery library and SPServices in a Document Library in your Site Collection and referencing it as needed, like this:
 ``` html
@@ -24,7 +25,7 @@ You can also reference the js files from a CDN, like so:
 ```
 See [this post](http://sympmarc.com/2013/02/07/referencing-jquery-jqueryui-and-spservices-from-cdns-revisited/) for more info on using CDNs.
 
-[Debug Mode](glossary/index.md#DebugMode), first implemented in [v0.4.5](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=35706), also can be helpful in implementing solutions with the library.
+[Debug Mode](glossary.md#debug-mode), first implemented in [v0.4.5](http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=35706), also can be helpful in implementing solutions with the library.
 
 Here's a small example. If you want to add functionality to NewForm.aspx, then take a copy of the form, call it something like NewFormCustom.aspx, and add your script into it. I like to put my scripts below this line:
 ``` html

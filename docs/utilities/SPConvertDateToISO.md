@@ -1,14 +1,12 @@
 ---
 title: 'SPConvertDateToISO'
+function: '$().SPServices.SPConvertDateToISO'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'Convert a JavaScript date to the ISO 8601 format required by SharePoint to update list items.'
+introduced: 2013.01
 ---
-
-## Function
-
-**$().SPServices.SPConvertDateToISO**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
