@@ -7,19 +7,19 @@ nav_sort: 5
 
 ## Certification
 
-![Certified for SharePoint 2007](../img/sp2007-certified.jpg)
+![Certified for SharePoint 2007](img/sp2007-certified.jpg)
 
 This icon indicates that the function is Certified for SharePoint 2007. There have been no reported issues, and the function works well in all of my testing.<br /> </p>
 
-![Not Tested with SharePoint 2010](../img/sp2010-nottested.jpg)
+![Not Tested with SharePoint 2010](img/sp2010-nottested.jpg)
 
 This icon indicates that the function has not yet been tested with SharePoint 2010. If you see this icon for a function, it doesn&rsquo;t necessarily mean that the function won&rsquo;t work with SharePoint 2010, it means that I can't say either way because I haven&rsquo;t done any testing. If you try the function, please let me know what happens, whether positive or negative.
 
-![Works with Caveats with SharePoint 2010](../img/sp2010-works.jpg)
+![Works with Caveats with SharePoint 2010](img/sp2010-works.jpg)
 
 This icon indicates that the function has been tested and works with SharePoint 2010 but that there are some caveats. In each case where you see this icon, you&rsquo;ll also see explicit details of what you need to consider or watch for to use the function with SharePoint 2010.<br /> </p>
 
-![Certified for SharePoint 2010](../img/sp2010-certified.jpg)
+![Certified for SharePoint 2010](img/sp2010-certified.jpg)
 
 This icon indicates that the function is Certified for SharePoint 2010. This means that, to the best of my knowledge, and based on my testing, the function works fine with SharePoint 2010. As with SharePoint 2007, your mileage may well vary, depending on what types of customization you have done.
 

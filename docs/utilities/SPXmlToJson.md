@@ -23,7 +23,7 @@ $(xData.responseXML).SPFilterNode("z:row").SPXmlToJson({
 });
 ```
 
-SPXmlToJson operates on a nodeset from XML returned by a SharePoint Web Services operation. In the current implementation, the nodeset must be "flat", as in the z:row elements returned by [GetListItems](../core/api/Lists-GetListItems.md). In other words, the function doesn't handle any nesting.
+SPXmlToJson operates on a nodeset from XML returned by a SharePoint Web Services operation. In the current implementation, the nodeset must be "flat", as in the z:row elements returned by [GetListItems](../core/web-services/Lists/GetListItems.md). In other words, the function doesn't handle any nesting.
 
 ### mapping
 
