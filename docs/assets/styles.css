@@ -1,0 +1,90 @@
+body {
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.site-header .navbar {
+  border-radius: 0;
+}
+
+.site-header .navbar-brand {
+  line-height: 30px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.site-header .navbar-brand img {
+  border: 1px solid #777;
+  border-radius: 3px;
+  display: inline-block;
+  margin-right: 10px;
+  vertical-align: top;
+  width: 30px;
+  height: 30px;
+}
+
+.masthead {
+  background-color: #ccc;
+  background-image: url('masthead-bg.png');
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  background-size: cover;
+  margin-top: -20px;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+}
+
+.masthead .jumbotron {
+  background: transparent;
+}
+
+.feature-section {
+  margin: 1em auto;
+  padding: 2em 0;
+  text-align: center;
+}
+
+.featured-heading {
+  margin-top: 0;
+}
+
+.sidebar-navigation {
+  margin-top: 40px;
+}
+
+.sidebar-navigation ul {
+  list-style: none;
+}
+
+.sidebar-navigation a {
+  display: block;
+  padding: 5px 0;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  word-break: break-word;
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto
+}
+
+.sidebar-navigation li > ul {
+  display: none;
+  padding-left: 0.8em;
+}
+
+.sidebar-navigation li.active > ul,
+.sidebar-navigation li.active-ancestor > ul {
+  display: block;
+}
+
+.sidebar-navigation li.active > a {
+  font-weight: bold;
+}
+
+.site-footer {
+  background-color: #eee;
+  margin-top: 2em;
+  padding: 2em 0 1em;
+}

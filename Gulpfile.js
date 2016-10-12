@@ -25,6 +25,7 @@ var msCollectionMetadata = require('metalsmith-collection-metadata');
 var msNavigation = require('metalsmith-navigation');
 var msWatch = require('metalsmith-watch');
 var msIgnore = require('metalsmith-ignore');
+var msAssets = require('metalsmith-assets');
 var zip = require('gulp-zip');
 var merge = require('merge-stream');
 var browserSync = require('browser-sync');
@@ -217,6 +218,10 @@ gulp.task('docs', ['clean:docs'], function () {
           directory: 'docs/templates',
           partials: 'docs/templates/partials',
           default: 'main.hbs'
+        }))
+        .use(msAssets({
+          'source': './docs/assets',
+          'destination': 'assets'
         }))
         .build(function (err) {
           if (err) {

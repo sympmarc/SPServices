@@ -42,6 +42,7 @@
     "jshint": "^2.9.1",
     "merge-stream": "^1.0.0",
     "metalsmith": "^2.2.0",
+    "metalsmith-assets": "^0.1.0",
     "metalsmith-collection-metadata": "^0.1.0",
     "metalsmith-collections": "^0.7.0",
     "metalsmith-ignore": "^0.1.2",
