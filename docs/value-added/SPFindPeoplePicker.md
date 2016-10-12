@@ -61,7 +61,7 @@ This is a reference to the checkNames img tag in the People Picker. It’s used 
 
 ### dictionaryEntries
 
-If the browser is Internet Explorer, then this object will contain the full dictionary entry values for each user or group in the People Picker value. If the browser is not IE, then the function calls [GetUserInfo](../core/api/UserGroup.md) to retrieve similar values to mirror the dictionary entry structure.
+If the browser is Internet Explorer, then this object will contain the full dictionary entry values for each user or group in the People Picker value. If the browser is not IE, then the function calls [GetUserInfo](../core/web-services/UserGroup.md) to retrieve similar values to mirror the dictionary entry structure.
 
 ## Example
 

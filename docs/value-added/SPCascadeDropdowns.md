@@ -110,7 +110,8 @@ _promptText_
 Text to use as prompt. If included, {0} will be replaced with the value of childColumn. The default value is `""`.
 
 NOTE: I discourage the use of this option. Yes, I put it into the function, but if the user doesn't make a choice, they get an ugly error because SharePoint doesn't understand it as an option. I've left in in for backward compatibility.
-<span style="color: #ff0000;">Deprecated in v0.7.1.</span>
+
+**Deprecated in v0.7.1.**
 
 _simpleChild_
 

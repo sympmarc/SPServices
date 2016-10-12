@@ -104,7 +104,7 @@
   sparse: false // Added in 2014.01
 });
 </code></pre>
-<p>SPXmlToJson operates on a nodeset from XML returned by a SharePoint Web Services operation. In the current implementation, the nodeset must be &quot;flat&quot;, as in the z:row elements returned by <a href="../core/api/Lists-GetListItems.html">GetListItems</a>. In other words, the function doesn&#39;t handle any nesting.</p>
+<p>SPXmlToJson operates on a nodeset from XML returned by a SharePoint Web Services operation. In the current implementation, the nodeset must be &quot;flat&quot;, as in the z:row elements returned by <a href="../core/web-services/Lists/GetListItems.html">GetListItems</a>. In other words, the function doesn&#39;t handle any nesting.</p>
 <h3 id="mapping">mapping</h3>
 <p>An array of columns to return in the JSON. While you should generally limit the values you request in your Web Services calls where you can, in some cases you won&#39;t have that capability. This option alows you to create &quot;lean&quot; JSON by only including the attributes you need. You can also rename the attributes for better compatibility with other jQuery plugins, for instance. Where it makes sense, the different column types (SPFieldType) are returned as analogous JavaScript objects. If not specified in the mapping, values are returned as strings.</p>
 <p>The default value for mapping is <code>{}</code> (no mappings).</p>

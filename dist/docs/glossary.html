@@ -85,20 +85,20 @@
 
 
       <h2 id="certification">Certification</h2>
-<p><img src="../img/sp2007-certified.jpg" alt="Certified for SharePoint 2007"></p>
+<p><img src="img/sp2007-certified.jpg" alt="Certified for SharePoint 2007"></p>
 <p>This icon indicates that the function is Certified for SharePoint 2007. There have been no reported issues, and the function works well in all of my testing.<br /> </p></p>
-<p><img src="../img/sp2010-nottested.jpg" alt="Not Tested with SharePoint 2010"></p>
+<p><img src="img/sp2010-nottested.jpg" alt="Not Tested with SharePoint 2010"></p>
 <p>This icon indicates that the function has not yet been tested with SharePoint 2010. If you see this icon for a function, it doesn&rsquo;t necessarily mean that the function won&rsquo;t work with SharePoint 2010, it means that I can&#39;t say either way because I haven&rsquo;t done any testing. If you try the function, please let me know what happens, whether positive or negative.</p>
-<p><img src="../img/sp2010-works.jpg" alt="Works with Caveats with SharePoint 2010"></p>
+<p><img src="img/sp2010-works.jpg" alt="Works with Caveats with SharePoint 2010"></p>
 <p>This icon indicates that the function has been tested and works with SharePoint 2010 but that there are some caveats. In each case where you see this icon, you&rsquo;ll also see explicit details of what you need to consider or watch for to use the function with SharePoint 2010.<br /> </p></p>
-<p><img src="../img/sp2010-certified.jpg" alt="Certified for SharePoint 2010"></p>
+<p><img src="img/sp2010-certified.jpg" alt="Certified for SharePoint 2010"></p>
 <p>This icon indicates that the function is Certified for SharePoint 2010. This means that, to the best of my knowledge, and based on my testing, the function works fine with SharePoint 2010. As with SharePoint 2007, your mileage may well vary, depending on what types of customization you have done.</p>
 <p>Thanks to <a href="http://htdweb.com/">Michael Greene</a> for his great work on these icons and the project logo.</p></p>
 <h2 id="debug-mode">Debug Mode</h2>
 <p>One of the goals of the implementations in this library is to &quot;do no harm&quot;. By this, I mean that no inherent functionality should be lost due to a problem. All of the functions in the library are meant to &quot;run silent&quot;, meaning that no messages or alerts are presented to the user if something goes wrong. At this stage, there are some exceptions to this, but it is the goal.</p>
 <p>In the functions which have it implemented, setting <code>debug: true</code> indicates that you would like to receive messages if anything obvious is wrong with the function call, like specifying a column name which doesn&#39;t exist. By using debug mode, you can receive messages to help you get things set up; I recommend turning debug mode off once everything is in place and running correctly. Debug mode was first implemented in <a href="http://spservices.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=35706"> v0.4.5</a>, and the functionality will be expanded over time.</p>
-<p>When debug mode is enabled, you will receive messages like this if there is an issue:
-<img src="../img/debugmode.png" alt=""></p>
+<p>When debug mode is enabled, you will receive messages like this if there is an issue:</p>
+<p><img src="img/debugmode.png" alt=""></p>
 <h2 id="displayname">DisplayName</h2>
 <p>DisplayName (as opposed to <a href="#staticname">StaticName</a>) means the name of the column which is shown on forms and as the header in list views, e.g., <code>Region Name</code>. The StaticName would be <code>Region_x0020_Name</code>, i.e., the underlying column name.</p>
 <h2 id="minified">minified</h2>
