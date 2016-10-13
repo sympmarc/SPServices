@@ -341,8 +341,6 @@ define([
         // Put together operation header and SOAPAction for the SOAP call based on which Web Service we're calling
         SOAPEnvelope.opheader = "<" + opt.operation + " ";
 
-
-
         switch (WSops[opt.operation][0]) {
             case webServices.ALERTS:
                 SOAPEnvelope.opheader += "xmlns='" + constants.SCHEMASharePoint + "/soap/2002/1/alerts/' >";
