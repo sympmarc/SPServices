@@ -1,10 +1,13 @@
-## Function
-
-**$().SPServices.SPLookupAddNew**
-
-## Certification
-
-[![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg)](/docs/glossary/index.md#Certification) [![Certified for SharePoint 2010](/docs/img/sp2010-cert.jpg "Certified for SharePoint 2010")](/docs/glossary/index.md#Certification)
+---
+title: 'SPLookupAddNew'
+function: '$().SPServices.SPLookupAddNew'
+certification:
+  sp2007: 'certified'
+  sp2010: 'works'
+certification_notes: 'While this function works with SharePoint 2010, because of the modal dialogs the user will get "lost". Alternatively, if you’ve turned off the modal dialogs, the function works just great.'
+description: 'This function allows you to provide a link in forms for Lookup columns so that the user can add new values to the Lookup list easily. It is based on a blog post by Waldek Mastykarz. (see Credits)'
+introduced: 0.3.2
+---
 
 ## Functionality
 
@@ -26,7 +29,7 @@ The function works like this:
 ## Syntax
 
 ``` javascript
-$().SPServices.SPLookupAddNew({	
+$().SPServices.SPLookupAddNew({
 	lookupColumn: "",
 	promptText: "Add new {0}",
 	newWindow: false,
@@ -38,7 +41,7 @@ $().SPServices.SPLookupAddNew({
 
 ### Lookup column
 
-The [DisplayName](/docs/glossary/index.md#DisplayName) of the Lookup column in the form.
+The [DisplayName](../glossary.md#displayname) of the Lookup column in the form.
 
 ### promptText
 
@@ -60,7 +63,7 @@ completefunc: function() {
 },
 ```
 
-or 
+or
 
 ``` javascript
 completefunc: doSomething,   // Where doSomething is the name of your function
@@ -68,20 +71,20 @@ completefunc: doSomething,   // Where doSomething is the name of your function
 
 ### debug
 
-Setting debug: true indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [DebugMode](/docs/glossary/index.md#DebugMode).
+Setting debug: true indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [DebugMode](../glossary.md#debug-mode).
 
 ## Example
 
 ``` javascript
 $(document).ready(function() {
-	$().SPServices.SPLookupAddNew({	
+	$().SPServices.SPLookupAddNew({
 		lookupColumn: "Region Name",
 		promptText: "Add new {0} "
 	});
 });
 ```
 
-![SP Lookup Add New](/docs/img/splookupaddnew.jpg)
+![SP Lookup Add New](../img/splookupaddnew.jpg)
 
 The prompt in this example will be 'Add new Region Name'. Other prompt examples:
 * 'Add {0}' --> 'Add Region Name'

@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Home - SPServices</title>
+
+    <meta name="description" content="SPServices is a jQuery library which abstracts SharePoint’s Web Services and makes them easier to use. It also includes functions which use the various Web Service operations to provide more useful (and cool) capabilities. It works entirely client side and requires no server install.">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+    <link rel="apple-touch-icon" sizes="76x76" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="manifest.json">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="theme-color" content="#ffffff">
+
+  </head>
+  <body>
+
+    <header class="site-header" id="top">
+      <nav class="navbar navbar-inverse">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html"><img src="img/spservices-icon.png" alt="" width="30" height="30"> SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+                <li class="">
+                        <a href="general-instructions.html" >General Instructions</a>
+                
+                </li>
+                <li class="">
+                        <a href="core.html" title="These are the low-level functions that allow SPServices to work its magic. Leverage them to interact directly with SharePoint’s web services.">Core</a>
+                
+                </li>
+                <li class="">
+                        <a href="value-added.html" title="Take the out-of-the-box SharePoint forms to the next level with enhancements like autocomplete, cascading dropdowns and more.">Value Added</a>
+                
+                </li>
+                <li class="">
+                        <a href="utilities.html" title="From parsing query string parameters to getting information about the current user, these utility functions are handy tools for building client-side solutions.">Utilities</a>
+                
+                </li>
+                <li class="">
+                        <a href="glossary.html" >Glossary</a>
+                
+                </li>
+                <li class="">
+                        <a href="faqs.html" >FAQs</a>
+                
+                </li>
+            </ul>
+    
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="https://github.com/sympmarc/spservices" title="View on GitHub"><span class="fa fa-fw fa-github" aria-hidden="true"></span> GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions" title="Discuss on CodePlex"><span class="fa fa-fw fa-comments" aria-hidden="true"></span> Discussions</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+<div class="masthead">
+  <div class="container">
+    <div class="jumbotron">
+      <h1>SPServices</h1>
+      <p class="lead">SPServices is a jQuery library which abstracts SharePoint’s Web Services and makes them easier to use. It also includes functions which use the various Web Service operations to provide more useful (and cool) capabilities. It works entirely client side and requires no server install.</p>
+      <p><a href="SPServices.zip" class="btn btn-lg btn-primary"><span class="fa fa-fw fa-download" aria-hidden="true"></span> Download SPServices.zip</a></p>
+      <p class="h6"><small>Or use with a CDN: <a href="https://cdnjs.com/libraries/jquery.SPServices">https://cdnjs.com/libraries/jquery.SPServices</a></small></p>
+    </div>
+  </div>
+</div>
+
+<div class="feature-section">
+  <div class="container">
+    <h2>Getting Started</h2>
+
+    <div class="lead">
+      <p>There is no server-side installation for SPServices. You just need to load jQuery and SPServices onto the page to start using it. View the <a href="general-instructions.html">general instructions</a> first, then dive into the <a href="core.html">Core</a>, <a href="value-added.html">Value Added</a>, and <a href="utilities.html">Utilities</a> documentation sections for more details.</p>
+
+    </div>
+
+    <p><a href="general-instructions.html" class="btn btn-lg btn-default">Start Here</a></p>
+  </div>
+</div>
+
+<hr>
+
+<div class="feature-section">
+  <div class="container">
+    <h2>Works with Most SharePoint Environments</h2>
+
+    <p class="lead">SPServices can be used with SharePoint 2007, 2010, and 2013, whether on premises or hosted with Office365 or others.</p>
+
+    <div class="row">
+      <div class="col-sm-4"><p><img src="img/SharePoint2007_thumb.png" alt="SharePoint 2007 logo"></p></div>
+      <div class="col-sm-4"><p><img src="img/SharePoint2010_thumb.jpg" alt="SharePoint 2010 logo"></p></div>
+      <div class="col-sm-4"><p><img src="img/SharePoint2013_thumb.png" alt="SharePoint 2013 logo"></p></div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div class="feature-section">
+  <div class="container">
+    <h2>Full Documentation</h2>
+
+    <p class="lead">The documentation sections below cover all aspects of SPServices.</p>
+
+    <div class="row">
+        <div class="col-sm-4">
+          <div class="h2 featured-icon">
+            <span class="fa fa-fw fa-code" aria-hidden="true"></span>
+          </div>
+          <h3 class="featured-heading">Core</h3>
+          <p>These are the low-level functions that allow SPServices to work its magic. Leverage them to interact directly with SharePoint’s web services.</p>
+          <p><a href="core.html">View More <span class="fa fa-fw fa-chevron-right" aria-hidden="true"></span></a></p>
+        </div>
+        <div class="col-sm-4">
+          <div class="h2 featured-icon">
+            <span class="fa fa-fw fa-magic" aria-hidden="true"></span>
+          </div>
+          <h3 class="featured-heading">Value Added</h3>
+          <p>Take the out-of-the-box SharePoint forms to the next level with enhancements like autocomplete, cascading dropdowns and more.</p>
+          <p><a href="value-added.html">View More <span class="fa fa-fw fa-chevron-right" aria-hidden="true"></span></a></p>
+        </div>
+        <div class="col-sm-4">
+          <div class="h2 featured-icon">
+            <span class="fa fa-fw fa-wrench" aria-hidden="true"></span>
+          </div>
+          <h3 class="featured-heading">Utilities</h3>
+          <p>From parsing query string parameters to getting information about the current user, these utility functions are handy tools for building client-side solutions.</p>
+          <p><a href="utilities.html">View More <span class="fa fa-fw fa-chevron-right" aria-hidden="true"></span></a></p>
+        </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div class="feature-section">
+  <div class="container">
+    <h2>Contribute</h2>
+
+    <p class="lead">SPServices is open source! Help develop it on GitHub.</p>
+
+    <p><a href="https://github.com/sympmarc/spservices" class="btn btn-lg btn-default"><span class="fa fa-fw fa-github" aria-hidden="true"></span> View on GitHub</a></p>
+  </div>
+</div>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6">
+            <p><a href="http://twitter.com/jQSPWS"><span class="fa fa-fw fa-twitter" aria-hidden="true"></span> Twitter</a> | <a href="http://facebook.com/jQSPWS"><span class="fa fa-fw fa-facebook" aria-hidden="true"></span> Facebook</a> | <a href="https://github.com/sympmarc/spservices"><span class="fa fa-fw fa-github" aria-hidden="true"></span> GitHub</a></p>
+    
+            <p>&copy; 2009-2016 Sympraxis Consulting LLC | Licensed <a href="https://github.com/sympmarc/SPServices/blob/master/license.txt">MIT</a></p>
+          </div>
+          <div class="col-sm-6">
+            <p>Like SPServcices? Please support my work; this is my hobby.</p>
+    
+            <p><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=2ZQS4LK7CT6DW&amp;lc=US&amp;item_name=Sympraxis%20Consulting%20LLC&amp;item_number=SPServices&amp;currency_code=USD&amp;bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" alt="Donate to SPServices" border="0"></a></p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

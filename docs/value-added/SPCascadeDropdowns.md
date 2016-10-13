@@ -1,18 +1,12 @@
 ---
-label: SPCascadeDropdowns
-id: SPCascadeDropdowns
-categorySlug: 'value-added'
-categoryLabel: 'value-added'
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
-
-## Function
-
-**$().SPServices.SPCascadeDropdowns**
-
-## Certification
-
-[![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg)](/docs/glossary/index.md#Certification) [![Certified for SharePoint 2010](/docs/img/sp2010-cert.jpg "Certified for SharePoint 2010")](/docs/glossary/index.md#Certification)
+title: 'SPCascadeDropdowns'
+function: '$().SPServices.SPCascadeDropdowns'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'This is the first function we implemented which allows you to take advantage of the Web Services calls in a meaningful way. It allows you to easily set up cascading dropdowns on a list form. (What we mean by cascading dropdowns is the situation where the available options for one column depend on the value you select in another column.)'
+introduced: 0.2.6
+---
 
 ## Functionality
 
@@ -25,14 +19,14 @@ This function works with any number of options in the dropdowns as well as multi
 | | | parentColumn |
 |------------- |
 | | | <20 options | 20+ options | multi-select |
-| childColumn | <20 options | ![](/docs/img/checkmark.gif) | ![](/docs/img/checkmark.gif) | ![](/docs/img/checkmark.gif) |
-| |  20+ options | ![](/docs/img/checkmark.gif) | ![](/docs/img/checkmark.gif) | ![](/docs/img/checkmark.gif) |
-| | multi-select | ![](/docs/img/checkmark.gif) | ![](/docs/img/checkmark.gif) | ![](/docs/img/checkmark.gif) |
+| childColumn | <20 options | ![](../img/checkmark.gif) | ![](../img/checkmark.gif) | ![](../img/checkmark.gif) |
+| |  20+ options | ![](../img/checkmark.gif) | ![](../img/checkmark.gif) | ![](../img/checkmark.gif) |
+| | multi-select | ![](../img/checkmark.gif) | ![](../img/checkmark.gif) | ![](../img/checkmark.gif) |
 
 
 When the relationshipList contains lookup columns for both the relationshipListParentColumn and relationshipListChildColumn columns, the function uses the relationshipListParentColumn's ID rather than the relationshipList item's ID. This means that "secondary lists" are also supported.
 
-![](/docs/value-added/img/SPCascadeDropdown1.png)
+![](img/SPCascadeDropdown1.png)
 
 Note that "multiple cascades" are supported, such as Country -> Region -> State. In this example, we have two "cascades" in place: Country -> Region, and Region -> State. There's not a lot to show here, but the available options in the dropdowns will change based on the relationships defined in the lists shown below. So, if you choose **Country** = `United States`, the options for **Region** will be limited to `Northeast, Southeast, Midwest, Mountain, Southwest, Northwest`. If you choose **Country** = `Canada`, the options for **Region** would be `Eastern Provinces, Western Provinces`.
 
@@ -58,7 +52,7 @@ $().SPServices.SPCascadeDropdowns({
   childColumn: "",
   CAMLQuery: "",
   CAMLQueryOptions: "<QueryOptions><IncludeMandatoryColumns>FALSE</IncludeMandatoryColumns></QueryOptions>", // Added in 2013.01
-  listName: $().SPServices.SPListNameFromUrl(), 
+  listName: $().SPServices.SPListNameFromUrl(),
   promptText: "",
   simpleChild: false,			// Added in v0.6.2
   selectSingleOption: false,    // Added in v0.6.2
@@ -78,11 +72,11 @@ The name or GUID of the list which contains the parent/child relationships. If y
 
 **_relationshipListParentColumn_**
 
-The [StaticName](/docs/glossary/index.md#StaticName) of the parent column in the _relationshipList_
+The [StaticName](../glossary.md#staticname) of the parent column in the _relationshipList_
 
 **_relationshipListChildColumn_**
 
-The [StaticName](/docs/glossary/index.md#StaticName) of the child column in the _relationshipList_
+The [StaticName](../glossary.md#staticname) of the child column in the _relationshipList_
 
 _CAMLQuery_
 
@@ -101,11 +95,11 @@ If specified, sort the options in the dropdown by this column otherwise the opti
 
 **_parentColumn_**
 
-The [DisplayName](/docs/glossary/index.md#DisplayName) of the parent column in the _form_
+The [DisplayName](../glossary.md#displayname) of the parent column in the _form_
 
 **_childColumn_**
 
-The [DisplayName](/docs/glossary/index.md#DisplayName) of the child column in the _form_
+The [DisplayName](../glossary.md#displayname) of the child column in the _form_
 
 _listName_
 
@@ -116,7 +110,8 @@ _promptText_
 Text to use as prompt. If included, {0} will be replaced with the value of childColumn. The default value is `""`.
 
 NOTE: I discourage the use of this option. Yes, I put it into the function, but if the user doesn't make a choice, they get an ugly error because SharePoint doesn't understand it as an option. I've left in in for backward compatibility.
-<span style="color: #ff0000;">Deprecated in v0.7.1.</span>
+
+**Deprecated in v0.7.1.**
 
 _simpleChild_
 
@@ -145,7 +140,7 @@ completefunc: doSomething,    // Where doSomething is the name of your function
 
 _debug_
 
-Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](/docs/glossary/index.md#DebugMode).
+Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](../glossary.md#debug-mode).
 
 ## Example
 
@@ -153,7 +148,7 @@ To make the example shown at the top of the page for Country -> Region -> State 
 
 The end result will look like this:
 
-![](/docs/value-added/img/SPCascadeDropdown1.png)
+![](img/SPCascadeDropdown1.png)
 
 You'll need these three relationship lists:
 
@@ -161,21 +156,21 @@ You'll need these three relationship lists:
 
 The Countries list simply contains all of the country names, stored in the list's Title column.
 
-![](/docs/value-added/img/SPCascadeDropdown2.png)
+![](img/SPCascadeDropdown2.png)
 
 **Regions List**
 
 The Regions list contains all of the Region names in the Title column. The Country column is a Lookup column into the Countries list's Title column.
 
-![](/docs/value-added/img/SPCascadeDropdown3.png) 
+![](img/SPCascadeDropdown3.png) 
 
 **States List**
 
 The States list contains all of the State names in the Title column. Note that I've changed the DisplayName of the Title column to State, but the StaticName is still Title. The Region Name column is a Lookup column into the Regions list's Title column. (The State Abbreviation column is only here to show that you can also store additional information about the States in this list. The same is true of the Countries and Regions lists, of course.)
 
-![](/docs/value-added/img/SPCascadeDropdown4.png) 
+![](img/SPCascadeDropdown4.png) 
 
-This is the sum total of what you'll need to add to your page to make the function work for the example above. The first two lines simply pull the script files into the page, and the `$(document).ready(function()` line is a jQuery function that says "Run this script when the page has been fully rendered". In the first call to the function, note that we're turning [debug mode](/docs/glossary/index.md#DebugMode) on by setting `debug: true`.
+This is the sum total of what you'll need to add to your page to make the function work for the example above. The first two lines simply pull the script files into the page, and the `$(document).ready(function()` line is a jQuery function that says "Run this script when the page has been fully rendered". In the first call to the function, note that we're turning [debug mode](../glossary.md#debug-mode) on by setting `debug: true`.
 
 ```html
 <script language="javascript" type="text/javascript" src="../../jQuery%20Libraries/jquery-1.11.3.js"></script>
@@ -203,4 +198,3 @@ $(document).ready(function() {
 
 </script>
 ```
-

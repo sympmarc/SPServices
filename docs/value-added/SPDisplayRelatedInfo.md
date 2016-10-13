@@ -1,24 +1,18 @@
 ---
-label: SPDisplayRelatedInfo
-id: SPDisplayRelatedInfo
-categorySlug: 'value-added'
-categoryLabel: 'value-added'
-categorySort: 'alphabetical'
-documentSort: 'alphabetical'
+title: 'SPDisplayRelatedInfo'
+function: '$().SPServices.SPDisplayRelatedInfo'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'This function lets you display related information on forms when an option in a dropdown is chosen.'
+introduced: 0.2.9
+---
 
-### Function
-
-**$().SPServices.SPDisplayRelatedInfo**
-
-### Certification
-
-[![Certified for SharePoint 2007](/docs/img/sp2007-cert.jpg)](/docs/glossary/index.md#Certification) [![Certified for SharePoint 2010](/docs/img/sp2010-cert.jpg "Certified for SharePoint 2010")](/docs/glossary/index.md#Certification)
-
-### Functionality
+## Functionality
 
 SPDisplayRelatedInfo is a function in the jQuery Library for SharePoint Web Services that lets you display information which is related to the selection in a dropdown. This can really bring your forms to life for users: rather than just selecting bland text values, you can show them images and links that are related to their choices.
 
-### How Does It Work?
+## How Does It Work?
 
 The SPDisplayRelatedInfo function works like this:
 
@@ -32,20 +26,20 @@ The SPDisplayRelatedInfo function works like this:
 
 **Tip**: If you don't want to see the column headers, pass in ms-hidden for headerCSSClass. (This is a CSS class in core.css which sets display: none.)
 
-### Prerequisites
+## Prerequisites
 
 *   You'll need to have a list (relatedList) which contains the values in the dropdown in one column and the related values you'd like to display in additional columns. If you're already using SPCascadeDropdowns, then you'll already have a list (or lists) in place which you can use here.
 
 Here is an example of the form where you want to use SPDisplayRelatedInfo:
-![](/docs/value-added/img/SPDisplayRelatedInfo1.jpg)
+![](img/SPDisplayRelatedInfo1.jpg)
  In this example, I have a list called Systems, which has three columns:
-![](/docs/value-added/img/SPDisplayRelatedInfo2.jpg)
+![](img/SPDisplayRelatedInfo2.jpg)
 
-### Syntax
+## Syntax
 
 **_columnName_**
 
-The [DisplayName](/docs/glossary/index.md#DisplayName) of the column in the _form_
+The [DisplayName](../glossary.md#displayname) of the column in the _form_
 
 _relatedWebURL_
 
@@ -57,11 +51,11 @@ The name or GUID of the list which contains the related information. If you choo
 
 **_relatedListColumn_**
 
-The [StaticName](/docs/glossary/index.md#StaticName) of the column in the _relatedList_
+The [StaticName](../glossary.md#staticname) of the column in the _relatedList_
 
 **_relatedColumns_**
 
-An array of [StaticNames](/docs/glossary/index.md#StaticName) of related columns to display
+An array of [StaticNames](../glossary.md#staticname) of related columns to display
 
 _displayFormat_
 
@@ -111,9 +105,9 @@ completefunc: doSomething,    // Where doSomething is the name of your function
 
 _debug_
 
-Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](/docs/glossary/index.md#DebugMode).
+Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](../glossary.md#debug-mode).
 
-### Examples
+## Examples
 ``` javascript
 $().SPServices.SPDisplayRelatedInfo({
 	columnName: "System",
@@ -123,18 +117,18 @@ $().SPServices.SPDisplayRelatedInfo({
 	displayFormat: "list"
 });
 ```
-Here I’m asking SPDisplayRelatedInfo to show me the values in the `System_x0020_Image` and `Lead_x0020_Sales_x0020_Rep` columns (these are the [StaticNames](/docs/glossary/index.md#StaticName) of the list columns as opposed to the [DisplayNames](/docs/glossary/index.md#DisplayName) in the `Systems` list under the `System` column in my form using the `list` display format where the `System value matches the `Title` value in the `Systems` list. I’m just taking the default CSS classes for the example. As you can see, you can pass in any CSS class you’d like to make the SPDisplayRelatedInfo output match your site branding.
-![](/docs/value-added/img/SPDisplayRelatedInfo3.jpg)
+Here I’m asking SPDisplayRelatedInfo to show me the values in the `System_x0020_Image` and `Lead_x0020_Sales_x0020_Rep` columns (these are the [StaticNames](../glossary.md#staticname) of the list columns as opposed to the [DisplayNames](../glossary.md#displayname) in the `Systems` list under the `System` column in my form using the `list` display format where the `System value matches the `Title` value in the `Systems` list. I’m just taking the default CSS classes for the example. As you can see, you can pass in any CSS class you’d like to make the SPDisplayRelatedInfo output match your site branding.
+![](img/SPDisplayRelatedInfo3.jpg)
 
 In this example, I'm displaying some information about the `Region`. To make the output look better, I'm doing a little post-processing on the `Total_x0020_Sales` column. You’ll see that I’m both pre-pending the value with “$” and right justifying it. In my case, the column is `Region` and the `Total_x0020_Sales` column is the 4th one, so I’m using `:nth-child(4)`.
 ``` javascript
 $().SPServices.SPDisplayRelatedInfo({       
-  columnName: "Region", 
+  columnName: "Region",
   relatedWebURL: "/Intranet/JQueryLib",
   relatedList: "Regions",
   relatedListColumn: "Title",
   relatedColumns: ["ID", "Country", "Title", "Total_x0020_Sales"],
-  displayFormat: "table", 
+  displayFormat: "table",
   completefunc: addDollarSigns,
   debug: true
 });
@@ -143,4 +137,4 @@ function addDollarSigns() {
   $("#SPDisplayRelatedInfo_Region td:nth-child(4)").prepend("$").css("textAlign", "right");
 }
 ```
-![](/docs/value-added/img/SPDisplayRelatedInfo4.png)
+![](img/SPDisplayRelatedInfo4.png)

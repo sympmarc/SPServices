@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>SPScriptAudit - SPServices</title>
+
+    <meta name="description" content="The SPScriptAudit function allows you to run an auditing report showing where scripting is in use in a site.">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css">
+
+    <link rel="apple-touch-icon" sizes="76x76" href="../apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="../favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="../favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="../manifest.json">
+    <link rel="mask-icon" href="../safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="theme-color" content="#ffffff">
+
+  </head>
+  <body>
+
+    <header class="site-header" id="top">
+      <nav class="navbar navbar-inverse">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="../index.html"><img src="../img/spservices-icon.png" alt="" width="30" height="30"> SPServices</a>
+          </div>
+    
+          <div class="collapse navbar-collapse" id="navbar-top">
+            <ul class="nav navbar-nav">
+                <li class="">
+                        <a href="../general-instructions.html" >General Instructions</a>
+                
+                </li>
+                <li class="">
+                        <a href="../core.html" title="These are the low-level functions that allow SPServices to work its magic. Leverage them to interact directly with SharePoint’s web services.">Core</a>
+                
+                </li>
+                <li class="">
+                        <a href="../value-added.html" title="Take the out-of-the-box SharePoint forms to the next level with enhancements like autocomplete, cascading dropdowns and more.">Value Added</a>
+                
+                </li>
+                <li class="">
+                        <a href="../utilities.html" title="From parsing query string parameters to getting information about the current user, these utility functions are handy tools for building client-side solutions.">Utilities</a>
+                
+                </li>
+                <li class="">
+                        <a href="../glossary.html" >Glossary</a>
+                
+                </li>
+                <li class="">
+                        <a href="../faqs.html" >FAQs</a>
+                
+                </li>
+            </ul>
+    
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="https://github.com/sympmarc/spservices" title="View on GitHub"><span class="fa fa-fw fa-github" aria-hidden="true"></span> GitHub</a></li>
+              <li><a href="http://spservices.codeplex.com/discussions" title="Discuss on CodePlex"><span class="fa fa-fw fa-comments" aria-hidden="true"></span> Discussions</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+<div class="container">
+
+<ol class="breadcrumb">
+    <li>
+        <a href="../../../../../index.html">Home</a>
+    </li>
+    <li>
+            <a href="../utilities.html">Utilities</a>
+    </li>
+    <li class="active">
+        SPScriptAudit
+    </li>
+</ol>
+
+  <div class="row">
+    <main class="col-md-9 col-md-push-3">
+        <h1 class="page-header">SPScriptAudit</h1>
+
+        <h2>Function</h2>
+        <p><code>$().SPServices.SPScriptAudit</code></p>
+        <h2>Certification</h2>
+        <p>
+            <a href="../glossary.html#certification"><img src="../img/sp2007-certified.jpg" alt="SharePoint 2007: certified"></a>
+            <a href="../glossary.html#certification"><img src="../img/sp2010-certified.jpg" alt="SharePoint 2010: certified"></a>
+        </p>
+
+      <h2 id="functionality">Functionality</h2>
+<p>The SPScriptAudit function allows you to run an auditing report showing where scripting is in use in a site.</p>
+<h2 id="how-does-it-work-">How Does It Work?</h2>
+<ul>
+<li>Calls <a href="http://msdn.microsoft.com/en-us/library/lists.lists.getlistcollection.aspx">GetListCollection</a> to get all of the lists in the site specified in <code>webURL</code> (or the current site if <code>webURL</code> is not specified).</li>
+<li>For each list, calls <a href="http://msdn.microsoft.com/en-us/library/lists.lists.getlistcontenttypes.aspx">GetListContentTypes</a> to identify the specific forms which have been customized. What we see in the results from GetListContentTypes is any form which has been specified in the Supporting Files tab of the list properties. I&#39;m explicitly excluding the Folder Content Type right now; I&#39;m not sure there&#39;s any real utility in including it.<ul>
+<li>For each customized form, does an AJAX call to fetch the form</li>
+<li>Find each Web Part in the form and looks for internal <code>&lt;script&gt;</code> tags. If any are found, then they are reported. I also look for any occurrences of &quot;<code>$(</code>&quot; within the <code>&lt;script&gt;</code> tags, which should indicate usage of jQuery, but I&#39;m interested in better or more reliable ideas for this.</li>
+<li>Find <code>&lt;script&gt;</code> tags <strong>outside</strong> of Web Parts. If any are found, then they are reported.</li>
+</ul>
+</li>
+<li>Next, go through the same process for the list&#39;s View pages by calling <a href="http://msdn.microsoft.com/en-us/library/forms.forms.getformcollection.aspx">GetFormCollection</a> for the list.</li>
+<li>Finally, the same basic process for the Pages, if requested.</li>
+</ul>
+<h2 id="syntax">Syntax</h2>
+<pre><code class="language-javascript">$().SPServices.SPScriptAudit({
+    webURL: &quot;&quot;,
+    listName: &quot;&quot;,
+    outputId: &quot;&quot;,
+    auditForms: true,
+    auditViews: true,
+    auditPages: true,
+    auditPagesListName: &quot;Pages&quot;,
+    showHiddenLists: false,
+    showNoScript: false,
+    showSrc: true
+});
+</code></pre>
+<h3 id="weburl">webURL</h3>
+<p>The site on which to run the audit. If no site is specified, the current site is used. Examples would be: &quot;/Departments&quot;, &quot;/Departments/HR&quot;, &quot;/Sites&quot;, etc.</p>
+<h3 id="listname">listName</h3>
+<p>The name of a specific list to audit. If not present, all lists in the site are audited.</p>
+<h3 id="outputid">outputId</h3>
+<p>The ID of an HTML element into which to insert the report. If you would like to see the report within this div: <code>&lt;div id=&quot;MyOutput&quot;&gt;&lt;/div&gt;</code>, then the value would be &quot;MyOutput&quot;.</p>
+<h3 id="auditforms">auditForms</h3>
+<p>Audit the form pages if true. The default is <code>true</code>.</p>
+<h3 id="auditviews">auditViews</h3>
+<p>Audit the view pages if true. The default is <code>true</code>.</p>
+<h3 id="auditpages">auditPages</h3>
+<p>Audit the Pages Document Library if true. The default is <code>true</code>.</p>
+<h3 id="auditpageslistname">auditPagesListName</h3>
+<p>The Pages Document Library, if desired. The default is <code>&quot;Pages&quot;</code>.</p>
+<h3 id="showhiddenlists">showHiddenLists</h3>
+<p><code>true</code> if you would like to see the output for hidden lists; <code>false</code> if not. The default is <code>false</code>.</p>
+<h3 id="shownoscript">showNoScript</h3>
+<p><code>true</code> if you would like to see the output for lists with no scripts (effectively &quot;verbose&quot;); <code>false</code> if not. The default is <code>false</code>.</p>
+<h3 id="showsrc">showSrc</h3>
+<p><code>true</code> if you would like to see the included script files on each page; <code>false</code> if not. The default is <code>true</code>.</p>
+<h2 id="example">Example</h2>
+<pre><code class="language-javascript">$().SPServices.SPScriptAudit({
+    webURL: &quot;&quot;,
+    outputId: &quot;WSOutput&quot;,
+    showHiddenLists: true,
+    showNoScript: false,
+    showSrc: true
+});
+</code></pre>
+<p><img src="img/SPScriptAudit1.jpg" alt="script audit results"></p>
+
+    </main>
+    <aside class="sidebar-navigation col-md-3 col-md-pull-9 hidden-print hidden-sm hidden-xs">
+          <h2 class="h4">Navigation</h2>
+          <ul class="list-unstyled">
+              <li class="">
+                      <a href="../index.html" title="SPServices is a jQuery library which abstracts SharePoint’s Web Services and makes them easier to use. It also includes functions which use the various Web Service operations to provide more useful (and cool) capabilities. It works entirely client side and requires no server install.">Home</a>
+              
+              </li>
+              <li class="">
+                      <a href="../general-instructions.html" >General Instructions</a>
+              
+              </li>
+              <li class="">
+                      <a href="../core.html" title="These are the low-level functions that allow SPServices to work its magic. Leverage them to interact directly with SharePoint’s web services.">Core</a>
+              
+                  <ul>
+                          <li class="">
+                                  <a href="../core/web-services.html" title="This is the core function of the library, which you can use to make Ajax calls to the SharePoint Web Services. Note: As of version 2013.01, all calls return a jQuery deferred object aka a promise.">Web Services</a>
+                          
+                              <ul>
+                                      <li class="">
+                                              <a href="../core/web-services/Alerts.html" >Alerts</a>
+                                      
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/Authentication.html" >Authentication</a>
+                                      
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/Copy.html" >Copy</a>
+                                      
+                                          <ul>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Copy/CopyIntoItemsLocal.html" >CopyIntoItemsLocal</a>
+                                                  
+                                                  </li>
+                                          </ul>
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/Diagnostics.html" >Diagnostics</a>
+                                      
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/Forms.html" >Forms</a>
+                                      
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/Lists.html" >Lists</a>
+                                      
+                                          <ul>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Lists/CheckInFile.html" >CheckInFile</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Lists/CheckOutFile.html" >CheckOutFile</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Lists/GetAttachmentCollection.html" >GetAttachmentCollection</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Lists/GetList.html" >GetList</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Lists/GetListContentTypes.html" >GetListContentTypes</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Lists/GetListItems.html" >GetListItems</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Lists/UpdateList.html" >UpdateList</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Lists/UpdateListItems.html" >UpdateListItems</a>
+                                                  
+                                                  </li>
+                                          </ul>
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/Meetings.html" >Meetings</a>
+                                      
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/People.html" >People</a>
+                                      
+                                          <ul>
+                                                  <li class="">
+                                                          <a href="../core/web-services/People/SearchPrincipals.html" >SearchPrinciples</a>
+                                                  
+                                                  </li>
+                                          </ul>
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/Permissions.html" >Permissions</a>
+                                      
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/PublishedLinksService.html" >PublishedLinksService</a>
+                                      
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/QueryService.html" >QueryService</a>
+                                      
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/RecordsRepository.html" >RecordsRepository</a>
+                                      
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/SiteData.html" >SiteData</a>
+                                      
+                                          <ul>
+                                                  <li class="">
+                                                          <a href="../core/web-services/SiteData/EnumerateFolder.html" >EnumerateFolder</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/SiteData/GetWeb.html" >GetWeb</a>
+                                                  
+                                                  </li>
+                                          </ul>
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/Sites.html" >Sites</a>
+                                      
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/SocialDataService.html" >SocialDataService</a>
+                                      
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/SpellChecker.html" >SpellChecker</a>
+                                      
+                                          <ul>
+                                                  <li class="">
+                                                          <a href="../core/web-services/SpellChecker/SpellCheck.html" >SpellCheck</a>
+                                                  
+                                                  </li>
+                                          </ul>
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/TaxonomyClientService.html" >TaxonomyClientService</a>
+                                      
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/UserGroup.html" >UserGroup</a>
+                                      
+                                          <ul>
+                                                  <li class="">
+                                                          <a href="../core/web-services/UserGroup/GetGroupCollectionFromUser.html" >GetGroupCollectionFromUser</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/UserGroup/GetRolesAndPermissionsForCurrentUser.html" >GetRolesAndPermissionsForCurrentUser</a>
+                                                  
+                                                  </li>
+                                          </ul>
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/UserProfileService.html" >UserProfileService</a>
+                                      
+                                          <ul>
+                                                  <li class="">
+                                                          <a href="../core/web-services/UserProfileService/GetUserProfileByName.html" >GetUserProfileByName</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/UserProfileService/ModifyUserPropertyByAccountName.html" >ModifyUserPropertyByAccountName</a>
+                                                  
+                                                  </li>
+                                          </ul>
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/Versions.html" >Versions</a>
+                                      
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/Views.html" >Views</a>
+                                      
+                                          <ul>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Views/AddView.html" >AddView</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Views/UpdateView.html" >UpdateView</a>
+                                                  
+                                                  </li>
+                                          </ul>
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/WebPartPages.html" >WebPartPages</a>
+                                      
+                                          <ul>
+                                                  <li class="">
+                                                          <a href="../core/web-services/WebPartPages/AddWebPart.html" >AddWebPart</a>
+                                                  
+                                                  </li>
+                                          </ul>
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/Webs.html" >Webs</a>
+                                      
+                                          <ul>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Webs/CreateContentType.html" >CreateContentType</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Webs/GetAllSubWebCollection.html" >GetAllSubWebCollection</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Webs/UpdateColumns.html" >UpdateColumns</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Webs/WebUrlFromPageUrl.html" >WebUrlFromPageUrl</a>
+                                                  
+                                                  </li>
+                                          </ul>
+                                      </li>
+                                      <li class="">
+                                              <a href="../core/web-services/Workflow.html" >Workflow</a>
+                                      
+                                          <ul>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Workflow/AlterToDo.html" >AlterToDo</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Workflow/GetTemplatesForItem.html" >GetTemplatesForItem</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Workflow/GetToDosForItem.html" >GetToDosForItem</a>
+                                                  
+                                                  </li>
+                                                  <li class="">
+                                                          <a href="../core/web-services/Workflow/StartWorkflow.html" >StartWorkflow</a>
+                                                  
+                                                  </li>
+                                          </ul>
+                                      </li>
+                              </ul>
+                          </li>
+                          <li class="">
+                                  <a href="../core/defaults.html" title="With this defaults function, you can set the defaults for the remainder of the page life. This can be useful if you’d like to make many calls into the library for a single list or site.">defaults</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="../core/Version.html" title="Returns the current version of SPServices as a string, e.g. “0.7.2”">Version</a>
+                          
+                          </li>
+                  </ul>
+              </li>
+              <li class="">
+                      <a href="../value-added.html" title="Take the out-of-the-box SharePoint forms to the next level with enhancements like autocomplete, cascading dropdowns and more.">Value Added</a>
+              
+                  <ul>
+                          <li class="">
+                                  <a href="../value-added/SPArrangeChoices.html" title="Rearranges radio buttons or checkboxes in a form from vertical to horizontal display to save page real estate.">SPArrangeChoices</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="../value-added/SPAutocomplete.html" title="The SPAutocomplete lets you provide values for a Single line of text column from values in a SharePoint list. The function is highly configurable and can enhance the user experience with forms.">SPAutocomplete</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="../value-added/SPCascadeDropdowns.html" title="This is the first function we implemented which allows you to take advantage of the Web Services calls in a meaningful way. It allows you to easily set up cascading dropdowns on a list form. (What we mean by cascading dropdowns is the situation where the available options for one column depend on the value you select in another column.)">SPCascadeDropdowns</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="../value-added/SPComplexToSimpleDropdown.html" title="Converts a &quot;complex&quot; dropdown (which SharePoint displays if there are 20+ options) to a &quot;simple&quot; dropdown (select).">SPComplexToSimpleDropdown</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="../value-added/SPDisplayRelatedInfo.html" title="This function lets you display related information on forms when an option in a dropdown is chosen.">SPDisplayRelatedInfo</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="../value-added/SPFilterDropdown.html" title="The SPFilterDropdown function allows you to filter the values available in a Lookup column using CAML against the Lookup column’s source list.">SPFilterDropdown</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="../value-added/SPFindMMSPicker.html" title="The SPFindMMSPicker function helps you find an MMS Picker’s values.">SPFindMMSPicker</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="../value-added/SPFindPeoplePicker.html" title="The SPFindPeoplePicker function helps you find and set People Picker column values.">SPFindPeoplePicker</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="../value-added/SPLookupAddNew.html" title="This function allows you to provide a link in forms for Lookup columns so that the user can add new values to the Lookup list easily. It is based on a blog post by Waldek Mastykarz. (see Credits)">SPLookupAddNew</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="../value-added/SPRedirectWithID.html" title="This function allows you to redirect to a another page from a new item form with the new item’s ID. This allows chaining of forms from item creation onward.">SPRedirectWithID</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="../value-added/SPRequireUnique.html" title="Checks to see if the value for a column on the form is unique in the list.">SPRequireUnique</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="../value-added/SPSetMultiSelectSizes.html" title="Sets the size of the boxes in a multi-select picker based on the values they contain.">SPSetMultiSelectSizes</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="../value-added/SPUpdateMultipleListItems.html" title="SPUpdateMultipleListItems allows you to update multiple items in a list based upon some common characteristic or metadata criteria.">SPUpdateMultipleListItems</a>
+                          
+                          </li>
+                  </ul>
+              </li>
+              <li class="active-ancestor">
+                      <a href="../utilities.html" title="From parsing query string parameters to getting information about the current user, these utility functions are handy tools for building client-side solutions.">Utilities</a>
+              
+                  <ul>
+                          <li class="">
+                                  <a href="SPConvertDateToISO.html" title="Convert a JavaScript date to the ISO 8601 format required by SharePoint to update list items.">SPConvertDateToISO</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="SPDebugXMLHttpResult.html" title="This function displays the XMLHttpResult from an Ajax call formatted for easy debugging. You can call it manually as part of your completefunc.">SPDebugXMLHttpResult</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="SPDropdownCtl.html" title="The function finds a dropdown in a form based on the name of the column (either the DisplayName or the StaticName) and returns an object you can use in your own functions.">SPDropdownCtl</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="SPFilterNode.html" title="Can be used to find namespaced elements in returned XML, such as rs:data or z:row from GetListItems.">SPFilterNode</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="SPGetCurrentSite.html" title="This utility function, which is also publicly available, simply returns the current site’s URL. It mirrors the functionality of the WebUrlFromPageUrl operation.">SPGetCurrentSite</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="SPGetCurrentUser.html" title="This function returns information about the current user. It is based on an insightful trick from Einar Otto Stangvik (see Credits).">SPGetCurrentUser</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="SPGetDisplayFromStatic.html" title="This function returns the DisplayName for a column based on the StaticName.">SPGetDisplayFromStatic</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="SPGetLastItemId.html" title="Function to return the ID of the last item created on a list by a specific user. Useful for maintaining parent/child relationships.">SPGetLastItemId</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="SPGetListItemsJson.html" title="SPGetListItemsJson combines several SPServices capabilities into one powerful function. By calling GetListItemChangesSinceToken, parsing the list schema, and passing the resulting mapping and data to SPXmlToJson automagically, we have a one-stop shop for retrieving SharePoint list data in JSON format. No manual mapping required!">SPGetListItemsJson</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="SPGetQueryString.html" title="The SPGetQueryString function returns an array containing the Query String parameters and their values.">SPGetQueryString</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="SPGetStaticFromDisplay.html" title="This function returns the StaticName for a column based on the DisplayName.">SPGetStaticFromDisplay</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="SPListNameFromUrl.html" title="Returns the current list’s GUID *if* called in the context of a list, meaning that the URL is within the list, like /DocLib or /Lists/ListName.">SPListNameFromUrl</a>
+                          
+                          </li>
+                          <li class="active">
+                                  <a href="SPScriptAudit.html" title="The SPScriptAudit function allows you to run an auditing report showing where scripting is in use in a site.">SPScriptAudit</a>
+                          
+                          </li>
+                          <li class="">
+                                  <a href="SPXmlToJson.html" title="SPXmlToJson is a function to convert XML data into JSON for client-side processing.">SPXmlToJson</a>
+                          
+                          </li>
+                  </ul>
+              </li>
+              <li class="">
+                      <a href="../glossary.html" >Glossary</a>
+              
+              </li>
+              <li class="">
+                      <a href="../faqs.html" >FAQs</a>
+              
+              </li>
+              <li class="">
+                      <a href="../caching.html" >Caching</a>
+              
+              </li>
+              <li class="">
+                      <a href="../credits.html" >Credits</a>
+              
+              </li>
+          </ul>
+    </aside>
+  </div>
+
+  <hr>
+  <p class="text-right"><a href="#top"><span class="fa fa-fw fa-arrow-up" aria-hidden="true"></span> Back to top</a></p>
+</div>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6">
+            <p><a href="http://twitter.com/jQSPWS"><span class="fa fa-fw fa-twitter" aria-hidden="true"></span> Twitter</a> | <a href="http://facebook.com/jQSPWS"><span class="fa fa-fw fa-facebook" aria-hidden="true"></span> Facebook</a> | <a href="https://github.com/sympmarc/spservices"><span class="fa fa-fw fa-github" aria-hidden="true"></span> GitHub</a></p>
+    
+            <p>&copy; 2009-2016 Sympraxis Consulting LLC | Licensed <a href="https://github.com/sympmarc/SPServices/blob/master/license.txt">MIT</a></p>
+          </div>
+          <div class="col-sm-6">
+            <p>Like SPServcices? Please support my work; this is my hobby.</p>
+    
+            <p><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=2ZQS4LK7CT6DW&amp;lc=US&amp;item_name=Sympraxis%20Consulting%20LLC&amp;item_number=SPServices&amp;currency_code=USD&amp;bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" alt="Donate to SPServices" border="0"></a></p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/prism.min.js"></script>
+  </body>
+</html>

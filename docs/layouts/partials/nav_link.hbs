@@ -1,0 +1,19 @@
+<li class="{{is_active @root.nav_path file.nav_path}}">
+    {{!--
+        currentNavNode.file
+    --}}
+    {{#if file}}
+        {{!--
+            @root === the template scope of the current file object being rendered
+            @root.nav_path === currentFileObject.nav_path
+            ('nav_path' property can be configured by navConfig.pathProperty = 'nav_path')
+
+            path === currentNavNode.path
+            (path property is set to all nav nodes)
+        --}}
+        <a href="{{relative_path @root.nav_path path}}" {{#if file.description}}title="{{file.description}}"{{/if}}>{{file.title}}</a>
+
+    {{else}}
+        {{name}}
+    {{/if}}
+</li>

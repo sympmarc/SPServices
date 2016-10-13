@@ -1,0 +1,26 @@
+{{#if function}}
+  <h2>Function</h2>
+  <p><code>{{function}}</code></p>
+{{/if}}
+{{#if certification}}
+  <h2>Certification</h2>
+  <p>
+    {{#if certification.sp2007}}
+      <a href="{{relative_path @root.nav_path 'glossary.html#certification'}}"><img src="{{relative_path @root.nav_path 'img/sp2007-'}}{{certification.sp2007}}.jpg" alt="SharePoint 2007: {{certification.sp2007}}"></a>
+    {{/if}}
+    {{#if certification.sp2010}}
+      <a href="{{relative_path @root.nav_path 'glossary.html#certification'}}"><img src="{{relative_path @root.nav_path 'img/sp2010-'}}{{certification.sp2010}}.jpg" alt="SharePoint 2010: {{certification.sp2010}}"></a>
+    {{/if}}
+  </p>
+  {{#if certification_notes}}
+    <p>{{certification_notes}}</p>
+  {{/if}}
+{{/if}}
+{{#if web_service}}
+  <h2>Web Service</h2>
+  <p>{{web_service}}</p>
+{{/if}}
+{{#if web_service_operation}}
+  <h2>Operation</h2>
+  <p>{{web_service_operation}}</p>
+{{/if}}

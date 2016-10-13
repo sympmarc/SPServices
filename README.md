@@ -6,9 +6,9 @@ SPServices is a jQuery library which abstracts SharePoint's Web Services and mak
 
 SPServices is primarily hosted on Codeplex, with this repository mirroring most of the downloads there.
 
-##This is a work in progress. It's a port of SPServices from [Codeplex](https://spservices.codeplex.com/) to GitHub, with a rewrite along the way.##
+## This is a work in progress. It's a port of SPServices from [Codeplex](https://spservices.codeplex.com/) to GitHub, with a rewrite along the way.
 _*Until otherwise announced, this is not a fully functional version of SPServices. When complete, this version will be:*_
-* SPServices 2.0 
+* SPServices 2.0
 * AMD-enabled using [RequireJS](http://requirejs.org/)
 * Converted from a monolithic file to modules
 * Enabled to take advantage of SharePoint's REST APIs - where available - for internal calls to get list data in the value-added functions
@@ -74,4 +74,26 @@ This will start a job that watches the sources files as they are saved and runs 
 
 Unit test cases are written under the test folder using [QUnit](http://qunitjs.com/). Tests will run in the dev.aspx above.
 
-Currently the tests require a real SharePoint server. The tests will create and delete some test data to validate basic core calls. 
+Currently the tests require a real SharePoint server. The tests will create and delete some test data to validate basic core calls.
+
+### Documentation
+
+Documentation is generated using the files in the [`/docs`](/docs) directory of this repo. Pages are written in Markdown with YAML front matter and then converted to HTML for hosting on GitHub pages via the `gh-pages` branch. _The `gh-pages` branch should never need to be directly edited or modified_.
+
+To edit documentation and see a live preview of changes in the browser, run:
+
+```
+gulp servedocs
+```
+
+This will build the documentation and serve the HTML files using Browsersync. Any changes to the source files in [`/docs`](/docs) will be reloaded in the browser automatically.
+
+When documentation changes are complete:
+
+1.  Stop the `servedocs` task (Ctrl+C or Cmd+C)
+2.  Run `gulp docs` to clean the `dist/docs` folder and rebuild it using the latest source files from `/docs`
+3.  If ready to deploy to gh-pages, run:
+
+        gulp deploydocs
+
+  This will package everything in the `/dist` folder into a ZIP file, then update the `gh-pages` branch with the ZIP file and all documentation files. Changes may take a few minutes to show up on http://sympmarc.github.io/SPServices.
