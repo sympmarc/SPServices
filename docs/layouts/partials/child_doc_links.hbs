@@ -1,0 +1,34 @@
+{{#if (is_active @root.nav_path file.nav_path)}}
+
+  {{#if children}}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Function Name</th>
+        <th>Short Description</th>
+        <th>Introduced</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each children}}
+        <tr>
+          <td><a href="{{relative_path @root.nav_path path}}" title="{{file.title}}">{{#if file.function}}{{file.function}}{{else}}{{file.title}}{{/if}}</a></td>
+          <td>{{file.description}}</td>
+          <td>{{file.introduced}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+  {{/if}}
+
+{{else}}
+
+  {{#if (is_active_with_ancestor @root.nav_path file.nav_path @root.breadcrumb_path)}}
+    {{#if children}}
+      {{#each children}}
+          {{> child_doc_links}}
+      {{/each}}
+    {{/if}}
+  {{/if}}
+
+{{/if}}

@@ -1,14 +1,12 @@
 ---
 title: 'SPCascadeDropdowns'
+function: '$().SPServices.SPCascadeDropdowns'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'This is the first function we implemented which allows you to take advantage of the Web Services calls in a meaningful way. It allows you to easily set up cascading dropdowns on a list form. (What we mean by cascading dropdowns is the situation where the available options for one column depend on the value you select in another column.)'
+introduced: 0.2.6
 ---
-
-## Function
-
-**$().SPServices.SPCascadeDropdowns**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg)](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -74,11 +72,11 @@ The name or GUID of the list which contains the parent/child relationships. If y
 
 **_relationshipListParentColumn_**
 
-The [StaticName](../glossary/index.md#StaticName) of the parent column in the _relationshipList_
+The [StaticName](../glossary.md#staticname) of the parent column in the _relationshipList_
 
 **_relationshipListChildColumn_**
 
-The [StaticName](../glossary/index.md#StaticName) of the child column in the _relationshipList_
+The [StaticName](../glossary.md#staticname) of the child column in the _relationshipList_
 
 _CAMLQuery_
 
@@ -97,11 +95,11 @@ If specified, sort the options in the dropdown by this column otherwise the opti
 
 **_parentColumn_**
 
-The [DisplayName](../glossary/index.md#DisplayName) of the parent column in the _form_
+The [DisplayName](../glossary.md#displayname) of the parent column in the _form_
 
 **_childColumn_**
 
-The [DisplayName](../glossary/index.md#DisplayName) of the child column in the _form_
+The [DisplayName](../glossary.md#displayname) of the child column in the _form_
 
 _listName_
 
@@ -112,7 +110,8 @@ _promptText_
 Text to use as prompt. If included, {0} will be replaced with the value of childColumn. The default value is `""`.
 
 NOTE: I discourage the use of this option. Yes, I put it into the function, but if the user doesn't make a choice, they get an ugly error because SharePoint doesn't understand it as an option. I've left in in for backward compatibility.
-<span style="color: #ff0000;">Deprecated in v0.7.1.</span>
+
+**Deprecated in v0.7.1.**
 
 _simpleChild_
 
@@ -141,7 +140,7 @@ completefunc: doSomething,    // Where doSomething is the name of your function
 
 _debug_
 
-Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](../glossary/index.md#DebugMode).
+Setting `debug: true` indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [debug mode](../glossary.md#debug-mode).
 
 ## Example
 
@@ -171,7 +170,7 @@ The States list contains all of the State names in the Title column. Note that I
 
 ![](img/SPCascadeDropdown4.png) 
 
-This is the sum total of what you'll need to add to your page to make the function work for the example above. The first two lines simply pull the script files into the page, and the `$(document).ready(function()` line is a jQuery function that says "Run this script when the page has been fully rendered". In the first call to the function, note that we're turning [debug mode](../glossary/index.md#DebugMode) on by setting `debug: true`.
+This is the sum total of what you'll need to add to your page to make the function work for the example above. The first two lines simply pull the script files into the page, and the `$(document).ready(function()` line is a jQuery function that says "Run this script when the page has been fully rendered". In the first call to the function, note that we're turning [debug mode](../glossary.md#debug-mode) on by setting `debug: true`.
 
 ```html
 <script language="javascript" type="text/javascript" src="../../jQuery%20Libraries/jquery-1.11.3.js"></script>

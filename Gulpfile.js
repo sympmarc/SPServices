@@ -18,12 +18,14 @@ var tap = require('gulp-tap');
 var metalsmith = require('metalsmith');
 var msMarkdown = require('metalsmith-markdown');
 var msReplace = require('metalsmith-text-replace');
+var msRegisterHelpers = require('metalsmith-register-helpers');
 var msLayouts = require('metalsmith-layouts');
 var msCollections = require('metalsmith-collections');
+var msCollectionMetadata = require('metalsmith-collection-metadata');
 var msNavigation = require('metalsmith-navigation');
 var msWatch = require('metalsmith-watch');
 var msIgnore = require('metalsmith-ignore');
-var Handlebars = require('handlebars');
+var msAssets = require('metalsmith-assets');
 var zip = require('gulp-zip');
 var merge = require('merge-stream');
 var browserSync = require('browser-sync');
@@ -140,103 +142,28 @@ gulp.task('scripts', function() {
 
 gulp.task('docs', ['clean:docs'], function () {
 
-    /**
-    * Generate a custom sort method for given starting `order`. After the given
-    * order, it will ignore casing and put periods last. So for example a call of:
-    *
-    *   sorter('Overview');
-    *
-    * That is passed:
-    *
-    *   - Analytics.js
-    *   - iOS
-    *   - Overview
-    *   - Ruby
-    *   - .NET
-    *
-    * Would guarantee that 'Overview' ends up first, with the casing in 'iOS'
-    * ignored so that it falls in the normal alphabetical order, and puts '.NET'
-    * last since it starts with a period. See https://gist.github.com/lambtron/c8945d3abd11c783eb67
-    *
-    * @param {Array} order
-    * @return {Function}
-    */
-
-    function sorter(order) {
-        order = order || [];
-
-        return function(one, two) {
-            var a = one.title;
-            var b = two.title;
-
-            if (!a && !b) return 0;
-            if (!a) return 1;
-            if (!b) return -1;
-
-            var i = order.indexOf(a);
-            var j = order.indexOf(b);
-
-            if (~i && ~j) {
-                if (i < j) return -1;
-                if (j < i) return 1;
-                return 0;
-            }
-
-            if (~i) return -1;
-            if (~j) return 1;
-
-            a = a.toLowerCase();
-            b = b.toLowerCase();
-            if (a[0] === '.') return 1;
-            if (b[0] === '.') return -1;
-            if (a < b) return -1;
-            if (b < a) return 1;
-            return 0;
-        };
-    }
-
-    /**
-     * Create Handlebars helper to generate relative links for navigation.
-     * See https://github.com/unstoppablecarl/metalsmith-navigation/blob/master/examples/generic/build.js
-     */
-    var relativePathHelper = function(current, target) {
-       // normalize and remove starting slash from path
-       if(!current || !target){
-           return '';
-       }
-       current = path.normalize(current).slice(0);
-       target = path.normalize(target).slice(0);
-       current = path.dirname(current);
-       return path.relative(current, target).replace(/\\/g, '/');
-    };
-    Handlebars.registerHelper('relative_path', relativePathHelper);
-
-    /**
-     * Create Handlebars helper to create active class for navigation.
-     */
-    var isActiveHelper = function(current, target) {
-       // normalize and remove starting slash from path
-       if(!current || !target){
-           return '';
-       }
-       current = path.normalize(current).slice(0);
-       target = path.normalize(target).slice(0);
-       return current === target ? 'active' : '';
-    };
-    Handlebars.registerHelper('is_active', isActiveHelper);
-
     return metalsmith(__dirname)
+        .metadata({
+          site: {
+            title: pkg.name,
+            description: pkg.description_long
+          },
+          version: pkg.version,
+          copyright: pkg.copyright,
+          repository: pkg.repository.url,
+          license: pkg.licenses[0]
+        })
         .source('./docs')
         .clean(false) // Don't delete files while Gulp tasks are running
         .destination('./dist/docs')
-
         .use(msWatch({
           paths: {
-            "${source}/**/*": true, // Rebuild a file when it changes
-            "docs/templates/**/*": "**/*.md", // Rebuild all .md files when a template changes
+            '${source}/**/*': true, // Rebuild an individual file when it is changed
+            "docs/**/*.md": "**/*.md", // Rebuild all .md files when a .md file is changed
+            "docs/layouts/**/*.*": "**/*.md" // Rebuild all .md files when a template file is changed
           }
         }))
-        .use(msIgnore('templates/**/*')) // Don't output template files in dist/docs
+        .use(msIgnore('layouts/**/*')) // Don't output template files in dist/docs
         .use(msMarkdown())
         .use(msReplace({
           '**/*.html': [
@@ -258,35 +185,43 @@ gulp.task('docs', ['clean:docs'], function () {
             }
           ]
         }))
-        .use(msNavigation({
-          all: {}
-        }))
         .use(msCollections({
-          'Home': {
-            pattern: 'index.html'
-          },
-          'Core': {
-            pattern: 'core/{/api/index.html,*.html}',
-            sortBy: sorter(['Web Services'])
-          },
-          'WebServices': {
-            pattern: 'core/api/**/*.html',
-            sortBy: 'title'
-          },
-          'Value Added': {
-            pattern: 'value-added/**/*.html',
-            sortBy: 'title'
-          },
-          'Utilities': {
-            pattern: 'utilities/**/*.html',
-            sortBy: 'title'
+          'All': {
+            pattern: '**/*' // Used by msCollectionMetadata
           }
+        }))
+        .use(msCollectionMetadata({
+          'collections.All': {
+            nav_group_global: 'global' // Add all pages to 'global' nav; this ensure that every page has a 'nav_path' property
+          }
+        }))
+        .use(msNavigation({
+          global: {
+            filterProperty: 'nav_group_global',
+            sortBy: 'nav_sort',
+            breadcrumbProperty: 'breadcrumb_path'
+          },
+          primary: {
+            filterProperty: 'nav_group',
+            sortBy: 'nav_sort'
+          },
+          featured: {
+            filterProperty: 'nav_group',
+            sortBy: 'nav_sort'
+          }
+        }))
+        .use(msRegisterHelpers({
+          directory: 'docs/layouts/helpers'
         }))
         .use(msLayouts({
           engine: 'handlebars',
-          directory: 'docs/templates',
-          partials: 'docs/templates/partials',
+          directory: 'docs/layouts',
+          partials: 'docs/layouts/partials',
           default: 'main.hbs'
+        }))
+        .use(msAssets({
+          'source': './docs/assets',
+          'destination': 'assets'
         }))
         .build(function (err) {
           if (err) {

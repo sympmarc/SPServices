@@ -14,4 +14,4 @@ $().SPServices.defaults.cacheXML = true;
 
 which will affect all Web Service operation calls in the current page lifecycle.
 
-You can use the `cacheXML: true` option with any Web Service operation in [SPServices Core](core/api/index.md), though as you can imagine some operations will benefit more than others.
+You can use the `cacheXML: true` option with any Web Service operation in [SPServices Core](core/web-services.md), though as you can imagine some operations will benefit more than others.

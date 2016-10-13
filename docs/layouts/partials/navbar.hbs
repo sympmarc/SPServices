@@ -1,0 +1,28 @@
+<header class="site-header" id="top">
+  <nav class="navbar navbar-inverse">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-top" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{{relative_path nav_path 'index.html'}}"><img src="{{relative_path nav_path 'img/spservices-icon.png'}}" alt="" width="30" height="30"> {{site.title}}</a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="navbar-top">
+        <ul class="nav navbar-nav">
+          {{#each navs.primary}}
+            {{> nav_link}}
+          {{/each}}
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="{{repository}}" title="View on GitHub">{{icon 'github'}} GitHub</a></li>
+          <li><a href="http://spservices.codeplex.com/discussions" title="Discuss on CodePlex">{{icon 'comments'}} Discussions</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>

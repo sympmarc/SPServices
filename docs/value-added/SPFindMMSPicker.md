@@ -1,14 +1,11 @@
 ---
 title: 'SPFindMMSPicker'
+function: '$().SPServices.SPFindMMSPicker'
+certification:
+  sp2010: 'certified'
+description: 'The SPFindMMSPicker function helps you find an MMS Picker’s values.'
+introduced: 2013.01
 ---
-
-## Function
-
-**$().SPServices.SPFindMMSPicker**
-
-## Certification
-
-[![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -23,7 +20,7 @@ $().SPServices.SPFindMMSPicker({
 ```
 
 ### MMSDisplayName
-The [DisplayName](../glossary/index.md#DisplayName) of the People Picker in the form.
+The [DisplayName](../glossary.md#displayname) of the People Picker in the form.
 
 ## Returns
 

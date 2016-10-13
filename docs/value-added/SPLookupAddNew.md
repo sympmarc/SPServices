@@ -1,14 +1,13 @@
 ---
 title: 'SPLookupAddNew'
+function: '$().SPServices.SPLookupAddNew'
+certification:
+  sp2007: 'certified'
+  sp2010: 'works'
+certification_notes: 'While this function works with SharePoint 2010, because of the modal dialogs the user will get "lost". Alternatively, if you’ve turned off the modal dialogs, the function works just great.'
+description: 'This function allows you to provide a link in forms for Lookup columns so that the user can add new values to the Lookup list easily. It is based on a blog post by Waldek Mastykarz. (see Credits)'
+introduced: 0.3.2
 ---
-
-## Function
-
-**$().SPServices.SPLookupAddNew**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg)](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
@@ -42,7 +41,7 @@ $().SPServices.SPLookupAddNew({
 
 ### Lookup column
 
-The [DisplayName](../glossary/index.md#DisplayName) of the Lookup column in the form.
+The [DisplayName](../glossary.md#displayname) of the Lookup column in the form.
 
 ### promptText
 
@@ -72,7 +71,7 @@ completefunc: doSomething,   // Where doSomething is the name of your function
 
 ### debug
 
-Setting debug: true indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [DebugMode](../glossary/index.md#DebugMode).
+Setting debug: true indicates that you would like to receive messages if anything obvious is wrong with the function call, like using a column name which doesn't exist. I call this [DebugMode](../glossary.md#debug-mode).
 
 ## Example
 

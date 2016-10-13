@@ -90,10 +90,10 @@ This will build the documentation and serve the HTML files using Browsersync. An
 
 When documentation changes are complete:
 
-1. Stop the `servedocs` task (Ctrl+C or Cmd+C)
-2. Run `gulp docs` to clean the `dist/docs` folder and rebuild it using the latest source files from `/docs`
-3. If ready to deploy to gh-pages, run:
-   ```
-   gulp deploydocs
-   ```
-   This will package everything in the `/dist` folder into a ZIP file, then update the `gh-pages` branch with the ZIP file and all documentation files. Changes may take a few minutes to show up on http://sympmarc.github.io/SPServices.
+1.  Stop the `servedocs` task (Ctrl+C or Cmd+C)
+2.  Run `gulp docs` to clean the `dist/docs` folder and rebuild it using the latest source files from `/docs`
+3.  If ready to deploy to gh-pages, run:
+
+        gulp deploydocs
+
+  This will package everything in the `/dist` folder into a ZIP file, then update the `gh-pages` branch with the ZIP file and all documentation files. Changes may take a few minutes to show up on http://sympmarc.github.io/SPServices.

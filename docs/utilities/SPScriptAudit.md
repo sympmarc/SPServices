@@ -1,14 +1,12 @@
 ---
 title: 'SPScriptAudit'
+function: '$().SPServices.SPScriptAudit'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'The SPScriptAudit function allows you to run an auditing report showing where scripting is in use in a site.'
+introduced: 0.4.8
 ---
-
-## Function
-
-**$().SPServices.SPScriptAudit**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 

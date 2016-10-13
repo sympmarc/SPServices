@@ -1,18 +1,16 @@
 ---
 title: 'SPFilterNode'
+function: '$().SPFilterNode'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'Can be used to find namespaced elements in returned XML, such as rs:data or z:row from GetListItems.'
+introduced: 0.7.0
 ---
-
-## Function
-
-**$().SPFilterNode**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 
-<div class="alert alert-danger">**IMPORTANT NOTE: This function was introduced in v0.7.0 because of a change that the jQuery team made in jQuery 1.7\. See my blog posts [here](http://sympmarc.com/2011/11/08/problem-with-jquery-1-7-and-spservices/) and [here](http://sympmarc.com/2011/11/23/jquery-library-for-sharepoint-web-services-spservices-v0-7-0-beta-1-available/) for details. If you are using a version of SPServices prior to v0.7.0, you do not have this function.**</div>
+<div class="alert alert-danger">**IMPORTANT NOTE: This function was introduced in v0.7.0 because of a change that the jQuery team made in jQuery 1.7. See my blog posts [here](http://sympmarc.com/2011/11/08/problem-with-jquery-1-7-and-spservices/) and [here](http://sympmarc.com/2011/11/23/jquery-library-for-sharepoint-web-services-spservices-v0-7-0-beta-1-available/) for details. If you are using a version of SPServices prior to v0.7.0, you do not have this function.**</div>
 
 Can be used to find namespaced elements in returned XML, such as `rs:data` or `z:row` from GetListItems.
 

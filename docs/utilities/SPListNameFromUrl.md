@@ -1,14 +1,12 @@
 ---
 title: 'SPListNameFromUrl'
+function: '$().SPServices.SPListNameFromUrl'
+certification:
+  sp2007: 'certified'
+  sp2010: 'certified'
+description: 'Returns the current list’s GUID *if* called in the context of a list, meaning that the URL is within the list, like /DocLib or /Lists/ListName.'
+introduced: 0.5.7
 ---
-
-## Function
-
-**$().SPServices.SPListNameFromUrl**
-
-## Certification
-
-[![Certified for SharePoint 2007](../img/sp2007-cert.jpg "Certified for SharePoint 2007")](../glossary/index.md#Certification) [![Certified for SharePoint 2010](../img/sp2010-cert.jpg "Certified for SharePoint 2010")](../glossary/index.md#Certification)
 
 ## Functionality
 

@@ -1,0 +1,27 @@
+<div class="container">
+
+{{> breadcrumbs}}
+
+  <div class="row">
+    <main class="col-md-9 col-md-push-3">
+      {{#if title}}
+        <h1 class="page-header">{{title}}</h1>
+      {{/if}}
+
+      {{> metadata}}
+
+      {{{contents}}}
+    </main>
+    <aside class="sidebar-navigation col-md-3 col-md-pull-9 hidden-print hidden-sm hidden-xs">
+          <h2 class="h4">Navigation</h2>
+          <ul class="list-unstyled">
+            {{#each navs.global}}
+              {{> nav_link_with_children}}
+            {{/each}}
+          </ul>
+    </aside>
+  </div>
+
+  <hr>
+  <p class="text-right"><a href="#top">{{icon 'arrow-up'}} Back to top</a></p>
+</div>
