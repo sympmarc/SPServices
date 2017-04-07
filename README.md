@@ -1,6 +1,8 @@
 SPServices
 ==========
-[![bitHound Score](https://www.bithound.io/github/sympmarc/SPServices/badges/score.svg)](https://www.bithound.io/github/sympmarc/SPServices) [![Code Climate](https://codeclimate.com/github/sympmarc/SPServices/badges/gpa.svg)](https://codeclimate.com/github/sympmarc/SPServices)
+[![bitHound Score](https://www.bithound.io/github/sympmarc/SPServices/badges/score.svg)](https://www.bithound.io/github/sympmarc/SPServices)
+[![Code Climate](https://codeclimate.com/github/sympmarc/SPServices/badges/gpa.svg)](https://codeclimate.com/github/sympmarc/SPServices)
+[![CDNJS](https://img.shields.io/cdnjs/v/jquery.SPServices.svg?style=plastic)](https://cdnjs.com/libraries/jquery.SPServices)
 
 SPServices is a jQuery library which abstracts SharePoint's Web Services and makes them easier to use. It also includes functions which use the various Web Service operations to provide more useful (and cool) capabilities. It works entirely client side and requires no server install.
 
