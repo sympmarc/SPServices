@@ -1,6 +1,5 @@
 SPServices
 ==========
-[![bitHound Score](https://www.bithound.io/github/sympmarc/SPServices/badges/score.svg)](https://www.bithound.io/github/sympmarc/SPServices)
 [![Code Climate](https://codeclimate.com/github/sympmarc/SPServices/badges/gpa.svg)](https://codeclimate.com/github/sympmarc/SPServices)
 [![CDNJS](https://img.shields.io/cdnjs/v/jquery.SPServices.svg?style=plastic)](https://cdnjs.com/libraries/jquery.SPServices)
 
