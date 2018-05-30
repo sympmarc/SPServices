@@ -185,8 +185,6 @@ declare module JQuerySPServices {
          * GetAttachmentCollection uses a string; UpdateListItems uses a number.
          */
         ID?: number | string;
-        /** A string that contains the GUID for the view. If no value is specified, returns the default view schema for the list. */
-        viewName?: string;
         /**
          * A ViewFields element that specifies which fields to return in the query and in what order, and that can be assigned to a System.Xml.XmlNode object.
          * 
@@ -529,8 +527,6 @@ declare module JQuerySPServices {
         rowLimit?: string;
         /** A string that specifies whether the view is an HTML view or a Datasheet view. Possible values include "HTML" and "Grid". */
         type?: string;
-        /** true to make the view the default view for the list. */
-        makeViewDefault?: boolean;
         /** An XML fragment that contains all the view-level properties as attributes, such as Editor, Hidden, ReadOnly, and Title. */
         viewProperties?: string;
         /** An Aggregations element that specifies the fields to aggregate and that can be assigned to a System.Xml.XmlNode object. */
