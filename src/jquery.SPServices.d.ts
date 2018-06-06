@@ -106,6 +106,8 @@ declare module JQuerySPServices {
         /** Site-relative URL of the form to retrieve. */
         formUrl?: string;
 
+        // List Operations
+
         /** List name for operations involving SharePoint lists. */
         listName?: string;
         /** ID of a list item for operations involving list attachments. */
@@ -983,7 +985,7 @@ declare module JQuerySPServices {
                  * People Picker value. If the browser is not IE, then the function calls GetUserInfo to retrieve similar values to mirror the 
                  * dictionary entry structure.
                  */
-                dictionaryEntires: any;
+                dictionaryEntries: any;
             };
 
         /**
@@ -1020,7 +1022,7 @@ declare module JQuerySPServices {
              * @example
              * completefunc: doSomething, // Where doSomething is the name of your function
             */
-            completefunc?: () => any;
+            completefunc?: () => void;
             /**
              * [Optional] Setting debug: true indicates that you would like to receive messages if anything obvious is wrong with the function call, 
              * like using a column name which doesn't exist. I call this debug mode.
@@ -1148,7 +1150,7 @@ declare module JQuerySPServices {
             /** [Optional] The batchCmd option specifies what the action should be. The choices are "Update" or "Delete". "Update" is the default. */
             batchCmd?: string;
             /** [Optional] Fieldname / Fieldvalue pairs for UpdateListItems */
-            valuepairs?: string[][];
+            valuepairs?: [string, any][];
             /**
              * [Optional] If specified, the completefunc will be called each time there is a change to parentColumn. Potential uses for the 
              * completefunc: consistent default formatting overrides, additional lookup customizations, image manipulations, etc. 
@@ -1164,7 +1166,7 @@ declare module JQuerySPServices {
              * @example
              * completefunc: doSomething, // Where doSomething is the name of your function
              */
-            completefunc?: () => any;
+            completefunc?: () => void;
             /**
              * [Optional] Setting debug: true indicates that you would like to receive messages if anything obvious is wrong with the function call, 
              * like using a column name which doesn't exist. I call this debug mode.
