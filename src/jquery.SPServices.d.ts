@@ -28,7 +28,7 @@ declare module JQuerySPServices {
         /** Method Cmd for UpdateListItems */
         batchCmd?: string;
         /** Fieldname / Fieldvalue pairs for UpdateListItems */
-        valuepairs?: string[];
+        valuepairs?: [string, any][];
 
         // As of v0.7.1, removed all options which were assigned an empty string ("") 
 
