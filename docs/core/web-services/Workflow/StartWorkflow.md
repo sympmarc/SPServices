@@ -53,3 +53,26 @@ $().SPServices({
 ```javascript
 workflowParameters: "<Data><Parameter1>" + parameter1 + "</Parameter1><Parameter2>" + parameter2 + "</Parameter2></Data>"
 ```
+
+
+Here's a complete example from [dsMagic12](https://github.com/dsmagic12) which shows to start a workflow given a know list item ID number, the title of the list the item is in, and the GUID of the workflow you wish to execute (assumes you do not need to pass any  parameter values):
+
+```javascript
+var listURLName = "Tasks";
+var itemId = 1;
+var workflowGuid = "{01116f76-e2c2-4a1a-b099-9b82680c14e8}";
+jQuery().SPServices({
+    async: true,
+    debug: true,
+    operation: "StartWorkflow",
+    item: jQuery().SPServices.SPGetCurrentSite() +"/Lists/"+ listURLName +"/"+ itemId +"_.000",
+    templateId: workflowGuid,
+    workflowParameters: "<root />",
+    completefunc: function(xDataStartWorkflow, StatusStartWorkflow) {
+        try{console.log("Started workflow on item |"+ itemId +"|");}catch(er){}
+        try{console.log(xDataStartWorkflow);}catch(er){}
+        try{console.log(StatusStartWorkflow);}catch(er){}
+    }
+});
+```
+
