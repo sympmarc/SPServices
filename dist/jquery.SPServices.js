@@ -3227,7 +3227,7 @@
             //Iterate over all available choices placing them in the correct position in the new choices table.
             for (i = 0; i < columnOptions.length; i++) {
                 // If we've already got perRow columnOptions in the row, close off the row
-                if ((i + 1) % opt.perRow === 0) {
+                if (i % opt.perRow === 0) { // Removed (i+1) - because of this first row of columnOptions was ommited from displaying
                     newChoiceTable.append("<tr></tr>");
                 }
                 newChoiceTable.find("tr:last").append(columnOptions[i]);
