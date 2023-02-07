@@ -606,7 +606,7 @@ define([
             case "GetServerInfo":
                 break;
             case "SubmitFile":
-                utils.addToPayload(opt, SOAPEnvelope, ["fileToSubmit"], ["properties"], ["recordRouting"], ["sourceUrl"], ["userName"]);
+                utils.addToPayload(opt, SOAPEnvelope, ["fileToSubmit", "properties", "recordRouting", "sourceUrl", "userName"]);
                 break;
 
 
